@@ -90,14 +90,12 @@
         @keyframes sadWobble { 0%, 100% { transform: rotate(0deg) translateY(0); } 25% { transform: rotate(-4deg) translateY(2px); } 75% { transform: rotate(4deg) translateY(2px); } }
         .animate-sad { animation: sadWobble 1.8s infinite ease-in-out; }
 
-        /* 新增：星星開心搖擺與眨眼 */
         @keyframes happySway { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-5px) rotate(4deg); } }
         .animate-happy-sway { animation: happySway 1.6s infinite ease-in-out; }
         
         @keyframes twinkle { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.3; transform: scale(0.7); } }
         .animate-twinkle { animation: twinkle 1s infinite ease-in-out; }
 
-        /* 新增：皇冠 3D 繞圈與降落 */
         @keyframes orbit3d {
             0% { transform: translateX(0) scale(1); }
             25% { transform: translateX(35px) scale(0.75); }
@@ -105,15 +103,28 @@
             75% { transform: translateX(-35px) scale(0.75); }
             100% { transform: translateX(0) scale(1); }
         }
-        /* 頭像：先繞圈 1.25秒，然後無縫接上跳躍 (Delay 1.25s) */
         .avatar-excited { animation: orbit3d 1.25s ease-in-out, cheerBounce 0.9s infinite cubic-bezier(0.28, 0.84, 0.42, 1) 1.25s; }
 
         @keyframes crownDrop {
             0% { transform: scale(4.5) translateY(-25px); opacity: 0; }
             100% { transform: scale(1) translateY(0); opacity: 1; }
         }
-        /* 皇冠：前 1.25秒隱藏，繞圈完畢後突然出現並降落 */
         .prop-crown-excited { animation: crownDrop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 1.25s both; }
+
+        .half-food {
+            position: relative;
+            display: inline-block;
+            opacity: 0.4;
+        }
+        .half-food::after {
+            content: attr(data-icon);
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 1;
+            clip-path: inset(0 50% 0 0);
+            border-right: 2.5px dashed #dc2626;
+        }
 
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
@@ -138,12 +149,38 @@
     <div id="nav-drawer-backdrop" onclick="toggleNavMenu(false)" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-40 hidden transition-opacity"></div>
     <aside id="nav-drawer" class="fixed top-0 right-0 h-full w-72 max-w-[80vw] bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out p-4 flex flex-col justify-between overflow-y-auto">
         <div class="space-y-3.5">
+            <!-- 🐾 側邊選單最頂部：寵物狀態卡片 (Tamagotchi Menu Card) -->
+            <div id="menu-pet-status-card" class="bg-white border-2 border-indigo-100 rounded-2xl p-3 text-center space-y-2 shadow-sm transition-colors relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-b from-indigo-50/50 to-transparent pointer-events-none"></div>
+                <div class="relative w-20 h-20 mx-auto flex items-center justify-center">
+                    <div id="menu-pet-badge" class="absolute -top-1 -right-1 z-20 text-2xl select-none animate-twinkle"></div>
+                    <div id="menu-pet-frame" class="relative w-16 h-16 rounded-full border-4 overflow-hidden bg-white shadow-sm flex items-center justify-center">
+                        <img id="menu-pet-img" src="" class="w-full h-full object-cover hidden" alt="Pet Avatar">
+                        <span id="menu-pet-default" class="text-3xl">🧒</span>
+                    </div>
+                </div>
+                <div class="space-y-1 relative z-10">
+                    <div id="menu-pet-name" class="font-black text-base text-slate-900 truncate">我的寵物</div>
+                    <div id="menu-pet-mood-hunger" class="text-xs font-bold leading-tight space-y-0.5 flex flex-col items-center">
+                        <div id="menu-pet-mood" class="text-indigo-800">心情: 讀取中...</div>
+                        <div class="flex items-center gap-1">
+                            <span id="menu-pet-hunger-label" class="text-indigo-800">飽足度: 讀取中...</span>
+                            <span id="menu-pet-hunger-value" class="font-black px-1.5 py-0.5 rounded-md text-[10px]"></span>
+                        </div>
+                    </div>
+                </div>
+                <div id="menu-pet-tip" class="text-[10px] font-bold text-amber-700 bg-amber-50 p-2 rounded-xl border border-amber-200 hidden relative z-10">
+                    💡 去玩「聽音拼字挑戰」贏食物餵飽我啦！
+                </div>
+            </div>
+
             <div class="flex justify-between items-center pb-2.5 border-b border-slate-100">
                 <div class="font-black text-base text-slate-900 flex items-center gap-2">
                     <span>🧭</span> <span data-i18n="menu_title">功能模組導覽</span>
                 </div>
                 <button onclick="toggleNavMenu(false)" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-black flex items-center justify-center">&times;</button>
             </div>
+
             <div class="space-y-1 text-sm font-bold">
                 <div class="text-[11px] font-black text-slate-400 px-2.5 uppercase tracking-wider" data-i18n="cat_core">自然拼讀核心</div>
                 <button onclick="selectNavTab('main')" id="btn-tab-main" class="nav-btn active w-full text-left px-3 py-2 rounded-xl text-slate-700 bg-slate-50 flex items-center gap-2.5">
@@ -197,7 +234,7 @@
             </div>
         </div>
         <div class="pt-3 border-t border-slate-100 text-center space-y-0.5">
-            <div class="text-[11px] font-black text-indigo-600">v4.7.0 · Movie Effects & Transposition ✓</div>
+            <div class="text-[11px] font-black text-indigo-600">v5.0.7 · Auth UI & Tamagotchi ✓</div>
             <div class="text-[10px] font-bold text-slate-400">Phonics 3000 · Science of Reading</div>
         </div>
     </aside>
@@ -248,7 +285,7 @@
                         <div id="display-ipa" class="text-base sm:text-xl font-bold text-slate-700 font-mono bg-white inline-block px-3 sm:px-4 py-1 rounded-xl shadow-2xs border border-slate-200">/ˈæmbjələns/</div>
                         <div class="flex items-center gap-1 bg-white p-1 rounded-2xl border border-slate-200 shadow-2xs">
                             <button onclick="triggerStep4TTS(1.0)" class="w-9 h-9 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-600 flex items-center justify-center transition-all" title="聆聽全字原音 (1.0x)">🔊</button>
-                            <button onclick="triggerStep4TTS(0.5)" class="w-9 h-9 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-700 flex items-center justify-center transition-all text-lg" title="超慢速發音 (0.5x)">🐢</button>
+                            <button onclick="triggerStep4TTS(0.5)" class="w-9 h-9 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-700 flex items-center justify-center transition-all text-lg font-bold" title="超慢速發音 (0.5x)">🐢</button>
                         </div>
                     </div>
 
@@ -344,14 +381,14 @@
                         </div>
                         <div class="pt-3 border-t border-indigo-100 flex items-center justify-center gap-2 mt-3 flex-wrap">
                             <div class="flex items-center gap-1">
-                                <button onclick="playFlashcardAudio(1.0)" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl shadow-xs flex items-center gap-1.5 text-xs sm:text-sm active:scale-95">
+                                <button onclick="playFlashcardAudio(1.0)" class="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl shadow-xs flex items-center gap-1 text-xs sm:text-sm active:scale-95">
                                     <span>🔊</span> <span data-i18n="fc_play_uk">朗讀全字</span>
                                 </button>
-                                <button onclick="playFlashcardAudio(0.5)" class="px-2.5 py-2 bg-amber-100 hover:bg-amber-200 text-amber-900 font-black rounded-xl shadow-xs flex items-center gap-0.5 text-xs sm:text-sm active:scale-95" title="超慢速發音 (0.5x)">
+                                <button onclick="playFlashcardAudio(0.5)" class="px-2.5 py-2 bg-amber-100 hover:bg-amber-200 text-amber-900 font-black rounded-xl shadow-xs flex items-center gap-0.5 text-xs sm:text-sm active:scale-95 font-bold" title="超慢速發音 (0.5x)">
                                     <span>🐢</span> <span>0.5x</span>
                                 </button>
                             </div>
-                            <button onclick="openCurrentFlashcardInEngine()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl shadow-xs flex items-center gap-1.5 text-xs sm:text-sm active:scale-95">
+                            <button onclick="openCurrentFlashcardInEngine()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl shadow-xs flex items-center gap-1 text-xs sm:text-sm active:scale-95">
                                 <span>🚀</span> <span data-i18n="fc_deep_decompose">深入拆解</span>
                             </button>
                         </div>
@@ -442,7 +479,7 @@
                         </div>
                         <div class="flex justify-center items-center gap-2 sm:gap-3 flex-wrap">
                             <button onclick="triggerScramblePlaySequence(1.0)" class="w-12 h-12 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xl shadow-md flex items-center justify-center active:scale-95 transition-all" title="常速播放 (1.0x)"><span>🔊</span></button>
-                            <button onclick="triggerScramblePlaySequence(0.5)" class="w-12 h-12 rounded-2xl bg-amber-100 hover:bg-amber-200 text-amber-900 font-black text-xl shadow-md flex items-center justify-center active:scale-95 border-2 border-amber-300 transition-all" title="超慢速發音 (0.5x)"><span>🐢</span></button>
+                            <button onclick="triggerScramblePlaySequence(0.5)" class="w-12 h-12 rounded-2xl bg-amber-100 hover:bg-amber-200 text-amber-900 font-black text-xl shadow-md flex items-center justify-center active:scale-95 border-2 border-amber-300 transition-all font-bold" title="超慢速發音 (0.5x)"><span>🐢</span></button>
                             <span class="text-xs font-bold text-slate-500" data-i18n="click_speaker_hint">點擊喇叭或龜龜可重複聆聽</span>
                         </div>
                         <div class="bg-white rounded-xl p-2.5 border border-slate-200 text-left">
@@ -515,11 +552,12 @@
                         </div>
                     </div>
 
-                    <div class="flex items-center gap-2 pt-1">
-                        <button onclick="resetCurrentScrambleSlots()" class="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold rounded-xl text-xs" data-i18n="reset_question">↺ 重填本題</button>
+                    <div class="flex items-center gap-2 pt-1 flex-wrap sm:flex-nowrap">
+                        <button onclick="resetCurrentScrambleSlots()" class="px-2.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold rounded-xl text-xs" data-i18n="reset_question">↺ 重填</button>
                         <button onclick="checkScrambleAnswer()" id="btn-submit-scramble" class="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl shadow-xs text-sm flex items-center justify-center gap-1.5">
                             <span>✓</span> <span data-i18n="btn_check">檢查答案</span>
                         </button>
+                        <button onclick="quitScrambleGame()" class="px-2.5 py-2.5 bg-red-50 hover:bg-red-100 text-red-600 font-extrabold rounded-xl text-xs">🚪 退出練習</button>
                     </div>
                     <div id="scramble-feedback" class="text-center font-black text-xs sm:text-sm h-5 transition-all"></div>
                 </div>
@@ -562,7 +600,7 @@
                         <button onclick="selectAllExtracted(true)" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs" data-i18n="select_all">✓ 全選</button>
                         <button onclick="selectAllExtracted(false)" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs" data-i18n="deselect_all">✕ 全不選</button>
                         <button onclick="filterExtractedSelection('builtin')" class="px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-black rounded-xl text-xs border border-emerald-200">🟢 只要核心庫</button>
-                        <button onclick="filterExtractedSelection('external')" class="px-2.5 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 font-black rounded-xl text-xs border border-amber-200">🟠 只要庫外字</button>
+                        <button onclick="filterExtractedSelection('external')" class="px-2.5 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 font-black rounded-xl text-xs border border-emerald-200">🟠 只要庫外字</button>
                     </div>
                     <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
                         <select id="extractor-subset-target" onchange="handleTargetSubsetChange(this.value)" class="px-3 py-2 bg-slate-50 border-2 border-slate-200 rounded-xl font-bold text-xs text-slate-700">
@@ -651,24 +689,22 @@
             <div id="view-profile" class="tab-content bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-xs border-2 border-slate-100 space-y-5 max-w-xl mx-auto">
                 <div class="text-center space-y-1 pb-3 border-b border-slate-100">
                     <h2 class="font-black text-lg text-slate-900" data-i18n="profile_heading">👤 會員專區與頭像設定</h2>
-                    <p class="text-xs text-slate-500" data-i18n="profile_subheading">自訂專屬頭像、激勵表情反應與雲端資料管理</p>
+                    <p class="text-xs text-slate-500" data-i18n="profile_subheading">自訂專屬頭像、小寵物暱稱與激勵表情反應</p>
                 </div>
 
                 <!-- 學生專屬頭像與激勵表情設定面板 -->
                 <div class="p-4 bg-gradient-to-b from-indigo-50/70 to-blue-50/50 rounded-2xl border-2 border-indigo-200 space-y-3">
                     <div class="flex items-center justify-between">
                         <span class="text-xs font-black text-indigo-900 uppercase tracking-wider flex items-center gap-1">
-                            <span>🎨</span> <span>專屬頭像與激勵表情設定</span>
+                            <span>🎨</span> <span>專屬頭像與寵物暱稱設定</span>
                         </span>
                         <span class="text-[10px] font-bold text-indigo-600 bg-white px-2 py-0.5 rounded-md border border-indigo-200">獎賞聯動</span>
                     </div>
 
                     <div class="flex items-center gap-4 flex-col sm:flex-row text-center sm:text-left">
-                        <!-- 即時動態頭像預覽框 -->
                         <div class="relative w-24 h-24 mx-auto sm:mx-0 shrink-0 flex items-center justify-center">
                             <div id="profile-avatar-aura" class="absolute inset-0 rounded-full transition-all duration-300"></div>
-                            <!-- 移除 default transition 以免干擾動畫 -->
-                            <div id="profile-prop-top" class="absolute -top-3.5 z-20 text-3xl select-none">👑</div>
+                            <div id="profile-prop-top" class="absolute -top-3.5 z-20 text-3xl select-none">☀️</div>
                             <div id="profile-avatar-frame" class="relative w-20 h-20 rounded-full border-4 border-amber-400 overflow-hidden bg-white shadow-md flex items-center justify-center">
                                 <img id="profile-avatar-img" src="" class="w-full h-full object-cover hidden" alt="Student Avatar">
                                 <span id="profile-avatar-default" class="text-3xl">🧒</span>
@@ -676,11 +712,14 @@
                             <div id="profile-prop-side" class="absolute -bottom-1 -right-1 z-20 text-xl select-none">✨</div>
                         </div>
 
-                        <div class="space-y-2 flex-1">
-                            <p class="text-xs text-slate-600 font-bold">上傳相片，挑戰成功時會動態載上皇冠或星星鼓勵！</p>
+                        <div class="space-y-2 flex-1 w-full">
+                            <div>
+                                <label class="text-[11px] font-extrabold text-slate-600 block mb-1">🐾 寵物 / 小主人暱稱：</label>
+                                <input type="text" id="user-nickname-input" oninput="saveUserNickname(this.value)" placeholder="輸入寵物名字 (例如: Crystal237)" class="w-full px-3 py-2 border-2 border-slate-200 rounded-xl font-black text-xs sm:text-sm bg-white focus:border-indigo-500">
+                            </div>
                             <div class="flex gap-2 justify-center sm:justify-start flex-wrap">
-                                <label class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl text-xs shadow-xs cursor-pointer active:scale-95 flex items-center gap-1.5 transition-all">
-                                    <span>📷 上傳 / 拍照</span>
+                                <label class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl text-xs shadow-xs cursor-pointer active:scale-95 flex items-center gap-1 transition-all">
+                                    <span>📷 上傳相片</span>
                                     <input type="file" id="user-avatar-upload" accept="image/*" class="hidden" onchange="handleAvatarUpload(event)">
                                 </label>
                                 <button onclick="removeCustomAvatar()" class="px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-700 font-bold rounded-xl border border-slate-200 text-xs transition-all">
@@ -690,7 +729,6 @@
                         </div>
                     </div>
 
-                    <!-- 即時表情反應測試器 (Live Preview Tabs) -->
                     <div class="pt-2 border-t border-indigo-100 space-y-1.5">
                         <span class="text-[11px] font-black text-slate-500 block">✨ 點選測試成績表情動畫：</span>
                         <div class="grid grid-cols-3 gap-1.5 text-xs">
@@ -707,7 +745,6 @@
                     </div>
                 </div>
 
-                <!-- 帳號管理 -->
                 <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
                     <div class="flex items-center gap-3">
                         <div class="w-12 h-12 rounded-full bg-blue-100 text-blue-600 font-black flex items-center justify-center text-xl">👤</div>
@@ -733,18 +770,13 @@
     <div id="scramble-summary-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4 border border-indigo-100 text-center relative overflow-hidden">
             
-            <!-- 動態頭像情緒展示舞台 (Stage) -->
             <div id="summary-avatar-stage" class="relative mx-auto w-28 h-28 my-1 flex items-center justify-center select-none">
-                <!-- 光暈背光 -->
                 <div id="summary-avatar-aura" class="absolute inset-0 rounded-full transition-all duration-500"></div>
-                <!-- 頭頂飾品 -->
-                <div id="summary-prop-top" class="absolute -top-3.5 z-20 text-4xl">👑</div>
-                <!-- 頭像框本體 (帶動態動畫) -->
+                <div id="summary-prop-top" class="absolute -top-3.5 z-20 text-4xl">☀️</div>
                 <div id="summary-avatar-frame" class="relative w-24 h-24 rounded-full border-4 overflow-hidden bg-slate-100 shadow-lg flex items-center justify-center">
                     <img id="summary-avatar-img" src="" class="w-full h-full object-cover hidden" alt="Student Avatar">
                     <span id="summary-avatar-default" class="text-4xl">🧒</span>
                 </div>
-                <!-- 身旁飾品 -->
                 <div id="summary-prop-side" class="absolute -bottom-1 -right-1 z-20 text-2xl">✨</div>
             </div>
 
@@ -752,6 +784,10 @@
                 <h3 id="summary-headline-text" class="font-black text-xl text-slate-900">挑戰大成功！</h3>
                 <div id="summary-stars" class="text-2xl text-amber-400 tracking-widest">⭐⭐⭐</div>
                 <p id="summary-praise-text" class="text-xs font-black text-indigo-600">表現卓越！自然拼讀基礎非常扎實！</p>
+                <div id="reward-food-container" class="pt-2 border-t border-slate-100 space-y-1.5">
+                    <p id="reward-food-sentence" class="text-xs font-black text-amber-700"></p>
+                    <div id="reward-food-icons" class="flex justify-center items-center gap-2 text-2xl min-h-[36px] flex-wrap"></div>
+                </div>
             </div>
             
             <div class="bg-slate-50 border-2 border-slate-200 rounded-2xl p-3.5 grid grid-cols-3 gap-2">
@@ -807,20 +843,234 @@
 
         let currentLang = 'zh_HK';
         const i18n = { zh_HK: { menu_title: "模組導覽", search_placeholder: "輸入單字拆解..." }, en: { menu_title: "Menu", search_placeholder: "Type a word..." } };
-        function setLanguage(l) { currentLang = l; try{ localStorage.setItem('phonics_lang_pref', l); }catch(e){} }
+        function setLanguage(l) { 
+            currentLang = l; 
+            try{ localStorage.setItem('phonics_lang_pref', l); }catch(e){} 
+            updateMenuPetStatusUI();
+        }
         
         function setTheme(t) {
             document.body.setAttribute('data-theme', t); document.documentElement.setAttribute('data-theme', t);
             ['default', 'colorblind', 'grayscale'].forEach(x => {
                 const b = document.getElementById(`theme-btn-${x}`);
                 if(b) {
-                    if(t===x) b.className="w-full py-1.5 px-2.5 rounded-lg font-extrabold text-left flex justify-between bg-blue-50 text-blue-700 border border-blue-200";
-                    else b.className="w-full py-1.5 px-2.5 rounded-lg font-bold text-left flex justify-between bg-white text-slate-700 border border-slate-200";
+                    if(t===x) b.className="w-full py-1.5 px-2.5 rounded-lg font-extrabold text-left flex items-center justify-between bg-blue-50 text-blue-700 border border-blue-200";
+                    else b.className="w-full py-1.5 px-2.5 rounded-lg font-bold text-left flex items-center justify-between bg-white text-slate-700 border border-slate-200";
                     b.querySelector('.theme-check')?.classList.toggle('hidden', t!==x);
                 }
             });
             try{ localStorage.setItem('phonics_theme_pref', t); }catch(e){}
             updateSyllableDisplay(currentStepLevel); if (document.getElementById('view-flashcard')?.classList.contains('active')) renderCurrentFlashcard();
+        }
+
+        // ==========================================
+        // 🐾 電子寵物餵食與暱稱狀態系統 (Tamagotchi)
+        // ==========================================
+        const FOOD_DATABASE = [
+            '🍕','🍣','🍜','🍰','🥩','🍔','🍟','🍗','🍩','🥞',
+            '🌮','🍙','🥟','🍦','🌭','🥗','🥐','🧇','🍢','🍛',
+            '🍎','🍇','🍉','🍓','🥪','🧀','🍿','🍮','🍡','🍫'
+        ];
+        const FOOD_NAMES_ZH = [
+            '薄餅','壽司','拉麵','蛋糕','燒肉','漢堡','薯條','炸雞','冬甩','班戟',
+            '墨西哥捲','飯糰','餃子','雪糕','熱狗','沙律','牛角包','窩夫','關東煮','咖喱飯',
+            '蘋果','提子','西瓜','士多啤梨','三文治','芝士','爆谷','布甸','丸子','朱古力'
+        ];
+        const FOOD_NAMES_EN = [
+            'pizza','sushi','ramen','cake','steak','burger','fries','chicken','donut','pancake',
+            'taco','rice ball','dumpling','ice cream','hot dog','salad','croissant','waffle','oden','curry',
+            'apple','grapes','watermelon','strawberry','sandwich','cheese','popcorn','pudding','dumpling','chocolate'
+        ];
+
+        function getUserNickname() {
+            return localStorage.getItem('phonics_user_nickname') || '我的寵物';
+        }
+        function saveUserNickname(name) {
+            localStorage.setItem('phonics_user_nickname', name.trim() || '我的寵物');
+            updateMenuPetStatusUI();
+        }
+
+        function getHungerScore() {
+            const savedTime = localStorage.getItem('phonics_last_fed_time');
+            let score = parseFloat(localStorage.getItem('phonics_hunger_score'));
+            
+            // 修改點：預設 0/6 (新玩家極度肚餓)
+            if (isNaN(score)) score = 0; 
+            
+            if (!savedTime) {
+                localStorage.setItem('phonics_last_fed_time', Date.now());
+                localStorage.setItem('phonics_hunger_score', score);
+                return score;
+            }
+            
+            const now = Date.now();
+            const diffMs = now - parseInt(savedTime);
+            const hoursPassed = diffMs / (1000 * 60 * 60);
+            
+            // 每 4 小時自動減 1 格食物
+            const foodsToDeduct = Math.floor(hoursPassed / 4); 
+            
+            if (foodsToDeduct > 0) {
+                score = Math.max(0, score - foodsToDeduct);
+                const newTime = parseInt(savedTime) + (foodsToDeduct * 4 * 60 * 60 * 1000);
+                localStorage.setItem('phonics_last_fed_time', newTime);
+                localStorage.setItem('phonics_hunger_score', score);
+            }
+            return score;
+        }
+
+        function calculateFoodReward(pct) {
+            let earnedFoodCount = 0;
+            
+            // 修正獎勵邏輯：100分得 2 份, 80-99分得 1 份, 60-79分得半份(0.5)
+            if (pct === 100) earnedFoodCount = 2;
+            else if (pct >= 80) earnedFoodCount = 1;   
+            else if (pct >= 60) earnedFoodCount = 0.5; 
+            
+            if (earnedFoodCount === 0) return { earned: 0, foods: [], namesZh: [], namesEn: [], currentScore: getHungerScore() };
+
+            let currentScore = getHungerScore();
+            if (currentScore >= 6) return { earned: 0, foods: [], namesZh: [], namesEn: [], currentScore: 6 }; 
+            
+            const actualEarned = Math.min(earnedFoodCount, 6 - currentScore);
+            const foods = [];
+            const namesZh = [];
+            const namesEn = [];
+            
+            // 計算視覺上需要抽取的食物數量 (0.5 需要抽 1 款展示為半透明)
+            const displayCount = Math.ceil(actualEarned);
+            
+            for(let i=0; i<displayCount; i++) {
+                const pickIdx = Math.floor(Math.random() * FOOD_DATABASE.length);
+                const isHalfItem = (actualEarned === 0.5 && i === 0);
+                foods.push({ emoji: FOOD_DATABASE[pickIdx], isHalf: isHalfItem });
+                
+                const zName = FOOD_NAMES_ZH[pickIdx];
+                const eName = FOOD_NAMES_EN[pickIdx];
+                namesZh.push((isHalfItem ? '半份' : '一份') + zName);
+                namesEn.push((isHalfItem ? 'half a ' : 'a ') + eName);
+            }
+            
+            currentScore += actualEarned;
+            localStorage.setItem('phonics_hunger_score', currentScore);
+            localStorage.setItem('phonics_last_fed_time', Date.now());
+            
+            updateMenuPetStatusUI();
+            return { earned: actualEarned, foods: foods, namesZh: namesZh, namesEn: namesEn, currentScore: currentScore };
+        }
+
+        // 🎨 0/6 至 6/6 狀態對應配置 (動態顏色與中英文雙語切換)
+        function getPetStatusConfig(score) {
+            // 動態顏色邏輯：5-6綠色，2-4橙色，0-1紅色
+            let borderColorClass = '';
+            let textValueClass = '';
+            
+            if (score >= 5) {
+                borderColorClass = 'border-emerald-500';
+                textValueClass = 'text-emerald-600 bg-emerald-50';
+            } else if (score >= 2) {
+                borderColorClass = 'border-orange-500';
+                textValueClass = 'text-orange-600 bg-orange-50';
+            } else {
+                borderColorClass = 'border-red-600 animate-pulse';
+                textValueClass = 'text-red-600 bg-red-50';
+            }
+
+            if (score >= 6) {
+                return {
+                    borderColor: borderColorClass, textValueColor: textValueClass, badge: '☀️',
+                    moodZh: '元氣滿滿~！', hungerZh: '極度飽足',
+                    moodEn: 'Joyful / Ecstatic', hungerEn: 'Satiated'
+                };
+            } else if (score >= 5) {
+                return {
+                    borderColor: borderColorClass, textValueColor: textValueClass, badge: '✨',
+                    moodZh: '開心愉快', hungerZh: '很飽',
+                    moodEn: 'Happy', hungerEn: 'Full'
+                };
+            } else if (score >= 4) {
+                return {
+                    borderColor: borderColorClass, textValueColor: textValueClass, badge: '🍀',
+                    moodZh: '精神奕奕', hungerZh: '剛剛好',
+                    moodEn: 'Energetic', hungerEn: 'Good'
+                };
+            } else if (score >= 3) {
+                return {
+                    borderColor: borderColorClass, textValueColor: textValueClass, badge: '🍎',
+                    moodZh: '有些肚子餓了', hungerZh: '普通',
+                    moodEn: 'A bit hungry', hungerEn: 'Fair'
+                };
+            } else if (score >= 2) {
+                return {
+                    borderColor: borderColorClass, textValueColor: textValueClass, badge: '🍖',
+                    moodZh: '肚子咕咕叫', hungerZh: '肚餓',
+                    moodEn: 'Hungry', hungerEn: 'Low'
+                };
+            } else if (score >= 1) {
+                return {
+                    borderColor: borderColorClass, textValueColor: textValueClass, badge: '💧',
+                    moodZh: '好虛弱...', hungerZh: '非常肚餓',
+                    moodEn: 'Weak', hungerEn: 'Very Low'
+                };
+            } else {
+                return {
+                    borderColor: borderColorClass, textValueColor: textValueClass, badge: '⚡',
+                    moodZh: '快要餓昏了！', hungerZh: '極度飢餓',
+                    moodEn: 'Starving!', hungerEn: 'Empty'
+                };
+            }
+        }
+
+        function updateMenuPetStatusUI() {
+            const score = getHungerScore();
+            const cfg = getPetStatusConfig(score);
+            const name = getUserNickname();
+            const isEn = (currentLang === 'en');
+            
+            const nameEl = document.getElementById('menu-pet-name');
+            const moodEl = document.getElementById('menu-pet-mood');
+            const hungerLabelEl = document.getElementById('menu-pet-hunger-label');
+            const hungerValueEl = document.getElementById('menu-pet-hunger-value');
+            const badgeEl = document.getElementById('menu-pet-badge');
+            const frameEl = document.getElementById('menu-pet-frame');
+            const tipEl = document.getElementById('menu-pet-tip');
+            const imgEl = document.getElementById('menu-pet-img');
+            const defEl = document.getElementById('menu-pet-default');
+
+            if (nameEl) nameEl.innerText = name;
+            if (badgeEl) badgeEl.innerText = cfg.badge;
+            
+            if (moodEl) moodEl.innerText = isEn ? `Mood: ${cfg.moodEn}` : `心情: ${cfg.moodZh}`;
+            if (hungerLabelEl) hungerLabelEl.innerText = isEn ? `Hunger: ${cfg.hungerEn}` : `飽足度: ${cfg.hungerZh}`;
+            
+            if (hungerValueEl) {
+                hungerValueEl.innerText = `(${score}/6)`;
+                hungerValueEl.className = `font-black px-1.5 py-0.5 rounded-md text-[10px] ${cfg.textValueColor}`;
+            }
+
+            if (frameEl) {
+                frameEl.className = `relative w-16 h-16 rounded-full border-4 overflow-hidden bg-white shadow-sm flex items-center justify-center ${cfg.borderColor}`;
+            }
+
+            const sv = localStorage.getItem(USER_AVATAR_STORAGE_KEY);
+            if (imgEl && defEl) {
+                if (sv) {
+                    imgEl.src = sv; imgEl.classList.remove('hidden'); defEl.classList.add('hidden');
+                } else {
+                    imgEl.src = ''; imgEl.classList.add('hidden'); defEl.classList.remove('hidden');
+                }
+            }
+
+            if (tipEl) {
+                if (score < 6) {
+                    tipEl.classList.remove('hidden');
+                    tipEl.innerText = isEn ? 
+                        `💡 Play "Spelling Challenge" to feed ${name}!` : 
+                        `💡 去玩「聽音拼字挑戰」贏取食物餵飽 ${name} 啦！`;
+                } else {
+                    tipEl.classList.add('hidden');
+                }
+            }
         }
 
         let activeSessionId = 0, activeAudioElements = [], currentAnalysis = null, currentStepLevel = 0;
@@ -832,7 +1082,7 @@
                 const u = getGUK(word.trim().toLowerCase());
                 for(let r=1; r<=repeats; r++){
                     if(sessionId!==activeSessionId) return res();
-                    updateStatus(`播放中 (1.0x)...`, true);
+                    updateStatus(speed<=0.5 ? '播放中 (0.5x 龜速)...' : '播放中 (1.0x)...', true);
                     let ok = false;
                     try {
                         const a = new Audio(u); a.playbackRate = speed; activeAudioElements.push(a);
@@ -888,10 +1138,7 @@
         };
 
         let customWordDatabase = {
-            "curious": { word: "curious", ipa: "/ˈkjʊə.ri.əs/", pos: "adjective", definition: "Eager to know or learn something.", chunks: [ { letters: "cu", onsetLet: "c", vowelLet: "u", codaLet: "", onset: "kj", vowel: "ʊə", coda: null }, { letters: "ri", onsetLet: "r", vowelLet: "i", codaLet: "", onset: "r", vowel: "i", coda: null }, { letters: "ous", onsetLet: "", vowelLet: "ou", codaLet: "s", onset: null, vowel: "ə", coda: "s" } ] },
-            "knowledge": { word: "knowledge", ipa: "/ˈnɒl.ɪdʒ/", pos: "noun", definition: "Facts and skills acquired through experience.", chunks: [ { letters: "knowl", onsetLet: "n", vowelLet: "ow", codaLet: "l", onset: "n", vowel: "ɒ", coda: "l", silentTokens: [{ char: "k", note: "k 不發音" }] }, { letters: "edge", onsetLet: "", vowelLet: "e", codaLet: "dge", onset: null, vowel: "ɪ", coda: "dʒ" } ] },
-            "accompany": { word: "accompany", ipa: "/əˈkʌm.pə.ni/", pos: "verb", definition: "Go somewhere with someone as a companion.", chunks: [ { letters: "ac", onsetLet: "", vowelLet: "a", codaLet: "c", onset: null, vowel: "ə", coda: null }, { letters: "com", onsetLet: "c", vowelLet: "o", codaLet: "m", onset: "k", vowel: "ʌ", coda: "m" }, { letters: "pa", onsetLet: "p", vowelLet: "a", codaLet: "", onset: "p", vowel: "ə", coda: null }, { letters: "ny", onsetLet: "n", vowelLet: "y", codaLet: "", onset: "n", vowel: "i", coda: null } ] },
-            "something": { word: "something", ipa: "/ˈsʌm.θɪŋ/", pos: "pronoun", definition: "An unspecified or undetermined thing.", chunks: [ { letters: "some", onsetLet: "s", vowelLet: "o", codaLet: "m", onset: "s", vowel: "ʌ", coda: "m", silentTokens: [{ char: "e", note: "Magic e" }] }, { letters: "thing", onsetLet: "th", vowelLet: "i", codaLet: "ng", onset: "θ", vowel: "ɪ", coda: "ŋ" } ] }
+            "something": { word: "something", ipa: "/ˈsʌm.θɪŋ/", pos: "pronoun", definition: "An unspecified thing.", chunks: [ { letters: "some", onsetLet: "s", vowelLet: "o", codaLet: "m", onset: "s", vowel: "ʌ", coda: "m", silentTokens: [{ char: "e", note: "Magic e" }] }, { letters: "thing", onsetLet: "th", vowelLet: "i", codaLet: "ng", onset: "θ", vowel: "ɪ", coda: "ŋ" } ] }
         };
 
         function getDynRange(s, role, f) {
@@ -1007,7 +1254,6 @@
             let wd = w.toLowerCase().trim(); const vMatch = []; let m; const vr=/[aeiouy]+/gi;
             while((m=vr.exec(wd))!==null) vMatch.push({t:m[0], s:m.index, e:m.index+m[0].length});
             
-            // 加入 m, n 輔音錨定映射 (Consonant Anchoring Map)
             const map = {
                 'p':['p','pp'], 'b':['b','bb'], 't':['t','tt'], 'd':['d','dd'], 'k':['k','c','ck','ch','q'], 'g':['g','gg'],
                 'f':['f','ff','ph'], 'v':['v','ve'], 's':['s','ss','c','sc','ce'], 'z':['z','zz','s','se'],
@@ -1080,7 +1326,7 @@
             const e=customWordDatabase[w], dT=document.getElementById('def-english-text'), dS=document.getElementById('def-source-indicator');
             if(e?.definition){ document.getElementById('def-pos-badge').innerText=e.pos||'WORD'; dT.innerText=e.definition; dS.innerText='Offline Entry'; return; }
             dT.innerHTML='<span class="text-slate-400 italic">正在檢索線上解釋...</span>'; dS.innerText='API Fetching...';
-            const ctrl = new AbortController(); const tm = setTimeout(()=>ctrl.abort(), 4000); // 4秒超時防卡死
+            const ctrl = new AbortController(); const tm = setTimeout(()=>ctrl.abort(), 4000);
             try {
                 const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(w)}`, {signal:ctrl.signal});
                 clearTimeout(tm);
@@ -1095,7 +1341,7 @@
         }
 
         function processWord() {
-            const raw=document.getElementById('word-input').value.trim(), w=raw.toLowerCase()||"ambulance"; stopAllPlayback();
+            const raw=document.getElementById('word-input').value.trim(), w=raw.toLowerCase()||"something"; stopAllPlayback();
             currentAnalysis = customWordDatabase[w] ? JSON.parse(JSON.stringify(customWordDatabase[w])) : dWAuto(w);
             document.getElementById('display-word').innerText = currentAnalysis.word;
             document.getElementById('display-ipa').innerText = currentAnalysis.ipa;
@@ -1108,7 +1354,7 @@
         function stopAllPlayback() { activeSessionId++; if(window.speechSynthesis)window.speechSynthesis.cancel(); activeAudioElements.forEach(a=>{try{a.pause();a.currentTime=0;}catch(e){}}); activeAudioElements=[]; clearVisualHighlights(); }
         function clearVisualHighlights() { document.querySelectorAll('.chunk-card, .step-btn').forEach(b=>b.classList.remove('playing')); }
         function updateStatus(msg, isB=false) { const el=document.getElementById('play-status'); if(el) el.innerHTML = isB ? `<span class="animate-spin mr-1">⏳</span><span>${msg}</span>` : msg; }
-        function toggleNavMenu(s) { document.getElementById('nav-drawer-backdrop')?.classList.toggle('hidden',!s); document.getElementById('nav-drawer')?.classList.toggle('translate-x-full',!s); }
+        function toggleNavMenu(s) { document.getElementById('nav-drawer-backdrop')?.classList.toggle('hidden',!s); document.getElementById('nav-drawer')?.classList.toggle('translate-x-full',!s); updateMenuPetStatusUI(); }
         function selectNavTab(tid, resFC=false) {
             stopAllPlayback(); document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active')); document.getElementById(`btn-tab-${tid}`)?.classList.add('active');
             document.querySelectorAll('.tab-content').forEach(v=>v.classList.remove('active')); document.getElementById(`view-${tid}`)?.classList.add('active'); toggleNavMenu(false);
@@ -1118,7 +1364,8 @@
             if(tid==='dictionary') renderDictionary();
             if(tid==='flashcard') { renderFlashcardSubsetSelectors(); if(!resFC) reloadFlashcards(); else renderCurrentFlashcard(); }
             if(tid==='scramble') renderScrambleSubsetSelectors();
-            if(tid==='profile') renderProfileAvatar();
+            if(tid==='profile') { renderProfileAvatar(); }
+            updateMenuPetStatusUI();
         }
 
         let fPool=[], fIdx=0, selFSubsets=new Set(['__ALL__']);
@@ -1153,7 +1400,7 @@
         let sQs=[], sIdx=0, sScore=0, sStreak=0, mStreak=0, sLimit=10, sVRep=2, sTimerS=0, sTimerIv=null;
         let sInMode='tiles', curSlotIdx=0, tWord="", tSlots=[], availTiles=[], selSSubsets=new Set(['__ALL__']);
         let hwCanvas=null, hwCtx=null, isDwg=false, hwStks=0;
-        let isQuestionLocked = false, autoCheckTimeout = null;
+        let isQuestionLocked = false, autoCheckTimeout = null, hintGiven = false;
 
         function renderScrambleSubsetSelectors() {
             const c=document.getElementById('scramble-subsets-checkboxes'); if(!c)return;
@@ -1169,9 +1416,12 @@
         function startScrambleGame() {
             const st=new Set(); if(selSSubsets.has('__ALL__')) Object.keys(customWordDatabase).forEach(w=>st.add(w.toLowerCase()));
             selSSubsets.forEach(id=>id!=='__ALL__'&&userSubsets[id]?.words.forEach(w=>st.add(w.toLowerCase())));
-            const cnd=Array.from(st).filter(w=>w.length>=3 && /^[a-z]+$/i.test(w)); if(!cnd.length) return showToast("清單無有效單字", "warning");
+            let cnd=Array.from(st).filter(w=>w.length>=3 && /^[a-z]+$/i.test(w)); if(!cnd.length) return showToast("清單無有效單字", "warning");
+            
             for(let i=cnd.length-1; i>0; i--){const j=Math.floor(Math.random()*(i+1)); [cnd[i],cnd[j]]=[cnd[j],cnd[i]];}
-            sQs=cnd.slice(0, Math.min(cnd.length, sLimit)); sIdx=0; sScore=0; sStreak=0; mStreak=0; isQuestionLocked=false;
+            sQs = cnd.slice(0, Math.min(cnd.length, sLimit)); 
+            
+            sIdx=0; sScore=0; sStreak=0; mStreak=0; isQuestionLocked=false;
             document.getElementById('scramble-setup-box').classList.add('hidden'); document.getElementById('scramble-game-arena').classList.remove('hidden');
             loadCurSQuestion();
         }
@@ -1180,11 +1430,11 @@
             document.getElementById('scramble-setup-box').classList.remove('hidden'); document.getElementById('scramble-game-arena').classList.add('hidden');
         }
         function loadCurSQuestion() {
-            clearInterval(sTimerIv); clearTimeout(autoCheckTimeout); isQuestionLocked=false; tWord=sQs[sIdx].toLowerCase(); tSlots=new Array(tWord.length).fill(null); curSlotIdx=0;
+            clearInterval(sTimerIv); clearTimeout(autoCheckTimeout); isQuestionLocked=false; hintGiven=false; tWord=sQs[sIdx].toLowerCase(); tSlots=new Array(tWord.length).fill(null); curSlotIdx=0;
             const ls=tWord.split(''); let sc=[...ls]; while(sc.join('')===tWord && ls.length>1) for(let i=sc.length-1; i>0; i--){const j=Math.floor(Math.random()*(i+1));[sc[i],sc[j]]=[sc[j],sc[i]];}
             availTiles=sc.map((c,i)=>({id:`t_${i}`, letter:c, isUsed:false}));
             document.getElementById('scramble-q-progress').innerText=`題目 ${sIdx+1} / ${sQs.length}`; document.getElementById('scramble-streak-badge').innerText=`🔥 連對: ${sStreak}`;
-            document.getElementById('scramble-progress-fill').style.width=`${(sIdx/sQs.length)*100}%`;
+            document.getElementById('scramble-progress-fill').style.width=`${((sIdx+1)/sQs.length)*100}%`;
             document.getElementById('scramble-feedback').innerText=''; document.getElementById('scramble-feedback').className="text-center font-black text-xs sm:text-sm h-5 transition-all";
             const e=customWordDatabase[tWord]||dWAuto(tWord); document.getElementById('scramble-pos-badge').innerText=e.pos||'word'; document.getElementById('scramble-hint-def').innerText=e.definition||'聆聽發音並拼出完整單字。';
             switchActiveScrambleInputMode(sInMode); renderScrambleSlots(); renderScrambleTiles(); clearHandwritingCanvas(); updateHWStatus();
@@ -1222,16 +1472,24 @@
         function rmSlot(i) { if(isQuestionLocked)return; const s=tSlots[i]; if(!s)return; const t=availTiles.find(x=>x.id===s.tileId); if(t)t.isUsed=false; tSlots[i]=null; curSlotIdx=i; renderScrambleSlots(); renderScrambleTiles(); }
         function resetCurrentScrambleSlots() { if(isQuestionLocked)return; clearTimeout(autoCheckTimeout); tSlots.fill(null); availTiles.forEach(t=>t.isUsed=false); curSlotIdx=0; renderScrambleSlots(); renderScrambleTiles(); clearHandwritingCanvas(); document.getElementById('scramble-feedback').innerText=''; }
 
-        function is2Swap(a,b) {
-            if(!a||!b||a.length!==b.length)return false; const d=[]; for(let i=0;i<a.length;i++)if(a[i]!==b[i])d.push(i);
-            if(d.length===2){ const [i,j]=d; return (a[i]===b[j] && a[j]===b[i]); } return false;
+        function isTwoLettersSwapped(a, b) {
+            if(!a || !b || a.length !== b.length) return false;
+            let diffs = [];
+            for(let i=0; i<a.length; i++) {
+                if(a[i] !== b[i]) diffs.push(i);
+            }
+            if(diffs.length === 2) {
+                let [i, j] = diffs;
+                return (a[i] === b[j] && a[j] === b[i]);
+            }
+            return false;
         }
 
-        let hintGiven=false;
         function checkScrambleAnswer() {
             if(isQuestionLocked)return; clearTimeout(autoCheckTimeout);
             const cur = tSlots.map(s=>s?s.letter:'').join('').toLowerCase(); const fb = document.getElementById('scramble-feedback');
             if(cur.length<tWord.length) { if(fb){fb.innerText="請填入全部字母！"; fb.className="text-center font-black text-xs sm:text-sm h-5 text-amber-600";} return; }
+            
             if(cur===tWord) {
                 isQuestionLocked=true; clearInterval(sTimerIv); sScore+=10; sStreak++; if(sStreak>mStreak)mStreak=sStreak;
                 document.getElementById('scramble-streak-badge').innerText=`🔥 連對: ${sStreak}`;
@@ -1239,11 +1497,12 @@
                 setTimeout(()=>advanceSQuestion(), 1200);
             } else {
                 const cEl=document.getElementById('scramble-slots-container'); cEl?.classList.remove('animate-shake'); void cEl?.offsetWidth; cEl?.classList.add('animate-shake');
-                if(is2Swap(cur, tWord) && !hintGiven) {
-                    hintGiven=true; if(fb){fb.innerText="💡 提示：有 2 個字母嘅位置調轉咗，睇清楚再改！"; fb.className="text-center font-black text-xs sm:text-sm h-5 text-amber-600 animate-shake";}
+                if(isTwoLettersSwapped(cur, tWord) && !hintGiven) {
+                    hintGiven=true;
+                    if(fb){fb.innerText="💡 提示：有 2 個字母嘅位置調轉咗，仔細睇下再改！"; fb.className="text-center font-black text-xs sm:text-sm h-5 text-amber-600 animate-shake";}
                 } else {
                     isQuestionLocked=true; clearInterval(sTimerIv); sStreak=0; document.getElementById('scramble-streak-badge').innerText=`🔥 連對: 0`;
-                    if(fb){fb.innerText=`❌ 錯誤！正確拼寫是: ${tWord.toUpperCase()}`; fb.className="text-center font-black text-xs sm:text-sm h-5 text-red-500 animate-shake";}
+                    if(fb){fb.innerText=`❌ 答案不正確！正確拼寫是: ${tWord.toUpperCase()}`; fb.className="text-center font-black text-xs sm:text-sm h-5 text-red-500 animate-shake";}
                     setTimeout(()=>advanceSQuestion(), 2000);
                 }
             }
@@ -1255,33 +1514,72 @@
             document.getElementById('summary-score-value').innerText=`${fin} / ${max}`; document.getElementById('summary-accuracy-value').innerText=`${pct}%`; document.getElementById('summary-streak-value').innerText=mStreak;
             const stE=document.getElementById('summary-stars'), prE=document.getElementById('summary-praise-text'), hdE=document.getElementById('summary-headline-text');
             
+            const reward = calculateFoodReward(pct);
+            const foodSentEl = document.getElementById('reward-food-sentence');
+            const foodIconsEl = document.getElementById('reward-food-icons');
+            
+            const isEn = (currentLang === 'en');
+            if(reward && reward.earned > 0) {
+                if(isEn) {
+                    foodSentEl.innerText = `You earned ${reward.namesEn.join(' and ')}!`;
+                } else {
+                    foodSentEl.innerText = `你這次獲得${reward.namesZh.join('與')}！`;
+                }
+                let iconHtml = '';
+                reward.foods.forEach(f => {
+                    if(f.isHalf) {
+                        iconHtml += `<span class="half-food text-3xl" data-icon="${f.emoji}">${f.emoji}</span>`;
+                    } else {
+                        iconHtml += `<span class="text-3xl">${f.emoji}</span>`;
+                    }
+                });
+                foodIconsEl.innerHTML = iconHtml;
+            } else {
+                if(isEn) {
+                    foodSentEl.innerText = pct >= 60 ? `Hunger is full (6/6). Keep it up!` : `Score below 60%. Practice more for food!`;
+                } else {
+                    foodSentEl.innerText = pct >= 60 ? `飽足度已滿 (6/6)，繼續保持！` : `分數未達 60 分，再加加油贏取食物！`;
+                }
+                foodIconsEl.innerHTML = `<span class="text-xs text-slate-400">🍽️ 暫無獲得食物</span>`;
+            }
+
             const sAva = localStorage.getItem(USER_AVATAR_STORAGE_KEY), img = document.getElementById('summary-avatar-img'), def = document.getElementById('summary-avatar-default');
             if(sAva){ if(img){img.src=sAva; img.classList.remove('hidden');} if(def)def.classList.add('hidden'); }
             else { if(img){img.src=""; img.classList.add('hidden');} if(def)def.classList.remove('hidden'); }
 
-            let em = "excited";
-            if(pct===100){ em="excited"; hdE.innerText="🏆 完美大滿貫！"; stE.innerText="⭐⭐⭐"; prE.innerText="表現卓越！你係 Phonics 大師！"; }
-            else if(pct>=80){ em="happy"; hdE.innerText="🎉 挑戰大成功！"; stE.innerText="⭐⭐"; prE.innerText="表現極之出色！基礎好扎實！"; }
-            else if(pct>=60){ em="encouraged"; hdE.innerText="💪 做得好，繼續努力！"; stE.innerText="⭐"; prE.innerText="多聽幾次頭尾音會更厲害！"; }
-            else { em="sad"; hdE.innerText="🌱 唔好氣餒，再接再厲！"; stE.innerText="🌱"; prE.innerText="建議先到閃卡溫習單字拆解！"; }
+            let em = "excited", crownMode = false;
+            // 修正：只有 100% 挑戰滿分才顯示皇冠
+            if(pct===100){ 
+                em="excited"; crownMode = true;
+                hdE.innerText=isEn?"🏆 Perfect Score!":"🏆 完美大滿貫！"; stE.innerText="⭐⭐⭐"; prE.innerText=isEn?"Outstanding! You are a Phonics Master!":"表現卓越!你係 Phonics 大師!"; 
+            } else if(pct>=80){ 
+                em="happy"; 
+                hdE.innerText=isEn?"🎉 Challenge Succeeded!":"🎉 挑戰大成功！"; stE.innerText="⭐⭐"; prE.innerText=isEn?"Great job! Solid foundation!":"表現極之出色!基礎好扎實!"; 
+            } else if(pct>=60){ 
+                em="encouraged"; 
+                hdE.innerText=isEn?"💪 Well done, keep going!":"💪 做得好，繼續努力！"; stE.innerText="⭐"; prE.innerText=isEn?"Listen more to improve!":"多聽幾次頭尾音會更厲害！"; 
+            } else { 
+                em="sad"; 
+                hdE.innerText=isEn?"🌱 Keep trying!":"🌱 唔好氣餒，再接再厲！"; stE.innerText="🌱"; prE.innerText=isEn?"Review flashcards first!":"建議先到閃卡溫習單字拆解！"; 
+            }
 
-            applyEmotionStylesToStage('summary', em);
+            applyEmotionStylesToStage('summary', em, crownMode);
             document.getElementById('scramble-summary-modal')?.classList.remove('hidden');
         }
 
-        function applyEmotionStylesToStage(prefix, emotion) {
+        // 修改：增加支援傳遞自訂 badge icon 的能力
+        function applyEmotionStylesToStage(prefix, emotion, crownMode = false) {
             const au = document.getElementById(`${prefix}-avatar-aura`), pTop = document.getElementById(`${prefix}-prop-top`), pSide = document.getElementById(`${prefix}-prop-side`), frm = document.getElementById(`${prefix}-avatar-frame`), ig = document.getElementById(`${prefix}-avatar-img`);
             if(!frm||!pTop||!pSide||!au) return;
             
-            // Clean up existing animations
             frm.classList.remove('animate-cheer', 'animate-sad', 'avatar-excited', 'animate-happy-sway');
             pTop.classList.remove('prop-crown-excited', 'animate-twinkle');
             pSide.classList.remove('animate-twinkle');
             frm.classList.remove('border-amber-400', 'border-blue-500', 'border-emerald-400', 'border-slate-400');
-            void frm.offsetWidth; void pTop.offsetWidth; // Force Reflow
+            void frm.offsetWidth; void pTop.offsetWidth;
 
-            if(emotion==='excited') {
-                pTop.innerText="👑"; pSide.innerText="✨"; au.className="absolute inset-0 rounded-full bg-amber-400/30 blur-md animate-pulse";
+            if(crownMode || emotion==='excited') {
+                pTop.innerText = crownMode ? "👑" : "☀️"; pSide.innerText="✨"; au.className="absolute inset-0 rounded-full bg-amber-400/30 blur-md animate-pulse";
                 frm.classList.add('border-amber-400', 'avatar-excited');
                 pTop.classList.add('prop-crown-excited');
                 if(ig) ig.style.filter="brightness(1.04) contrast(1.02)";
@@ -1301,7 +1599,7 @@
             }
         }
 
-        function previewAvatarEmotion(e) { applyEmotionStylesToStage('profile', e); }
+        function previewAvatarEmotion(e) { applyEmotionStylesToStage('profile', e, e==='excited'); }
         function restartScrambleQuiz() { document.getElementById('scramble-summary-modal')?.classList.add('hidden'); startScrambleGame(); }
         function closeScrambleSummaryModal(bt) { document.getElementById('scramble-summary-modal')?.classList.add('hidden'); if(bt)quitScrambleGame(); }
         function quitScrambleToMainEngine() { closeScrambleSummaryModal(false); quitScrambleGame(); selectNavTab('main'); }
@@ -1322,7 +1620,7 @@
             clearTimeout(autoCheckTimeout); if(!tSlots.includes(null)) autoCheckTimeout=setTimeout(()=>checkScrambleAnswer(), 200);
         }
         function handleKeyboardBackspace() { if(isQuestionLocked)return; let idx=curSlotIdx; if(tSlots[idx]===null && idx>0)idx--; if(tSlots[idx])rmSlot(idx); renderScrambleSlots(); }
-        window.addEventListener('keydown', e=>{ if(document.getElementById('scramble-game-arena')?.classList.contains('hidden'))return; if(e.target.tagName==='INPUT'&&e.target.id!=='scramble-hidden-keyboard-input')return; if(e.key==='Backspace'){e.preventDefault(); handleKeyboardBackspace();} else if(e.key==='Enter'){e.preventDefault(); checkScrambleAnswer();} else if(/^[a-zA-Z]$/.test(e.key)){e.preventDefault(); typeLetterByKeyboard(e.key);} });
+        window.addEventListener('keydown', e=>{ if(document.getElementById('scramble-game-arena')?.classList.contains('hidden'))return; if(e.target.tagName==='INPUT'&&e.target.id!=='scramble-hidden-keyboard-input'&&e.target.id!=='user-nickname-input')return; if(e.key==='Backspace'){e.preventDefault(); handleKeyboardBackspace();} else if(e.key==='Enter'){e.preventDefault(); checkScrambleAnswer();} else if(/^[a-zA-Z]$/.test(e.key)){e.preventDefault(); typeLetterByKeyboard(e.key);} });
 
         function setupHWCanvas() {
             hwCanvas=document.getElementById('scramble-handwriting-canvas'); if(!hwCanvas)return; const wp=document.getElementById('handwriting-canvas-wrapper');
@@ -1429,16 +1727,47 @@
         function filterDictionary() { const q=document.getElementById('dict-search')?.value.toLowerCase().trim()||''; let ws=(curDictId!=='__ALL__'&&userSubsets[curDictId])?userSubsets[curDictId].words:Object.keys(customWordDatabase); const fd=ws.filter(w=>w.includes(q)); const ls=document.getElementById('dict-list'); if(ls){ls.innerHTML=fd.slice(0,300).map(w=>`<div class="bg-slate-50 hover:bg-blue-50 border border-slate-200 p-2 rounded-xl text-xs font-bold text-slate-700 flex justify-between items-center"><span class="truncate cursor-pointer flex-1" onclick="quickInputWord('${w}'); selectNavTab('main');">${w}</span><span onclick="quickInputWord('${w}'); selectNavTab('main');" class="text-[10px] bg-blue-50 text-blue-600 px-1 rounded cursor-pointer">🚀</span></div>`).join('');} }
 
         function handleExcelUpload(ev) {
-            const f=ev.target.files[0]; if(!f)return; const r=new FileReader();
-            r.onload=function(e) {
+            const f = ev.target.files[0]; 
+            if(!f) return;
+            const r = new FileReader();
+            r.onload = function(e) {
                 try {
-                    const d=new Uint8Array(e.target.result), wb=XLSX.read(d,{type:'array'}), sht=wb.Sheets[wb.SheetNames[0]], rw=XLSX.utils.sheet_to_json(sht,{header:1});
-                    Object.keys(customWordDatabase).forEach(k=>delete customWordDatabase[k]); let c=0;
-                    rw.forEach((r,i)=>{ if(i===0||!r||!r[0])return; const w=String(r[0]).trim().toLowerCase(), ip=r[1]?String(r[1]).trim():'';
-                        if(/^[a-z\s\-']{2,25}$/i.test(w)) { if(ip&&!ip.includes('No IPA')){const cl="/"+ip.replace(/\//g,'')+"/"; customWordDatabase[w]=aChunks(w,cl);} else {customWordDatabase[w]=dWAuto(w);} c++; }
-                    }); document.getElementById('recommended-words-bar').innerHTML='<span class="shrink-0 text-slate-400">已套用自訂 Excel 詞庫</span>'; renderDictionary(); showToast(`✓ 成功匯入 ${c} 字！`, "success");
-                } catch(er){ showToast("Excel 解析失敗", "error"); }
-            }; r.readAsArrayBuffer(f);
+                    const d = new Uint8Array(e.target.result), wb = XLSX.read(d, {type: 'array'});
+                    if (!wb.SheetNames || wb.SheetNames.length === 0) throw new Error("Excel 檔案無工作表");
+                    const sht = wb.Sheets[wb.SheetNames[0]];
+                    if (!sht) throw new Error("無法讀取工作表內容");
+                    const rw = XLSX.utils.sheet_to_json(sht, {header: 1});
+                    if (!rw || rw.length === 0) throw new Error("Excel 內容為空");
+                    
+                    let c = 0;
+                    rw.forEach((r, i) => { 
+                        if(i === 0 || !r || !r[0]) return; 
+                        const w = String(r[0]).trim().toLowerCase(), ip = r[1] ? String(r[1]).trim() : '';
+                        if(/^[a-z\s\-']{2,25}$/i.test(w)) { 
+                            if(ip && !ip.includes('No IPA')) {
+                                const cl = "/" + ip.replace(/\//g, '') + "/"; 
+                                customWordDatabase[w] = aChunks(w, cl); 
+                            } else {
+                                customWordDatabase[w] = dWAuto(w);
+                            } 
+                            c++; 
+                        }
+                    }); 
+                    if(c === 0) throw new Error("未偵測到有效英文單字欄位");
+                    document.getElementById('recommended-words-bar').innerHTML = '<span class="shrink-0 text-slate-400">已套用自訂 Excel 詞庫</span>'; 
+                    renderDictionary(); 
+                    showToast(`✓ 成功匯入 ${c} 字！`, "success");
+                } catch(er) { 
+                    showToast("Excel 解析失敗: " + (er.message || "格式不符"), "error"); 
+                } finally {
+                    ev.target.value = '';
+                }
+            }; 
+            r.onerror = function() {
+                showToast("讀取檔案出錯", "error");
+                ev.target.value = '';
+            };
+            r.readAsArrayBuffer(f);
         }
         function downloadWordsJson() { const a=document.createElement('a'); a.href="data:text/json;charset=utf-8,"+encodeURIComponent(JSON.stringify(customWordDatabase,null,2)); a.download="words.json"; document.body.appendChild(a); a.click(); a.remove(); }
 
@@ -1450,13 +1779,15 @@
                     const cv=document.createElement('canvas'), sz=200; cv.width=sz; cv.height=sz; const ctx=cv.getContext('2d');
                     const me=Math.min(img.width,img.height), sx=(img.width-me)/2, sy=(img.height-me)/2;
                     ctx.drawImage(img,sx,sy,me,me,0,0,sz,sz); const b64=cv.toDataURL('image/jpeg',0.85);
-                    try{ localStorage.setItem(USER_AVATAR_STORAGE_KEY, b64); renderProfileAvatar(); showToast("✓ 專屬頭像已更新！", "success"); }catch(err){ showToast("圖片過大", "warning"); }
+                    try{ localStorage.setItem(USER_AVATAR_STORAGE_KEY, b64); renderProfileAvatar(); updateMenuPetStatusUI(); showToast("✓ 專屬頭像已更新！", "success"); }catch(err){ showToast("圖片過大", "warning"); }
                 }; img.src=e.target.result;
             }; r.readAsDataURL(f);
         }
-        function removeCustomAvatar() { localStorage.removeItem(USER_AVATAR_STORAGE_KEY); renderProfileAvatar(); showToast("已重設頭像", "info"); }
+        function removeCustomAvatar() { localStorage.removeItem(USER_AVATAR_STORAGE_KEY); renderProfileAvatar(); updateMenuPetStatusUI(); showToast("已重設頭像", "info"); }
         function renderProfileAvatar() {
             const sv=localStorage.getItem(USER_AVATAR_STORAGE_KEY), i=document.getElementById('profile-avatar-img'), d=document.getElementById('profile-avatar-default');
+            const nickInput = document.getElementById('user-nickname-input');
+            if(nickInput) nickInput.value = getUserNickname();
             if(sv){if(i){i.src=sv; i.classList.remove('hidden');} if(d)d.classList.add('hidden');} else {if(i){i.src=""; i.classList.add('hidden');} if(d)d.classList.remove('hidden');}
             previewAvatarEmotion('excited');
         }
@@ -1480,7 +1811,7 @@
         function importSubsetsBackupFile(ev) { const f=ev.target.files[0]; if(!f)return; const r=new FileReader(); r.onload=function(e){try{Object.assign(userSubsets, JSON.parse(e.target.result)); svSubs(); renderDictionary(); showToast("✓ 備份恢復成功", "success");}catch(er){showToast("備份格式錯誤", "error");}}; r.readAsText(f); }
 
         async function initDB() { try{ const r=await fetch('./words.json?v='+Date.now(), {cache:'no-store'}); if(r.ok){ const rm=await r.json(); if(rm && typeof rm==='object'){ Object.keys(customWordDatabase).forEach(k=>delete customWordDatabase[k]); Object.assign(customWordDatabase, rm); document.getElementById('recommended-words-bar').innerHTML='<span class="shrink-0 text-slate-400">已套用自訂詞庫</span>'; } } }catch(e){} renderDictionary(); pSubSel(); processWord(); }
-        window.addEventListener('load', ()=>{ ldSubs(); initDB(); renderProfileAvatar(); try{setLanguage(localStorage.getItem('phonics_lang_pref')||'zh_HK'); setTheme(localStorage.getItem('phonics_theme_pref')||'default');}catch(e){} });
+        window.addEventListener('load', ()=>{ ldSubs(); initDB(); renderProfileAvatar(); updateMenuPetStatusUI(); try{setLanguage(localStorage.getItem('phonics_lang_pref')||'zh_HK'); setTheme(localStorage.getItem('phonics_theme_pref')||'default');}catch(e){} });
     </script>
 </body>
 </html>
