@@ -170,7 +170,7 @@
         </div>
         <!-- 系統最新版本與確認標籤 -->
         <div class="pt-3 border-t border-slate-100 text-center space-y-0.5">
-            <div class="text-[11px] font-black text-indigo-600">v4.6.0 · OCR Confirm Active ✓</div>
+            <div class="text-[11px] font-black text-indigo-600">v4.9.0 · Anti-Crash Debounce Active ✓</div>
             <div class="text-[10px] font-bold text-slate-400">Phonics 3000 · Science of Reading</div>
         </div>
     </aside>
@@ -180,6 +180,18 @@
 
             <!-- 1. 主頁拆解引擎 -->
             <div id="view-main" class="tab-content active space-y-4 sm:space-y-6">
+                <!-- 閃卡深入拆解返回條 -->
+                <div id="main-return-to-fc-bar" class="hidden bg-gradient-to-r from-indigo-50 to-blue-50 border-2 border-indigo-200 rounded-2xl p-3 flex items-center justify-between shadow-xs">
+                    <div class="flex items-center gap-2 text-xs font-black text-indigo-900">
+                        <span class="text-lg">🎴</span>
+                        <span>正在深入拆解閃卡單字：<span id="return-fc-word-label" class="underline font-mono text-indigo-700"></span></span>
+                    </div>
+                    <button onclick="returnToFlashcardSession()" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs rounded-xl shadow-xs flex items-center gap-1.5 transition-all active:scale-95">
+                        <span>⬅️ 返回閃卡</span>
+                        <span id="return-fc-progress-pill" class="bg-indigo-700/70 text-[10px] px-1.5 py-0.5 rounded font-mono">第 1 張</span>
+                    </button>
+                </div>
+
                 <div class="bg-white p-3.5 sm:p-4 rounded-2xl sm:rounded-3xl shadow-xs border-2 border-slate-100 space-y-2.5">
                     <div class="flex gap-2">
                         <div class="relative flex-1">
@@ -217,9 +229,14 @@
                     </div>
 
                     <h1 id="display-word" class="fluid-word-title font-black text-slate-900 tracking-tight mb-1 select-text">climb</h1>
+                    
+                    <!-- 全字音標預覽及雙速播放按鈕（常速 1.0x + 0.5x 超慢速龜龜掣） -->
                     <div class="flex items-center justify-center gap-2 sm:gap-3 flex-wrap mb-3">
                         <div id="display-ipa" class="text-base sm:text-xl font-bold text-slate-700 font-mono bg-white inline-block px-3 sm:px-4 py-1 rounded-xl shadow-2xs border border-slate-200">/klaɪm/</div>
-                        <button onclick="triggerStep4TTS()" class="w-9 h-9 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-600 flex items-center justify-center active:scale-95" title="聆聽全字原音 (Google UK)">🔊</button>
+                        <div class="flex items-center gap-1 bg-white p-1 rounded-2xl border border-slate-200 shadow-2xs">
+                            <button onclick="triggerStep4TTS(1.0)" class="w-9 h-9 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-600 flex items-center justify-center active:scale-95 transition-all" title="聆聽全字原音 (Google UK - 1.0x)">🔊</button>
+                            <button onclick="triggerStep4TTS(0.5)" class="w-9 h-9 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-700 flex items-center justify-center active:scale-95 transition-all text-lg" title="超慢速清晰發音 (0.5x 龜速)">🐢</button>
+                        </div>
                     </div>
 
                     <div id="word-definition-card" class="max-w-xl mx-auto bg-white/95 rounded-2xl p-3.5 border border-blue-100 shadow-2xs text-left space-y-1">
@@ -317,11 +334,16 @@
                                 <p id="fc-meaning" class="text-xs font-semibold text-slate-700 mt-1">Go or come up a slope or incline.</p>
                             </div>
                         </div>
-                        <div class="pt-3 border-t border-indigo-100 flex items-center justify-center gap-3 mt-3">
-                            <button onclick="playFlashcardAudio()" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl shadow-xs flex items-center gap-2 text-xs sm:text-sm active:scale-95">
-                                <span>🔊</span> <span data-i18n="fc_play_uk">朗讀全字 (Google UK)</span>
-                            </button>
-                            <button onclick="openCurrentFlashcardInEngine()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl shadow-xs flex items-center gap-2 text-xs sm:text-sm active:scale-95">
+                        <div class="pt-3 border-t border-indigo-100 flex items-center justify-center gap-2 sm:gap-3 mt-3 flex-wrap">
+                            <div class="flex items-center gap-1">
+                                <button onclick="playFlashcardAudio(1.0)" class="px-3.5 sm:px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl shadow-xs flex items-center gap-1.5 text-xs sm:text-sm active:scale-95">
+                                    <span>🔊</span> <span data-i18n="fc_play_uk">朗讀全字</span>
+                                </button>
+                                <button onclick="playFlashcardAudio(0.5)" class="px-2.5 py-2 bg-amber-100 hover:bg-amber-200 text-amber-900 font-black rounded-xl shadow-xs flex items-center gap-0.5 text-xs sm:text-sm active:scale-95" title="超慢速朗讀 (0.5x)">
+                                    <span>🐢</span> <span>0.5x</span>
+                                </button>
+                            </div>
+                            <button onclick="openCurrentFlashcardInEngine()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl shadow-xs flex items-center gap-1.5 text-xs sm:text-sm active:scale-95">
                                 <span>🚀</span> <span data-i18n="fc_deep_decompose">深入拆解</span>
                             </button>
                         </div>
@@ -411,9 +433,11 @@
                             <span class="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider" data-i18n="scramble_audio_hint">聽音重組 (Google UK 英式原音)</span>
                             <span id="scramble-repeat-indicator" class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">播音 2 次</span>
                         </div>
-                        <div class="flex justify-center items-center gap-3">
-                            <button onclick="triggerScramblePlaySequence()" class="w-12 h-12 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xl shadow-md flex items-center justify-center active:scale-95"><span>🔊</span></button>
-                            <span class="text-xs font-bold text-slate-500" data-i18n="click_speaker_hint">點擊喇叭可重複聆聽</span>
+                        <!-- 拼字挑戰音訊控制：常速 1.0x 喇叭 + 超慢速 0.5x 龜龜掣 -->
+                        <div class="flex justify-center items-center gap-2 sm:gap-3 flex-wrap">
+                            <button onclick="triggerScramblePlaySequence(1.0)" class="w-12 h-12 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xl shadow-md flex items-center justify-center active:scale-95 transition-all" title="常速播放 (1.0x)"><span>🔊</span></button>
+                            <button onclick="triggerScramblePlaySequence(0.5)" class="w-12 h-12 rounded-2xl bg-amber-100 hover:bg-amber-200 text-amber-900 font-black text-xl shadow-md flex items-center justify-center active:scale-95 border-2 border-amber-300 transition-all" title="超慢速發音 (0.5x 龜速)"><span>🐢</span></button>
+                            <span class="text-xs font-bold text-slate-500" data-i18n="click_speaker_hint">點擊喇叭或龜龜可重複聆聽</span>
                         </div>
                         <div class="bg-white rounded-xl p-2.5 border border-slate-200 text-left">
                             <div class="flex items-center gap-1.5 mb-0.5">
@@ -424,7 +448,7 @@
                         </div>
                     </div>
 
-                    <!-- 三大輸入模式導航條 (樣式框選完美切換) -->
+                    <!-- 三大輸入模式導航條 -->
                     <div class="flex items-center justify-between bg-slate-100 p-1.5 rounded-2xl border border-slate-200">
                         <span class="text-[11px] font-black text-slate-500 px-2" data-i18n="input_mode_label">輸入模式：</span>
                         <div class="flex gap-1 flex-1 justify-end">
@@ -491,7 +515,7 @@
                             <span>✓</span> <span data-i18n="btn_check">檢查答案</span>
                         </button>
                     </div>
-                    <div id="scramble-feedback" class="text-center font-black text-xs sm:text-sm h-5"></div>
+                    <div id="scramble-feedback" class="text-center font-black text-xs sm:text-sm h-5 transition-all"></div>
                 </div>
             </div>
 
@@ -508,7 +532,6 @@
                     </label>
                 </div>
 
-                <!-- 課文拍照與圖片 OCR 辨識工具列 -->
                 <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-50 p-2.5 rounded-2xl border border-slate-200 text-xs font-bold">
                     <div class="flex items-center gap-1.5 flex-wrap">
                         <span class="text-slate-500">📷 課本圖片辨識：</span>
@@ -545,7 +568,6 @@
                     </div>
                 </div>
 
-                <!-- 提取結果統計列 -->
                 <div class="flex items-center justify-between flex-wrap gap-2 text-xs font-bold px-1">
                     <div class="flex items-center gap-2">
                         <span id="selected-count-badge" class="bg-blue-50 text-blue-700 px-2.5 py-1 rounded-lg border border-blue-200">已選 0 字</span>
@@ -601,7 +623,7 @@
                 <div id="dict-list" class="grid grid-cols-2 sm:grid-cols-4 gap-2 max-h-[50vh] overflow-y-auto pr-1"></div>
             </div>
 
-            <!-- 6. 44 國際音標表 (Vocabulary.com 真人女聲 + Google UK 原音) -->
+            <!-- 6. 44 國際音標表 -->
             <div id="view-ipa" class="tab-content bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-xs border-2 border-slate-100 space-y-5">
                 <div class="pb-3 border-b-2 border-slate-100">
                     <h2 class="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2"><span>📊</span> <span data-i18n="ipa_heading">國際音標表 (44 IPA Sounds)</span></h2>
@@ -659,7 +681,48 @@
         </div>
     </main>
 
-    <!-- 提示 Modal -->
+    <!-- 聽音拼字挑戰成果榮譽榜結算 Modal (Reward Screen) -->
+    <div id="scramble-summary-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4 border border-indigo-100 text-center">
+            <div class="text-5xl">🏆</div>
+            <div class="space-y-1">
+                <h3 class="font-black text-xl text-slate-900">挑戰大成功！</h3>
+                <div id="summary-stars" class="text-2xl text-amber-400">⭐⭐⭐</div>
+                <p id="summary-praise-text" class="text-xs font-black text-indigo-600">表現卓越！自然拼讀基礎非常扎實！</p>
+            </div>
+            
+            <div class="bg-slate-50 border-2 border-slate-200 rounded-2xl p-3.5 grid grid-cols-3 gap-2">
+                <div class="text-center">
+                    <div class="text-[10px] font-bold text-slate-400 uppercase">總分</div>
+                    <div id="summary-score-value" class="text-lg font-black text-blue-600">50 / 50</div>
+                </div>
+                <div class="text-center border-x border-slate-200">
+                    <div class="text-[10px] font-bold text-slate-400 uppercase">準確率</div>
+                    <div id="summary-accuracy-value" class="text-lg font-black text-emerald-600">100%</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-[10px] font-bold text-slate-400 uppercase">最高連對</div>
+                    <div id="summary-streak-value" class="text-lg font-black text-amber-600">5</div>
+                </div>
+            </div>
+
+            <div class="space-y-2 pt-1">
+                <button onclick="restartScrambleQuiz()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl shadow-xs text-xs sm:text-sm flex items-center justify-center gap-1.5 active:scale-95">
+                    <span>🔄</span> <span>再次挑戰同組題庫</span>
+                </button>
+                <div class="flex gap-2">
+                    <button onclick="closeScrambleSummaryModal(true)" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs">
+                        ⚙️ 更換題庫
+                    </button>
+                    <button onclick="quitScrambleToMainEngine()" class="flex-1 py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-black rounded-xl text-xs">
+                        🏠 回主頁
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 通用自訂 Modal -->
     <div id="custom-app-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-slate-100">
             <div class="flex items-center justify-between pb-3 border-b border-slate-100">
@@ -702,13 +765,13 @@
                 step3_title: "3. 拼頭音", step3_desc: "Onset 70% + 韻部 (綠+紅+紫)", step4_title: "4. 全字拼音",
                 fc_heading: "智能閃卡學習模式 (Flashcards)", fc_subheading: "自由挑選自訂課文清單，專注字素與音節對齊發音。",
                 subset_scope: "📁 選擇抽考清單範圍：", select_all: "全選", deselect_all: "全不選", reset: "重設",
-                show_def: "顯示英文解釋", hide_def: "隱藏英文解釋", fc_play_uk: "朗讀全字 (Google UK)",
+                show_def: "顯示英文解釋", hide_def: "隱藏英文解釋", fc_play_uk: "朗讀全字",
                 fc_deep_decompose: "深入拆解", prev_card: "上一張", next_card: "下一張", shuffle_cards: "洗牌",
                 scramble_heading: "✍️ 聽音重組拼字挑戰 (Workbook)", scramble_subheading: "聆聽標準發音，透過字母瓷磚、四線格手寫或鍵盤拼出單字",
                 scramble_step1: "1. 選擇題庫清單：", scramble_step2: "2. 每次播放發音次數：", scramble_step3: "3. 答題計時設置：",
                 scramble_step4: "4. 挑戰題數：", scramble_step5: "5. 偏好輸入作答模式：", mode_tiles: "點選字母",
                 mode_handwriting: "手寫畫板", mode_keyboard: "鍵盤輸入", btn_start_challenge: "開始聽音拼字挑戰",
-                quit_challenge: "結束", scramble_audio_hint: "聽音重組 (Google UK 英式原音)", click_speaker_hint: "點擊喇叭可重複聆聽",
+                quit_challenge: "結束", scramble_audio_hint: "聽音重組 (Google UK 英式原音)", click_speaker_hint: "點擊喇叭或龜龜可重複聆聽",
                 hint_def: "字義提示", input_mode_label: "輸入模式：", spelling_area: "單字拼寫區：",
                 slot_tip: "點擊已填空格可退回 / 選中空格打字", pool_tip: "點選字母依序填入：",
                 hw_tip: "✍️ 在四線格內手寫英文字母（支援長字分段書寫）：", clear_canvas: "🧹 清空畫板",
@@ -734,13 +797,13 @@
                 step3_title: "3. Blend Onset", step3_desc: "Onset 70% + Rime (Full)", step4_title: "4. Whole Word",
                 fc_heading: "Smart Flashcards", fc_subheading: "Pick reading subsets and practice grapheme-phoneme correspondence.",
                 subset_scope: "📁 Select Test Subsets:", select_all: "Select All", deselect_all: "Deselect All", reset: "Reset",
-                show_def: "Show English Definition", hide_def: "Hide English Definition", fc_play_uk: "Read Full Word (Google UK)",
+                show_def: "Show English Definition", hide_def: "Hide English Definition", fc_play_uk: "Read Word",
                 fc_deep_decompose: "Deep Decompose", prev_card: "Previous", next_card: "Next", shuffle_cards: "Shuffle",
                 scramble_heading: "✍️ Listening Spelling Challenge", scramble_subheading: "Listen to authentic RP audio and spell via tiles, canvas, or keyboard",
                 scramble_step1: "1. Select Question Bank:", scramble_step2: "2. Audio Repeat Times:", scramble_step3: "3. Timer Setting:",
                 scramble_step4: "4. Question Count:", scramble_step5: "5. Preferred Input Mode:", mode_tiles: "Tile Tap",
                 mode_handwriting: "Handwriting Canvas", mode_keyboard: "Keyboard Input", btn_start_challenge: "Start Spelling Challenge",
-                quit_challenge: "Quit", scramble_audio_hint: "Sound & Spell (Google UK Audio)", click_speaker_hint: "Click speaker to replay sound",
+                quit_challenge: "Quit", scramble_audio_hint: "Sound & Spell (Google UK Audio)", click_speaker_hint: "Click speaker or turtle to replay",
                 hint_def: "Definition Hint", input_mode_label: "Input Mode:", spelling_area: "Spelling Slots:",
                 slot_tip: "Click slot to retract / focus to type", pool_tip: "Tap letters in order:", hw_tip: "✍️ Write letters in 4-line grid:",
                 clear_canvas: "🧹 Clear Board", kb_tip: "Supports keyboard (A-Z) or virtual keys:", reset_question: "↺ Reset Question",
@@ -749,7 +812,8 @@
                 lemmatize_toggle: "🌱 Auto-lemmatize root words (played ➔ play, knives ➔ knife)", btn_extract: "Extract Vocab",
                 btn_import_subset: "Import Selected", dict_heading: "Core Dictionary & Subsets",
                 dict_subheading: "Browse 3,000 core words or switch between your custom chapter subsets.", subset_view_label: "📁 Subset Filter:",
-                ipa_heading: "International Phonetic Alphabet (44 IPA Sounds)", ipa_subheading: "Combined Vocabulary.com and Google UK audio slices.",
+                ipa_heading: "International Phonetic Alphabet (44 IPA Sounds)",
+                ipa_subheading: "Combined Vocabulary.com and Google UK audio slices.",
                 profile_heading: "👤 Member Area", profile_subheading: "Sync custom lists across devices"
             }
         };
@@ -790,22 +854,24 @@
             if (document.getElementById('view-flashcard')?.classList.contains('active')) renderCurrentFlashcard();
         }
 
-        // 3. 聲學切片發音引擎 (Vocabulary.com + Google UK 原音)
+        // 3. 聲學切片發音引擎 (支援 1.0x 常速 與 0.5x 超慢速播放)
         let activeSessionId = 0, activeAudioElements = [], currentAnalysis = null, currentStepLevel = 0;
         const getGoogleUK = (q) => `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en-gb&q=${encodeURIComponent(q)}`;
 
-        function playWholeWordAudioUK(word, repeats = 2, sessionId = activeSessionId) {
+        function playWholeWordAudioUK(word, repeats = 2, sessionId = activeSessionId, speed = 1.0) {
             return new Promise(async (resolve) => {
                 if (!word) return resolve();
                 const cleanWord = word.trim().toLowerCase();
                 const googleUrl = getGoogleUK(cleanWord);
+                const speedLabel = speed < 1.0 ? ` [慢速 ${speed}x 🐢]` : "";
                 for (let r = 1; r <= repeats; r++) {
                     if (sessionId !== activeSessionId) return resolve();
-                    updateStatus(`播放中: 全字發音 (Google UK) [第 ${r}/${repeats} 次]...`, true);
+                    updateStatus(`播放中: 全字發音 (Google UK)${speedLabel} [第 ${r}/${repeats} 次]...`, true);
                     let playedSuccessfully = false;
                     try {
                         const audio = new Audio(googleUrl);
                         audio.preload = 'auto';
+                        audio.playbackRate = speed;
                         activeAudioElements.push(audio);
                         await new Promise((resAudio) => {
                             let done = false;
@@ -815,7 +881,8 @@
                                 if (idx !== -1) activeAudioElements.splice(idx, 1);
                                 resAudio();
                             };
-                            const safety = setTimeout(finish, 3200);
+                            const maxDuration = speed <= 0.5 ? 5600 : (speed < 1.0 ? 4200 : 3200);
+                            const safety = setTimeout(finish, maxDuration);
                             audio.onended = () => { clearTimeout(safety); finish(); };
                             audio.onerror = () => { clearTimeout(safety); finish(); };
                             audio.play().then(() => playedSuccessfully = true).catch(() => { clearTimeout(safety); finish(); });
@@ -827,10 +894,10 @@
                             try {
                                 window.speechSynthesis.cancel();
                                 const u = new SpeechSynthesisUtterance(cleanWord);
-                                u.lang = 'en-GB'; u.rate = 0.85;
+                                u.lang = 'en-GB'; u.rate = 0.85 * speed;
                                 u.onend = resTTS; u.onerror = resTTS;
                                 window.speechSynthesis.speak(u);
-                                setTimeout(resTTS, 2500);
+                                setTimeout(resTTS, 3000);
                             } catch (err) { resTTS(); }
                         });
                     }
@@ -1068,16 +1135,16 @@
             if (currentSession === activeSessionId) { clearVisualHighlights(); updateStatus('Ready'); }
         }
 
-        function triggerStep4TTS() {
+        function triggerStep4TTS(speed = 1.0) {
             stopAllPlayback();
             document.getElementById('step-btn-4')?.classList.add('playing');
-            playWholeWordAudioUK(document.getElementById('display-word').innerText, 2, activeSessionId);
+            playWholeWordAudioUK(document.getElementById('display-word').innerText, 2, activeSessionId, speed);
         }
 
         function triggerStep(step) {
             updateSyllableDisplay(step);
             if (step >= 1 && step <= 3) runAudioStepSequence(step);
-            else if (step === 4) triggerStep4TTS();
+            else if (step === 4) triggerStep4TTS(1.0);
         }
 
         function parseChunkTokens(chunk, chunkIdx, totalChunks, fullWord) {
@@ -1413,7 +1480,11 @@
             document.getElementById('nav-drawer-backdrop')?.classList.toggle('hidden', !show);
             document.getElementById('nav-drawer')?.classList.toggle('translate-x-full', !show);
         }
-        function selectNavTab(tabId) {
+
+        // 6. 導航切換 (支援閃卡返回保持進度)
+        let activeFlashcardSessionState = null;
+
+        function selectNavTab(tabId, resumeFlashcard = false) {
             stopAllPlayback();
             document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(`btn-tab-${tabId}`)?.classList.add('active');
@@ -1423,13 +1494,22 @@
             const icons = { main: '🏠', dictionary: '📖', extractor: '📝', ipa: '📊', flashcard: '🎴', scramble: '✍️', profile: '👤' };
             const label = document.getElementById('nav-active-label');
             if (label && icons[tabId]) label.innerText = icons[tabId];
+            
+            if (tabId !== 'main' && !resumeFlashcard) {
+                document.getElementById('main-return-to-fc-bar')?.classList.add('hidden');
+            }
+
             if (tabId === 'ipa' && document.getElementById('grid-vowels').innerHTML === '') renderIPAChart();
             if (tabId === 'dictionary') renderDictionary();
-            if (tabId === 'flashcard') { renderFlashcardSubsetSelectors(); reloadFlashcards(); }
+            if (tabId === 'flashcard') {
+                renderFlashcardSubsetSelectors();
+                if (!resumeFlashcard) reloadFlashcards();
+                else renderCurrentFlashcard();
+            }
             if (tabId === 'scramble') renderScrambleSubsetSelectors();
         }
 
-        // 6. 閃卡與練習中心
+        // 7. 閃卡與練習中心
         let flashcardPool = [], flashcardIndex = 0, selectedFlashcardSubsets = new Set(['__ALL__']);
         function renderFlashcardSubsetSelectors() {
             const container = document.getElementById('fc-subsets-checkboxes'); if (!container) return;
@@ -1494,14 +1574,48 @@
             }
             flashcardIndex = 0; renderCurrentFlashcard();
         }
-        function playFlashcardAudio() { if (flashcardPool.length) playWholeWordAudioUK(flashcardPool[flashcardIndex], 1, activeSessionId); }
-        function openCurrentFlashcardInEngine() { if (flashcardPool.length) { selectNavTab('main'); quickInputWord(flashcardPool[flashcardIndex]); } }
+        function playFlashcardAudio(speed = 1.0) { 
+            if (flashcardPool.length) playWholeWordAudioUK(flashcardPool[flashcardIndex], 1, activeSessionId, speed); 
+        }
 
-        // 7. 聽音重組拼字挑戰 (Scramble)
-        let scrambleQuestions = [], currentScrambleIndex = 0, scrambleScore = 0, scrambleStreak = 0;
+        function openCurrentFlashcardInEngine() { 
+            if (flashcardPool.length) { 
+                const currentWord = flashcardPool[flashcardIndex];
+                activeFlashcardSessionState = {
+                    index: flashcardIndex,
+                    word: currentWord,
+                    total: flashcardPool.length
+                };
+                
+                const returnBar = document.getElementById('main-return-to-fc-bar');
+                const returnWordLabel = document.getElementById('return-fc-word-label');
+                const returnPill = document.getElementById('return-fc-progress-pill');
+                if (returnBar) returnBar.classList.remove('hidden');
+                if (returnWordLabel) returnWordLabel.innerText = currentWord;
+                if (returnPill) returnPill.innerText = `第 ${flashcardIndex + 1} / ${flashcardPool.length} 張`;
+
+                selectNavTab('main'); 
+                quickInputWord(currentWord); 
+            } 
+        }
+
+        function returnToFlashcardSession() {
+            document.getElementById('main-return-to-fc-bar')?.classList.add('hidden');
+            selectNavTab('flashcard', true);
+            showToast(`✓ 已返回閃卡（第 ${flashcardIndex + 1} 張）`, "info");
+        }
+
+        // 8. 聽音重組拼字挑戰 (Scramble) - 升級防重連點機制與雙字母換位判定
+        let scrambleQuestions = [], currentScrambleIndex = 0, scrambleScore = 0, scrambleStreak = 0, maxStreakEver = 0;
         let scrambleLimit = 10, scrambleVoiceRepeats = 2, scrambleTimerSeconds = 0, scrambleTimerInterval = null;
         let scrambleInputMode = 'tiles', currentActiveSlotIdx = 0, targetScrambleWord = "", targetLetterSlots = [], availableTiles = [];
         let selectedScrambleSubsets = new Set(['__ALL__']), hwCanvas = null, hwCtx = null, isDrawing = false, hwStrokes = 0;
+        
+        // 防重複觸發與跳題旗標
+        let isQuestionLocked = false;
+        let hasReceivedSwapHint = false;
+        let autoCheckTimeout = null;
+        let advanceQuestionTimeout = null;
 
         function renderScrambleSubsetSelectors() {
             const c = document.getElementById('scramble-subsets-checkboxes'); if (!c) return;
@@ -1546,19 +1660,28 @@
             if (!candidates.length) return showToast("請先選擇至少一個包含生字的清單！", "warning");
             for (let i = candidates.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [candidates[i], candidates[j]] = [candidates[j], candidates[i]]; }
             scrambleQuestions = candidates.slice(0, Math.min(candidates.length, scrambleLimit));
-            currentScrambleIndex = 0; scrambleScore = 0; scrambleStreak = 0;
+            currentScrambleIndex = 0; scrambleScore = 0; scrambleStreak = 0; maxStreakEver = 0;
+            isQuestionLocked = false;
             document.getElementById('scramble-setup-box').classList.add('hidden');
             document.getElementById('scramble-game-arena').classList.remove('hidden');
             loadCurrentScrambleQuestion();
         }
         function quitScrambleGame() {
             clearInterval(scrambleTimerInterval);
+            clearTimeout(autoCheckTimeout);
+            clearTimeout(advanceQuestionTimeout);
+            isQuestionLocked = false;
             document.getElementById('scramble-setup-box').classList.remove('hidden');
             document.getElementById('scramble-game-arena').classList.add('hidden');
             renderScrambleSubsetSelectors();
         }
         function loadCurrentScrambleQuestion() {
             clearInterval(scrambleTimerInterval);
+            clearTimeout(autoCheckTimeout);
+            clearTimeout(advanceQuestionTimeout);
+            isQuestionLocked = false;
+            hasReceivedSwapHint = false;
+
             targetScrambleWord = scrambleQuestions[currentScrambleIndex].toLowerCase();
             targetLetterSlots = new Array(targetScrambleWord.length).fill(null);
             currentActiveSlotIdx = 0;
@@ -1571,25 +1694,39 @@
             document.getElementById('scramble-streak-badge').innerText = `🔥 連對: ${scrambleStreak}`;
             document.getElementById('scramble-progress-fill').style.width = `${((currentScrambleIndex) / scrambleQuestions.length) * 100}%`;
             document.getElementById('scramble-feedback').innerText = '';
+            document.getElementById('scramble-feedback').className = "text-center font-black text-xs sm:text-sm h-5 transition-all";
+            
             const entry = customWordDatabase[targetScrambleWord] || decomposeWordAutomatically(targetScrambleWord);
             document.getElementById('scramble-pos-badge').innerText = entry.pos || 'word';
             document.getElementById('scramble-hint-def').innerText = entry.definition || '聆聽發音並拼出完整單字。';
             switchActiveScrambleInputMode(scrambleInputMode);
             renderScrambleSlots(); renderScrambleTiles(); clearHandwritingCanvas(); updateHandwritingStatus();
             startScrambleQuestionTimer();
-            setTimeout(() => triggerScramblePlaySequence(), 300);
+            setTimeout(() => triggerScramblePlaySequence(1.0), 300);
         }
-        function triggerScramblePlaySequence() { if (targetScrambleWord) { stopAllPlayback(); playWholeWordAudioUK(targetScrambleWord, scrambleVoiceRepeats, activeSessionId); } }
+        function triggerScramblePlaySequence(speed = 1.0) { 
+            if (targetScrambleWord) { 
+                stopAllPlayback(); 
+                playWholeWordAudioUK(targetScrambleWord, scrambleVoiceRepeats, activeSessionId, speed); 
+            } 
+        }
         function startScrambleQuestionTimer() {
             const pill = document.getElementById('scramble-timer-pill'); const secSpan = document.getElementById('scramble-timer-seconds');
             if (scrambleTimerSeconds <= 0) { pill?.classList.add('hidden'); return; }
             pill?.classList.remove('hidden'); let remaining = scrambleTimerSeconds; if (secSpan) secSpan.innerText = remaining;
             scrambleTimerInterval = setInterval(() => {
+                if (isQuestionLocked) return;
                 remaining--; if (secSpan) secSpan.innerText = remaining;
                 if (remaining <= 0) {
                     clearInterval(scrambleTimerInterval);
-                    document.getElementById('scramble-feedback').innerText = `⏱️ 時間到！正確答案是: ${targetScrambleWord.toUpperCase()}`;
-                    scrambleStreak = 0; setTimeout(advanceToNextScrambleQuestion, 1800);
+                    isQuestionLocked = true;
+                    const fb = document.getElementById('scramble-feedback');
+                    if (fb) {
+                        fb.innerText = `⏱️ 時間到！正確答案是: ${targetScrambleWord.toUpperCase()}`;
+                        fb.className = "text-center font-black text-xs sm:text-sm h-5 text-red-500 animate-shake";
+                    }
+                    scrambleStreak = 0; 
+                    advanceQuestionTimeout = setTimeout(advanceToNextScrambleQuestion, 2000);
                 }
             }, 1000);
         }
@@ -1609,6 +1746,7 @@
             document.getElementById('hw-next-slot-tip').innerText = (emptyIdx === -1) ? "✓ 已全部填滿" : `下一次將從第 ${emptyIdx + 1} 格填起`;
         }
         function handleSlotClick(idx) {
+            if (isQuestionLocked) return;
             currentActiveSlotIdx = idx;
             if (scrambleInputMode === 'keyboard') document.getElementById('scramble-hidden-keyboard-input')?.focus();
             else removeLetterFromSlot(idx);
@@ -1619,42 +1757,179 @@
             c.innerHTML = availableTiles.map(t => t.isUsed ? `<div class="scramble-box-tile rounded-md bg-slate-100 border border-slate-200 text-slate-300 font-bold text-lg flex items-center justify-center opacity-30 select-none">${t.letter}</div>` : `<button onclick="placeTileInSlot('${t.id}')" class="scramble-box-tile rounded-md bg-slate-50 hover:bg-blue-50 text-slate-800 font-black text-lg shadow-2xs border-2 border-slate-300 flex items-center justify-center">${t.letter}</button>`).join('');
         }
         function placeTileInSlot(id) {
+            if (isQuestionLocked) return;
             const t = availableTiles.find(x => x.id === id); if (!t || t.isUsed) return;
             const idx = targetLetterSlots.findIndex(s => s === null); if (idx === -1) return;
             t.isUsed = true; targetLetterSlots[idx] = { tileId: t.id, letter: t.letter };
             currentActiveSlotIdx = Math.min(targetLetterSlots.length - 1, idx + 1);
             renderScrambleSlots(); renderScrambleTiles();
-            if (!targetLetterSlots.includes(null)) setTimeout(checkScrambleAnswer, 200);
+            
+            // 防連點：若填滿自動觸發防重計時
+            clearTimeout(autoCheckTimeout);
+            if (!targetLetterSlots.includes(null)) {
+                autoCheckTimeout = setTimeout(() => {
+                    if (!isQuestionLocked) checkScrambleAnswer();
+                }, 220);
+            }
         }
         function removeLetterFromSlot(idx) {
+            if (isQuestionLocked) return;
             const slot = targetLetterSlots[idx]; if (!slot) return;
             const t = availableTiles.find(x => x.id === slot.tileId); if (t) t.isUsed = false;
             targetLetterSlots[idx] = null; currentActiveSlotIdx = idx;
             renderScrambleSlots(); renderScrambleTiles();
         }
         function resetCurrentScrambleSlots() {
+            if (isQuestionLocked) return;
+            clearTimeout(autoCheckTimeout);
             targetLetterSlots.fill(null); availableTiles.forEach(t => t.isUsed = false); currentActiveSlotIdx = 0;
             renderScrambleSlots(); renderScrambleTiles(); clearHandwritingCanvas();
+            document.getElementById('scramble-feedback').innerText = '';
         }
+
+        // 判定是否純屬 2 個字母位置互相調轉（Transposition）
+        function isTwoLettersSwapped(strA, strB) {
+            if (!strA || !strB || strA.length !== strB.length) return false;
+            const diffs = [];
+            for (let i = 0; i < strA.length; i++) {
+                if (strA[i] !== strB[i]) diffs.push(i);
+            }
+            if (diffs.length === 2) {
+                const [i, j] = diffs;
+                return (strA[i] === strB[j] && strA[j] === strB[i]);
+            }
+            return false;
+        }
+
         function checkScrambleAnswer() {
-            const current = targetLetterSlots.map(s => s ? s.letter : '').join('');
+            if (isQuestionLocked) return; // 鎖定狀態嚴格防止二次檢查與重複計分
+            clearTimeout(autoCheckTimeout);
+
+            const current = targetLetterSlots.map(s => s ? s.letter : '').join('').toLowerCase();
             const fb = document.getElementById('scramble-feedback');
-            if (current.length < targetScrambleWord.length) return fb ? fb.innerText = "請填入全部字母！" : 0;
-            if (current.toLowerCase() === targetScrambleWord.toLowerCase()) {
-                clearInterval(scrambleTimerInterval); scrambleScore += 10; scrambleStreak += 1;
+            if (current.length < targetScrambleWord.length) {
+                if (fb) {
+                    fb.innerText = "請填入全部字母！";
+                    fb.className = "text-center font-black text-xs sm:text-sm h-5 text-amber-600";
+                }
+                return;
+            }
+
+            if (current === targetScrambleWord.toLowerCase()) {
+                // 答對了：立刻鎖定題目，嚴禁重複執行
+                isQuestionLocked = true;
+                clearInterval(scrambleTimerInterval);
+                scrambleScore += 10;
+                scrambleStreak += 1;
+                if (scrambleStreak > maxStreakEver) maxStreakEver = scrambleStreak;
                 document.getElementById('scramble-streak-badge').innerText = `🔥 連對: ${scrambleStreak}`;
-                if (fb) { fb.innerText = "🎉 太棒了，拼寫完全正確！"; fb.className = "text-center font-black text-xs text-emerald-600"; }
-                setTimeout(advanceToNextScrambleQuestion, 1200);
+                if (fb) {
+                    fb.innerText = "🎉 太棒了，拼寫完全正確！";
+                    fb.className = "text-center font-black text-xs sm:text-sm h-5 text-emerald-600";
+                }
+                advanceQuestionTimeout = setTimeout(advanceToNextScrambleQuestion, 1200);
             } else {
-                if (fb) { fb.innerText = "拼法有小誤，再聽一次音重試！"; fb.className = "text-center font-black text-xs text-red-500 animate-shake"; }
-                scrambleStreak = 0; document.getElementById('scramble-streak-badge').innerText = `🔥 連對: 0`;
+                // 答錯邏輯分支：
+                const slotsEl = document.getElementById('scramble-slots-container');
+                slotsEl?.classList.remove('animate-shake');
+                void slotsEl?.offsetWidth; // 重置 CSS 動畫
+                slotsEl?.classList.add('animate-shake');
+
+                if (isTwoLettersSwapped(current, targetScrambleWord) && !hasReceivedSwapHint) {
+                    // 情況 1：剛好僅有 2 個字母位置調轉，且尚未給過提示 ➔ 給予 1 次提示修改機會，不切換題目
+                    hasReceivedSwapHint = true;
+                    if (fb) {
+                        fb.innerText = "💡 提示：有 2 個字母嘅位置調轉咗，仔細睇下再改！";
+                        fb.className = "text-center font-black text-xs sm:text-sm h-5 text-amber-600 animate-shake";
+                    }
+                } else {
+                    // 情況 2：非單純 2 個字母調轉，或經提示後依然答錯 ➔ 正式判定錯誤，公佈答案並換題！
+                    isQuestionLocked = true;
+                    clearInterval(scrambleTimerInterval);
+                    scrambleStreak = 0;
+                    document.getElementById('scramble-streak-badge').innerText = `🔥 連對: 0`;
+                    if (fb) {
+                        fb.innerText = `❌ 答案不正確！正確拼寫是: ${targetScrambleWord.toUpperCase()}`;
+                        fb.className = "text-center font-black text-xs sm:text-sm h-5 text-red-500 animate-shake";
+                    }
+                    advanceQuestionTimeout = setTimeout(advanceToNextScrambleQuestion, 2000);
+                }
             }
         }
+
+        // 完成題目推進或觸發榮譽榜結算
         function advanceToNextScrambleQuestion() {
+            clearTimeout(advanceQuestionTimeout);
             currentScrambleIndex++;
-            if (currentScrambleIndex < scrambleQuestions.length) loadCurrentScrambleQuestion();
-            else { showToast(`🏆 挑戰完成！總得分: ${scrambleScore}`, "success"); quitScrambleGame(); }
+            if (currentScrambleIndex < scrambleQuestions.length) {
+                loadCurrentScrambleQuestion();
+            } else {
+                clearInterval(scrambleTimerInterval);
+                showScrambleCompletionRewardModal();
+            }
         }
+
+        // 結算與榮譽榜彈窗（防超過 100% 準確率安全保護）
+        function showScrambleCompletionRewardModal() {
+            const totalQ = scrambleQuestions.length;
+            const maxPossibleScore = totalQ * 10;
+            // 準確率與總分嚴格限制不得超越 100%
+            const safeFinalScore = Math.min(scrambleScore, maxPossibleScore);
+            const accuracyPct = Math.min(100, Math.round((safeFinalScore / maxPossibleScore) * 100));
+            
+            document.getElementById('summary-score-value').innerText = `${safeFinalScore} / ${maxPossibleScore}`;
+            document.getElementById('summary-accuracy-value').innerText = `${accuracyPct}%`;
+            document.getElementById('summary-streak-value').innerText = maxStreakEver;
+
+            const starsEl = document.getElementById('summary-stars');
+            const praiseEl = document.getElementById('summary-praise-text');
+
+            if (accuracyPct === 100) {
+                starsEl.innerText = "⭐⭐⭐";
+                praiseEl.innerText = "🏆 完美無瑕！你係 Phonics 拼字大宗師！";
+            } else if (accuracyPct >= 80) {
+                starsEl.innerText = "⭐⭐";
+                praiseEl.innerText = "👏 表現極之出色！拼音基礎非常扎實！";
+            } else if (accuracyPct >= 60) {
+                starsEl.innerText = "⭐";
+                praiseEl.innerText = "💪 做得好！多聽幾次頭尾音會更上一層樓！";
+            } else {
+                starsEl.innerText = "🌱";
+                praiseEl.innerText = "再接再厲！建議先去「智能閃卡」溫習後再挑戰！";
+            }
+
+            // 保存最近成績到 localStorage
+            try {
+                const history = JSON.parse(localStorage.getItem('phonics_quiz_history') || '[]');
+                history.unshift({
+                    date: new Date().toLocaleDateString(),
+                    score: safeFinalScore,
+                    total: maxPossibleScore,
+                    accuracy: accuracyPct,
+                    streak: maxStreakEver
+                });
+                localStorage.setItem('phonics_quiz_history', JSON.stringify(history.slice(0, 20)));
+            } catch(e){}
+
+            document.getElementById('scramble-summary-modal')?.classList.remove('hidden');
+        }
+
+        function restartScrambleQuiz() {
+            document.getElementById('scramble-summary-modal')?.classList.add('hidden');
+            startScrambleGame();
+        }
+
+        function closeScrambleSummaryModal(backToSetup = true) {
+            document.getElementById('scramble-summary-modal')?.classList.add('hidden');
+            if (backToSetup) quitScrambleGame();
+        }
+
+        function quitScrambleToMainEngine() {
+            closeScrambleSummaryModal(false);
+            quitScrambleGame();
+            selectNavTab('main');
+        }
+
         function switchActiveScrambleInputMode(m) {
             scrambleInputMode = m;
             const activeClass = "px-3 py-1.5 rounded-xl font-black text-xs bg-white text-blue-600 shadow-xs border border-slate-300 ring-2 ring-blue-500/20 transition-all";
@@ -1671,6 +1946,7 @@
         }
 
         function typeLetterByKeyboard(char) {
+            if (isQuestionLocked) return;
             if (!/^[a-z]$/i.test(char)) return;
             const letter = char.toLowerCase();
             let idx = currentActiveSlotIdx;
@@ -1682,9 +1958,16 @@
             targetLetterSlots[idx] = { tileId, letter };
             currentActiveSlotIdx = Math.min(targetLetterSlots.length - 1, idx + 1);
             renderScrambleSlots(); renderScrambleTiles();
-            if (!targetLetterSlots.includes(null)) setTimeout(checkScrambleAnswer, 200);
+            
+            clearTimeout(autoCheckTimeout);
+            if (!targetLetterSlots.includes(null)) {
+                autoCheckTimeout = setTimeout(() => {
+                    if (!isQuestionLocked) checkScrambleAnswer();
+                }, 220);
+            }
         }
         function handleKeyboardBackspace() {
+            if (isQuestionLocked) return;
             let idx = currentActiveSlotIdx;
             if (targetLetterSlots[idx] === null && idx > 0) idx--;
             if (targetLetterSlots[idx]) removeLetterFromSlot(idx);
@@ -1716,7 +1999,6 @@
             const ocrBtn = document.getElementById('btn-handwriting-ocr');
             if (!hwCanvas || hwStrokes === 0) return showToast("請先在四線格內手寫英文字母！", "warning");
             
-            // 防重複點擊
             if (ocrBtn) ocrBtn.disabled = true;
             document.getElementById('ocr-btn-spinner')?.classList.remove('hidden');
             const off = document.createElement('canvas'); off.width = hwCanvas.width; off.height = hwCanvas.height;
@@ -1741,7 +2023,6 @@
                 if (ocrBtn) ocrBtn.disabled = false;
             }
 
-            // 辨識完成後【一律彈出確認視窗】，嚴禁未經確認直接填入空格
             showHandwritingOcrConfirmModal(recognized, dataUrl);
         }
 
@@ -1806,7 +2087,13 @@
             renderScrambleSlots();
             renderScrambleTiles();
             updateHandwritingStatus();
-            if (!targetLetterSlots.includes(null)) setTimeout(checkScrambleAnswer, 300);
+            
+            clearTimeout(autoCheckTimeout);
+            if (!targetLetterSlots.includes(null)) {
+                autoCheckTimeout = setTimeout(() => {
+                    if (!isQuestionLocked) checkScrambleAnswer();
+                }, 250);
+            }
         }
 
         function openApiKeyModal() {
@@ -1824,7 +2111,7 @@
             });
         }
 
-        // 8. 課文提取與形態還原 (Lemmatizer)
+        // 9. 課文提取與形態還原 (Lemmatizer)
         const SUBSET_STORAGE_KEY = 'phonics_user_subsets_v1';
         let userSubsets = {}, currentDictionarySubsetId = '__ALL__', extractedItems = [];
         const protectedWordRoots = new Set(['nothing', 'morning', 'evening', 'ceiling', 'king', 'ring', 'sing', 'wing', 'spring', 'string', 'thing', 'building', 'meaning', 'during', 'bring', 'tired', 'bored', 'excited', 'enraged', 'engaged', 'interested', 'scared', 'married', 'worried', 'surprised', 'confused', 'closed', 'naked', 'wicked', 'detailed', 'complicated', 'advanced']);
@@ -2019,7 +2306,7 @@
             document.getElementById('extractor-stats-badge').innerHTML = `🟢 核心庫: <span class="text-emerald-700 font-black">${inDbCount}</span> | 🟠 庫外生字: <span class="text-amber-700 font-black">${outDbCount}</span>`;
 
             if (!extractedItems.length) {
-                grid.innerHTML = `<div class="text-slate-400 text-xs font-bold py-6 text-center w-full">未提取到生字。請貼入課文或拍照上傳後點擊「🔍 提取生字」。</div>`;
+                grid.innerHTML = `<div class="text-slate-400 text-xs font-bold py-6 text-center w-full">未提取到生字。請在上方貼上課文或拍照後點擊「🔍 提取生字」。</div>`;
                 return;
             }
 
@@ -2106,7 +2393,7 @@
             selectNavTab('dictionary'); switchDictionarySubset(subset.id);
         }
 
-        // 9. 字庫管理與 Excel / JSON 管道
+        // 10. 字庫管理與 Excel / JSON 管道
         function loadSubsetsFromStorage() { try { const s = localStorage.getItem(SUBSET_STORAGE_KEY); if (s) userSubsets = JSON.parse(s); } catch(e){} populateSubsetSelectors(); }
         function saveSubsetsToStorage() { try { localStorage.setItem(SUBSET_STORAGE_KEY, JSON.stringify(userSubsets)); } catch(e){} populateSubsetSelectors(); }
         function populateSubsetSelectors() {
@@ -2180,7 +2467,6 @@
             }
         }
 
-        // 同步讀取 A 欄 (Word) 與 B 欄 (IPA) 並清空示範庫
         function handleExcelUpload(event) {
             const file = event.target.files[0]; if (!file) return;
             const reader = new FileReader();
@@ -2260,7 +2546,7 @@
             reader.readAsText(file);
         }
 
-        // 10. 44 國際音標圖表 (Vocabulary.com 真人女聲 + Google UK 輔助音源)
+        // 11. 44 國際音標圖表
         const ipaChartDataset = {
             vowels: [
                 { sym: 'iː', word: 'bean', audio: ipaAudioMap['iː'], src: 'Vocab' },
