@@ -179,6 +179,9 @@
                 <button onclick="selectNavTab('scramble')" id="btn-tab-scramble" class="nav-btn w-full text-left px-3 py-2 rounded-xl text-slate-700 bg-slate-50 flex items-center gap-2.5">
                     <span class="text-base shrink-0">✍️</span> <span data-i18n="nav_scramble">聽音拼字挑戰</span>
                 </button>
+                <button onclick="selectNavTab('mock-dictation')" id="btn-tab-mock-dictation" class="nav-btn w-full text-left px-3 py-2 rounded-xl text-slate-700 bg-slate-50 flex items-center gap-2.5">
+                    <span class="text-base shrink-0">📝</span> <span>模擬默書伴讀</span>
+                </button>
                 <button onclick="selectNavTab('extractor')" id="btn-tab-extractor" class="nav-btn w-full text-left px-3 py-2 rounded-xl text-slate-700 bg-slate-50 flex items-center gap-2.5">
                     <span class="text-base shrink-0">📝</span> <span data-i18n="nav_extractor">課文生字提取</span>
                 </button>
@@ -644,6 +647,199 @@
                 </div>
             </div>
 
+            <!-- 📝 模擬默書伴讀 (Mock Dictation) 模組 -->
+            <div id="view-mock-dictation" class="tab-content bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-7 shadow-xs border-2 border-slate-100 space-y-4">
+                
+                <!-- 階段一：設定面板 -->
+                <section id="dict-setup-card" class="space-y-4 max-w-xl mx-auto">
+                    <div class="space-y-1 pb-2 border-b border-slate-100 text-center sm:text-left">
+                        <h2 class="font-black text-lg sm:text-xl text-slate-900 flex items-center justify-center sm:justify-start gap-2">
+                            <span>📝</span> <span>模擬默書伴讀</span>
+                        </h2>
+                        <p class="text-xs text-slate-500 font-semibold">拿出真筆真紙，系統自動讀音並倒數停頓，完全模擬學校默書流程。</p>
+                    </div>
+
+                    <!-- 1. 詞表選擇 (動態讀取 Subsets) -->
+                    <div class="space-y-1.5">
+                        <div class="flex justify-between items-center text-xs font-black text-slate-700 uppercase">
+                            <span>1. 選擇默書範圍：</span>
+                            <div class="flex gap-2 text-[11px]">
+                                <button onclick="selectAllDictSubsets(true)" class="text-blue-600 hover:underline">全選</button>
+                                <span class="text-slate-300">|</span>
+                                <button onclick="selectAllDictSubsets(false)" class="text-slate-500 hover:underline">重設</button>
+                            </div>
+                        </div>
+                        <div id="dict-subsets-checkboxes" class="flex flex-wrap gap-2 max-h-28 overflow-y-auto p-1 bg-slate-50 rounded-2xl border border-slate-200"></div>
+                    </div>
+
+                    <!-- 2. 發音次數 -->
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-black text-slate-700 uppercase">2. 每個單字朗讀次數：</label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button onclick="setDictRepeatCount(1, this)" class="opt-btn-dict-repeat py-2 rounded-xl border-2 border-slate-200 bg-white text-xs font-black text-slate-700">1 次</button>
+                            <button onclick="setDictRepeatCount(2, this)" class="opt-btn-dict-repeat py-2 rounded-xl border-2 border-indigo-600 bg-indigo-600 text-xs font-black text-white shadow-xs">2 次 (推薦)</button>
+                            <button onclick="setDictRepeatCount(3, this)" class="opt-btn-dict-repeat py-2 rounded-xl border-2 border-slate-200 bg-white text-xs font-black text-slate-700">3 次</button>
+                        </div>
+                    </div>
+
+                    <!-- 3. 書寫停頓時間 (包含自訂秒數) -->
+                    <div class="space-y-1.5">
+                        <div class="flex justify-between items-center">
+                            <label class="block text-xs font-black text-slate-700 uppercase">3. 讀完後的書寫停頓時間：</label>
+                            <span id="dict-interval-label" class="text-[11px] text-indigo-600 font-black">目前：10 秒</span>
+                        </div>
+                        <div class="grid grid-cols-5 gap-1.5">
+                            <button onclick="setDictIntervalSec(6, this)" class="opt-btn-dict-interval py-2 rounded-xl border-2 border-slate-200 bg-white text-xs font-black text-slate-700">6s</button>
+                            <button onclick="setDictIntervalSec(10, this)" class="opt-btn-dict-interval py-2 rounded-xl border-2 border-indigo-600 bg-indigo-600 text-xs font-black text-white shadow-xs">10s (推)</button>
+                            <button onclick="setDictIntervalSec(15, this)" class="opt-btn-dict-interval py-2 rounded-xl border-2 border-slate-200 bg-white text-xs font-black text-slate-700">15s</button>
+                            <button onclick="setDictIntervalSec(0, this)" class="opt-btn-dict-interval py-2 rounded-xl border-2 border-slate-200 bg-white text-xs font-black text-slate-700">手動</button>
+                            <button onclick="openDictCustomIntervalInput(this)" id="btn-dict-custom-interval" class="opt-btn-dict-interval py-2 rounded-xl border-2 border-amber-200 bg-amber-50 text-xs font-black text-amber-800">自訂 ✎</button>
+                        </div>
+                        <div id="dict-custom-interval-wrap" class="hidden flex items-center gap-2 pt-1">
+                            <span class="text-xs font-bold text-slate-600">設定停頓秒數：</span>
+                            <input type="number" id="input-dict-custom-interval" min="3" max="60" value="12" class="w-20 px-3 py-1.5 border-2 border-indigo-300 rounded-xl text-xs font-black text-center focus:outline-none focus:border-indigo-600">
+                            <span class="text-xs font-bold text-slate-500">秒</span>
+                            <button onclick="applyDictCustomInterval()" class="px-3 py-1.5 bg-indigo-600 text-white rounded-xl text-xs font-black">確定</button>
+                        </div>
+                    </div>
+
+                    <!-- 4. 順序與音節拆解提示開關 -->
+                    <div class="space-y-2 pt-1 border-t border-slate-100">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-black text-slate-700">🔀 朗讀順序：</span>
+                            <div class="flex gap-1.5">
+                                <button onclick="setDictShuffleMode(false, this)" class="opt-btn-dict-shuffle px-3 py-1.5 rounded-xl text-xs font-black border-2 border-indigo-600 bg-indigo-50 text-indigo-700">循序朗讀</button>
+                                <button onclick="setDictShuffleMode(true, this)" class="opt-btn-dict-shuffle px-3 py-1.5 rounded-xl text-xs font-bold border-2 border-slate-200 bg-white text-slate-600">隨機洗牌</button>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <span class="text-xs font-black text-slate-700 block">🧩 允許「音節拆解提示」按鈕：</span>
+                                <span class="text-[10px] text-slate-400 font-medium">關閉時完全模擬考試，不允許聽音節分解</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="chk-dict-allow-phonics-hint" checked class="sr-only peer">
+                                <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button onclick="startDictationSession()" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-2xl shadow-md text-base flex items-center justify-center gap-2 active:scale-98 transition-all">
+                        <span>🚀</span> <span>拿出真筆真紙，開始默書！</span>
+                    </button>
+                </section>
+
+                <!-- 階段二：默書進行舞台 (大按鈕 + 防偷看倒數) -->
+                <section id="dict-active-stage" class="hidden space-y-4 max-w-xl mx-auto text-center relative overflow-hidden">
+                    <div class="flex items-center justify-between pb-1 border-b border-slate-100">
+                        <span id="dict-progress-badge" class="px-3 py-1 rounded-xl bg-slate-100 text-slate-700 font-black text-xs">
+                            進度: 1 / 6
+                        </span>
+                        <div class="flex items-center gap-2">
+                            <span id="dict-phase-pill" class="px-3 py-1 rounded-full text-[11px] font-black bg-blue-50 text-blue-700 border border-blue-200 flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-blue-500 animate-ping"></span>
+                                <span id="dict-phase-text">正在朗讀 (1/2)</span>
+                            </span>
+                            <button onclick="abortDictationSession()" class="text-xs font-bold text-slate-400 hover:text-red-500 px-2 py-1">結束</button>
+                        </div>
+                    </div>
+
+                    <!-- 防偷看題號區 (大字體但緊湊) -->
+                    <div class="py-1 space-y-0.5">
+                        <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest">CURRENT QUESTION</div>
+                        <div id="dict-current-num" class="text-3xl sm:text-4xl font-black text-indigo-600 tracking-tight">第 1 題</div>
+                        <p id="dict-prompt-hint" class="text-xs font-bold text-slate-500 min-h-[1.25rem]">
+                            請專心聆聽並於紙上書寫...
+                        </p>
+                    </div>
+
+                    <!-- 視覺倒數進度條 -->
+                    <div class="space-y-1">
+                        <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden border border-slate-200 p-0.5">
+                            <div id="dict-countdown-bar" class="bg-indigo-600 h-1.5 rounded-full transition-all duration-100 ease-linear" style="width: 100%;"></div>
+                        </div>
+                        <div class="flex justify-between items-center text-[10px] font-bold text-slate-400 px-1">
+                            <span id="dict-status-indicator">倒數停頓中</span>
+                            <span id="dict-countdown-seconds">剩餘 10s</span>
+                        </div>
+                    </div>
+
+                    <!-- 加大按鈕群 (專為手指觸控設計) -->
+                    <div class="space-y-2.5 pt-1">
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <button onclick="manualRepeatDictWord()" class="py-4 bg-blue-50 hover:bg-blue-100 text-blue-800 border-2 border-blue-300 rounded-2xl font-black text-base flex items-center justify-center gap-2 active:scale-95 transition-all shadow-sm">
+                                <span class="text-2xl">🔊</span> <span>再讀一次</span>
+                            </button>
+                            <button onclick="manualSlowDictWord()" class="py-4 bg-amber-50 hover:bg-amber-100 text-amber-900 border-2 border-amber-300 rounded-2xl font-black text-base flex items-center justify-center gap-2 active:scale-95 transition-all shadow-sm">
+                                <span class="text-2xl">🐢</span> <span>0.5x 慢讀</span>
+                            </button>
+                        </div>
+
+                        <button id="btn-dict-phonics-hint" onclick="triggerDictPhonicsHint()" class="w-full py-3.5 bg-purple-50 hover:bg-purple-100 text-purple-800 border-2 border-purple-300 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 active:scale-95 transition-all shadow-sm">
+                            <span class="text-lg">🧩</span> <span>音節拆解提示 (0.5x 慢速分解音節結構)</span>
+                        </button>
+
+                        <div class="flex items-center gap-2.5 pt-1">
+                            <button id="btn-dict-pause" onclick="toggleDictPause()" class="flex-1 py-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-black rounded-2xl text-sm flex items-center justify-center gap-1.5 transition-all border border-slate-200">
+                                <span id="dict-pause-icon" class="text-lg">⏸️</span> <span id="dict-pause-text">暫停</span>
+                            </button>
+                            <button onclick="skipToNextDictWordManual()" class="flex-[2] py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-2xl text-base shadow-md flex items-center justify-center gap-2 active:scale-98 transition-all">
+                                <span>寫好咗，下一題</span> <span class="text-xl">⏭️</span>
+                            </button>
+                        </div>
+                    </div>
+                    <p class="text-[10px] text-slate-400 font-semibold pt-1">💡 快捷鍵：可按鍵盤「空白鍵 (Space)」重複聽音</p>
+                </section>
+
+                <!-- 階段三：自評核對清單 -->
+                <section id="dict-summary-stage" class="hidden space-y-4 max-w-xl mx-auto">
+                    <div class="text-center space-y-1 pb-2 border-b border-slate-100">
+                        <div class="text-3xl my-0.5">📑</div>
+                        <h2 class="font-black text-lg sm:text-xl text-slate-900">完成默寫！請核對答案</h2>
+                        <p class="text-xs text-slate-500 font-semibold">拿起實體紙本對照，預設全對，請點選按鈕切換錯題：</p>
+                    </div>
+
+                    <!-- 即時計分條 -->
+                    <div class="bg-slate-50 rounded-2xl p-3 border border-slate-200 flex items-center justify-between text-xs font-black">
+                        <div class="flex items-center gap-1 text-slate-600">
+                            <span>總題數:</span> <span id="dict-summary-total-count" class="text-slate-900">0</span>
+                        </div>
+                        <div class="flex items-center gap-1 text-emerald-600">
+                            <span>✓ 答對:</span> <span id="dict-summary-correct-count">0</span>
+                        </div>
+                        <div class="flex items-center gap-1 text-red-500">
+                            <span>✕ 答錯:</span> <span id="dict-summary-wrong-count">0</span>
+                        </div>
+                        <div class="bg-indigo-100 text-indigo-800 px-2.5 py-0.5 rounded-lg font-mono">
+                            準確率: <span id="dict-summary-accuracy-percent">100%</span>
+                        </div>
+                    </div>
+
+                    <!-- 逐題核對卡片 -->
+                    <div id="dict-self-check-list" class="space-y-2 max-h-[38vh] overflow-y-auto pr-1"></div>
+
+                    <!-- 結算操作區 -->
+                    <div class="space-y-2 pt-2 border-t border-slate-100">
+                        <button onclick="openParentEvaluationModal()" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-2xl text-sm flex items-center justify-center gap-2 shadow-xs active:scale-95 transition-all">
+                            <span>🏆</span> <span>完成核對並結算 (家長確認)</span>
+                        </button>
+                        <button id="btn-dict-practice-mistakes" onclick="launchDictMistakeChunkPractice()" class="hidden w-full py-3.5 bg-amber-500 hover:bg-amber-600 text-white font-black rounded-2xl text-xs sm:text-sm flex items-center justify-center gap-2 shadow-xs active:scale-95 transition-all">
+                            <span>🔧</span> <span>練習錯題 (直通音節字塊重組)</span>
+                        </button>
+                        <div class="flex gap-2">
+                            <button onclick="startDictationSession()" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-black rounded-xl text-xs flex items-center justify-center gap-1 transition-all">
+                                <span>🔄</span> <span>重新紙筆默一次</span>
+                            </button>
+                            <button onclick="backToDictationSetup()" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition-all">
+                                ⚙️ 更換詞表 / 設置
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+
             <div id="view-extractor" class="tab-content bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-xs border-2 border-slate-100 space-y-4">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-2 border-b border-slate-100">
                     <div>
@@ -903,6 +1099,44 @@
             </div>
         </div>
     </div> <!-- 💡 補回這個遺漏的 div 關閉標籤 -->
+
+    <!-- 家長核算與食物派發確認 Modal (模擬默書專屬) -->
+    <div id="parent-food-eval-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4 border border-indigo-100 text-center relative overflow-hidden">
+            <div id="eval-modal-badge" class="text-5xl my-1 animate-bounce">🍕</div>
+            <div class="space-y-1">
+                <h3 id="eval-modal-title" class="font-black text-xl text-slate-900">默寫結算完成！</h3>
+                <p id="eval-modal-stats" class="text-xs font-black text-indigo-600">答對 0 / 0 題 (100%)</p>
+            </div>
+
+            <!-- 家長決定是否給食物獎勵區域 -->
+            <div class="p-3.5 bg-slate-50 border-2 border-slate-200 rounded-2xl text-left space-y-2.5">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-black text-slate-700">獎勵食物計算：</span>
+                    <span id="eval-food-calc-badge" class="text-xs font-black text-amber-700 bg-amber-100 px-2 py-0.5 rounded-md">2 份食物</span>
+                </div>
+                <div id="eval-food-icons-preview" class="flex justify-center items-center gap-2 text-3xl min-h-[40px]"></div>
+                <p id="eval-food-sentence" class="text-[11px] font-bold text-slate-500 text-center"></p>
+
+                <div class="pt-2 border-t border-slate-200">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="chk-grant-pet-food" checked class="w-4 h-4 rounded text-indigo-600 accent-indigo-600">
+                        <span class="text-xs font-black text-slate-800">同意將本次食物餵給電子寵物</span>
+                    </label>
+                    <p class="text-[10px] text-slate-400 font-semibold pl-6">家長若為重複演練，可取消勾選不派發食物。</p>
+                </div>
+            </div>
+
+            <div class="space-y-2 pt-1">
+                <button onclick="confirmParentEvaluation()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl text-sm shadow-xs transition-colors">
+                    ✓ 確認並完成默書
+                </button>
+                <button onclick="closeParentEvaluationModal()" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-xl text-xs">
+                    返回核對清單
+                </button>
+            </div>
+        </div>
+    </div>
 
     <div id="cs-summary-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4 border border-emerald-100 text-center relative overflow-hidden">
@@ -1434,13 +1668,14 @@
         function selectNavTab(tid, resFC=false) {
             stopAllPlayback(); document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active')); document.getElementById(`btn-tab-${tid}`)?.classList.add('active');
             document.querySelectorAll('.tab-content').forEach(v=>v.classList.remove('active')); document.getElementById(`view-${tid}`)?.classList.add('active'); toggleNavMenu(false);
-            const ic={main:'🏠',dictionary:'📖',extractor:'📝',ipa:'📊',flashcard:'🎴',scramble:'✍️', 'chunk-scramble':'🧩', profile:'👤'}; const lbl=document.getElementById('nav-active-label'); if(lbl&&ic[tid]) lbl.innerText=ic[tid];
+            const ic={main:'🏠',dictionary:'📖',extractor:'📝',ipa:'📊',flashcard:'🎴',scramble:'✍️', 'chunk-scramble':'🧩', 'mock-dictation':'📝', profile:'👤'}; const lbl=document.getElementById('nav-active-label'); if(lbl&&ic[tid]) lbl.innerText=ic[tid];
             if(tid!=='main' && !resFC) document.getElementById('main-return-to-fc-bar')?.classList.add('hidden');
             if(tid==='ipa' && document.getElementById('grid-vowels').innerHTML==='') renderIPAChart();
             if(tid==='dictionary') renderDictionary();
             if(tid==='flashcard') { renderFlashcardSubsetSelectors(); if(!resFC) reloadFlashcards(); else renderCurrentFlashcard(); }
             if(tid==='scramble') renderScrambleSubsetSelectors();
             if(tid==='chunk-scramble') renderCSSubsetSelectors();
+            if(tid==='mock-dictation') renderDictSubsetSelectors();
             if(tid==='profile') { renderProfileAvatar(); }
             updateMenuPetStatusUI();
         }
@@ -2343,6 +2578,419 @@
         function openApiKeyModal() { showCustomModal({title:"⚙️ AI 設定", body:`<p class="text-xs">輸入 Gemini API Key 啟用極速辨識：</p><input type="password" id="m-gem-k" class="w-full p-2 border rounded-xl text-xs" value="${localStorage.getItem('gemini_api_key')||''}">`, actions:[{text:"取消", class:"px-4 py-2 bg-slate-100 rounded text-xs", onClick:closeCustomModal}, {text:"儲存", class:"px-4 py-2 bg-blue-600 text-white rounded text-xs font-black", onClick:()=>{const v=document.getElementById('m-gem-k')?.value.trim(); if(v)localStorage.setItem('gemini_api_key',v); else localStorage.removeItem('gemini_api_key'); closeCustomModal(); showToast("金鑰已更新");}}]}); }
         function exportSubsetsBackupFile() { const a=document.createElement('a'); a.href="data:text/json;charset=utf-8,"+encodeURIComponent(JSON.stringify(userSubsets,null,2)); a.download="phonics_backup.json"; document.body.appendChild(a); a.click(); a.remove(); }
         function importSubsetsBackupFile(ev) { const f=ev.target.files[0]; if(!f)return; const r=new FileReader(); r.onload=function(e){try{Object.assign(userSubsets, JSON.parse(e.target.result)); svSubs(); renderDictionary(); showToast("✓ 備份恢復成功", "success");}catch(er){showToast("備份格式錯誤", "error");}}; r.readAsText(f); }
+
+        // ====== 📝 模擬默書伴讀模組 (Mock Dictation Engine) ======
+        let dictConfig = { repeats: 2, interval: 10, shuffle: false, allowPhonicsHint: true };
+        let selDictSubsets = new Set(['__ALL__']);
+        let dictSessionWords = [], dictCurrentIdx = 0, isDictPaused = false;
+        let dictCountdownTimer = null, dictRemainingSec = 0;
+        let dictMarkingResults = [], dictCalculatedReward = null;
+
+        function playDingSound() {
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtx) return;
+                const ctx = new AudioCtx();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(1318.5, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.15);
+                gain.gain.setValueAtTime(0.4, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.55);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.55);
+            } catch (e) {
+                console.log("Ding error", e);
+            }
+        }
+
+        function renderDictSubsetSelectors() {
+            const c = document.getElementById('dict-subsets-checkboxes');
+            if (!c) return;
+            const all = [{ id: '__ALL__', name: '全部核心庫', count: Object.keys(customWordDatabase).length }, ...Object.values(userSubsets).map(s => ({ id: s.id, name: s.name, count: s.words.length }))];
+            c.innerHTML = all.map(s => `<label class="cursor-pointer text-xs font-bold px-3 py-1.5 rounded-xl border-2 flex items-center gap-1.5 ${selDictSubsets.has(s.id) ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-slate-700 border-slate-200'} transition-all"><input type="checkbox" ${selDictSubsets.has(s.id) ? 'checked' : ''} onchange="toggleDictSubset('${s.id}')" class="w-3.5 h-3.5 rounded accent-indigo-500"><span>📁 ${s.name} (${s.count})</span></label>`).join('');
+        }
+
+        function toggleDictSubset(id) {
+            if (selDictSubsets.has(id)) selDictSubsets.delete(id);
+            else selDictSubsets.add(id);
+            if (!selDictSubsets.size) selDictSubsets.add('__ALL__');
+            renderDictSubsetSelectors();
+        }
+
+        function selectAllDictSubsets(all) {
+            selDictSubsets.clear();
+            if (all) {
+                selDictSubsets.add('__ALL__');
+                Object.keys(userSubsets).forEach(id => selDictSubsets.add(id));
+            } else selDictSubsets.add('__ALL__');
+            renderDictSubsetSelectors();
+        }
+
+        function setDictRepeatCount(cnt, el) {
+            dictConfig.repeats = cnt;
+            document.querySelectorAll('.opt-btn-dict-repeat').forEach(b => b.className = "opt-btn-dict-repeat py-2 rounded-xl border-2 border-slate-200 bg-white text-xs font-black text-slate-700");
+            el.className = "opt-btn-dict-repeat py-2 rounded-xl border-2 border-indigo-600 bg-indigo-600 text-xs font-black text-white shadow-xs";
+        }
+
+        function setDictIntervalSec(sec, el) {
+            dictConfig.interval = sec;
+            document.getElementById('dict-custom-interval-wrap').classList.add('hidden');
+            document.querySelectorAll('.opt-btn-dict-interval').forEach(b => b.className = "opt-btn-dict-interval py-2 rounded-xl border-2 border-slate-200 bg-white text-xs font-black text-slate-700");
+            el.className = "opt-btn-dict-interval py-2 rounded-xl border-2 border-indigo-600 bg-indigo-600 text-xs font-black text-white shadow-xs";
+            document.getElementById('dict-interval-label').innerText = sec === 0 ? "目前：手動換題" : `目前：${sec} 秒`;
+        }
+
+        function openDictCustomIntervalInput(el) {
+            document.querySelectorAll('.opt-btn-dict-interval').forEach(b => b.className = "opt-btn-dict-interval py-2 rounded-xl border-2 border-slate-200 bg-white text-xs font-black text-slate-700");
+            el.className = "opt-btn-dict-interval py-2 rounded-xl border-2 border-amber-500 bg-amber-500 text-xs font-black text-white shadow-xs";
+            document.getElementById('dict-custom-interval-wrap').classList.remove('hidden');
+            document.getElementById('input-dict-custom-interval').focus();
+        }
+
+        function applyDictCustomInterval() {
+            const val = parseInt(document.getElementById('input-dict-custom-interval').value);
+            if (isNaN(val) || val < 3 || val > 60) {
+                showToast("請輸入 3 至 60 秒之間的數值", "warning");
+                return;
+            }
+            dictConfig.interval = val;
+            document.getElementById('dict-interval-label').innerText = `目前：自訂 ${val} 秒`;
+            document.getElementById('btn-dict-custom-interval').innerText = `自訂 ${val}s`;
+            document.getElementById('dict-custom-interval-wrap').classList.add('hidden');
+            showToast(`✓ 已設定停頓 ${val} 秒`, "success");
+        }
+
+        function setDictShuffleMode(shuf, el) {
+            dictConfig.shuffle = shuf;
+            document.querySelectorAll('.opt-btn-dict-shuffle').forEach(b => b.className = "opt-btn-dict-shuffle px-3 py-1.5 rounded-xl text-xs font-bold border-2 border-slate-200 bg-white text-slate-600");
+            el.className = "opt-btn-dict-shuffle px-3 py-1.5 rounded-xl text-xs font-black border-2 border-indigo-600 bg-indigo-50 text-indigo-700";
+        }
+
+        function startDictationSession() {
+            const st = new Set();
+            if (selDictSubsets.has('__ALL__')) Object.keys(customWordDatabase).forEach(w => st.add(w.toLowerCase()));
+            selDictSubsets.forEach(id => id !== '__ALL__' && userSubsets[id]?.words.forEach(w => st.add(w.toLowerCase())));
+            let cnd = Array.from(st);
+            if (!cnd.length) return showToast("清單中無單字可供默書！", "warning");
+
+            if (dictConfig.shuffle) {
+                for (let i = cnd.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [cnd[i], cnd[j]] = [cnd[j], cnd[i]];
+                }
+            }
+
+            dictSessionWords = cnd.map(w => customWordDatabase[w] || dWAuto(w));
+            dictConfig.allowPhonicsHint = document.getElementById('chk-dict-allow-phonics-hint').checked;
+            document.getElementById('btn-dict-phonics-hint').style.display = dictConfig.allowPhonicsHint ? 'flex' : 'none';
+
+            dictCurrentIdx = 0;
+            isDictPaused = false;
+            dictMarkingResults = dictSessionWords.map(e => ({ word: e.word, ipa: e.ipa, chunks: e.chunks, isCorrect: true }));
+
+            document.getElementById('dict-setup-card').classList.add('hidden');
+            document.getElementById('dict-summary-stage').classList.add('hidden');
+            document.getElementById('dict-active-stage').classList.remove('hidden');
+
+            loadCurrentDictationStep();
+        }
+
+        async function loadCurrentDictationStep() {
+            clearInterval(dictCountdownTimer);
+            if (dictCurrentIdx >= dictSessionWords.length) {
+                finishDictationSession();
+                return;
+            }
+
+            const cur = dictSessionWords[dictCurrentIdx];
+            document.getElementById('dict-current-num').innerText = `第 ${dictCurrentIdx + 1} 題`;
+            document.getElementById('dict-progress-badge').innerText = `進度: ${dictCurrentIdx + 1} / ${dictSessionWords.length}`;
+            document.getElementById('dict-prompt-hint').innerText = `請專心聆聽並於紙上書寫...`;
+
+            for (let r = 1; r <= dictConfig.repeats; r++) {
+                if (isDictPaused) await waitForDictResume();
+                updateDictPhasePill(true, `正在朗讀 (${r}/${dictConfig.repeats})`);
+                await playWholeWordAudioUK(cur.word, 1, activeSessionId, 1.0);
+                if (r < dictConfig.repeats) {
+                    await new Promise(res => setTimeout(res, 850));
+                }
+            }
+
+            updateDictPhasePill(false, `請在紙上書寫...`);
+            if (dictConfig.interval > 0) {
+                startDictCountdown(dictConfig.interval);
+            } else {
+                document.getElementById('dict-countdown-bar').style.width = '100%';
+                document.getElementById('dict-status-indicator').innerText = '等待手動換題';
+                document.getElementById('dict-countdown-seconds').innerText = '按「下一題」繼續';
+            }
+        }
+
+        function updateDictPhasePill(isReading, text) {
+            const pill = document.getElementById('dict-phase-pill');
+            const txt = document.getElementById('dict-phase-text');
+            if (txt) txt.innerText = text;
+            if (pill) {
+                pill.className = isReading
+                    ? "px-3 py-1 rounded-full text-[11px] font-black bg-blue-50 text-blue-700 border border-blue-200 flex items-center gap-1.5"
+                    : "px-3 py-1 rounded-full text-[11px] font-black bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1.5";
+            }
+        }
+
+        function startDictCountdown(totalSec) {
+            dictRemainingSec = totalSec;
+            const bar = document.getElementById('dict-countdown-bar');
+            const secLabel = document.getElementById('dict-countdown-seconds');
+            const statusLabel = document.getElementById('dict-status-indicator');
+
+            statusLabel.innerText = '倒數停頓中';
+            bar.style.width = '100%';
+            secLabel.innerText = `剩餘 ${dictRemainingSec}s`;
+
+            const stepMs = 100;
+            let elapsedMs = 0;
+            const totalMs = totalSec * 1000;
+
+            dictCountdownTimer = setInterval(() => {
+                if (isDictPaused) return;
+
+                elapsedMs += stepMs;
+                const progressPct = Math.max(0, 100 - (elapsedMs / totalMs) * 100);
+                bar.style.width = `${progressPct}%`;
+
+                const leftSec = Math.ceil((totalMs - elapsedMs) / 1000);
+                secLabel.innerText = `剩餘 ${Math.max(0, leftSec)}s`;
+
+                if (elapsedMs >= totalMs) {
+                    clearInterval(dictCountdownTimer);
+                    playDingSound();
+                    dictCurrentIdx++;
+                    setTimeout(() => {
+                        loadCurrentDictationStep();
+                    }, 400);
+                }
+            }, stepMs);
+        }
+
+        function manualRepeatDictWord() {
+            const cur = dictSessionWords[dictCurrentIdx];
+            if (!cur) return;
+            playWholeWordAudioUK(cur.word, 1, activeSessionId, 1.0);
+        }
+
+        function manualSlowDictWord() {
+            const cur = dictSessionWords[dictCurrentIdx];
+            if (!cur) return;
+            playWholeWordAudioUK(cur.word, 1, activeSessionId, 0.5);
+        }
+
+        async function triggerDictPhonicsHint() {
+            const cur = dictSessionWords[dictCurrentIdx];
+            if (!cur || !cur.chunks) return;
+
+            document.getElementById('dict-prompt-hint').innerHTML = `💡 音節拆解提示中... 請注意聽發音分段！`;
+            activeSessionId++;
+            const s = activeSessionId;
+            for (let chunk of cur.chunks) {
+                if (s !== activeSessionId) break;
+                await pStepA(chunk, 3, s, false);
+                await new Promise(r => setTimeout(r, 280));
+            }
+            document.getElementById('dict-prompt-hint').innerText = `請專心聆聽並於紙上書寫...`;
+        }
+
+        function toggleDictPause() {
+            isDictPaused = !isDictPaused;
+            const btn = document.getElementById('btn-dict-pause');
+            const icon = document.getElementById('dict-pause-icon');
+            const txt = document.getElementById('dict-pause-text');
+
+            if (isDictPaused) {
+                icon.innerText = '▶️';
+                txt.innerText = '繼續';
+                btn.className = "flex-1 py-4 bg-amber-100 hover:bg-amber-200 text-amber-900 font-black rounded-2xl text-sm flex items-center justify-center gap-1.5 border border-amber-300";
+            } else {
+                icon.innerText = '⏸️';
+                txt.innerText = '暫停';
+                btn.className = "flex-1 py-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-black rounded-2xl text-sm flex items-center justify-center gap-1.5 border border-slate-200";
+            }
+        }
+
+        function waitForDictResume() {
+            return new Promise(resolve => {
+                const check = setInterval(() => {
+                    if (!isDictPaused) {
+                        clearInterval(check);
+                        resolve();
+                    }
+                }, 100);
+            });
+        }
+
+        function skipToNextDictWordManual() {
+            clearInterval(dictCountdownTimer);
+            playDingSound();
+            dictCurrentIdx++;
+            setTimeout(() => {
+                loadCurrentDictationStep();
+            }, 300);
+        }
+
+        function abortDictationSession() {
+            clearInterval(dictCountdownTimer);
+            stopAllPlayback();
+            document.getElementById('dict-active-stage').classList.add('hidden');
+            document.getElementById('dict-setup-card').classList.remove('hidden');
+        }
+
+        function finishDictationSession() {
+            document.getElementById('dict-active-stage').classList.add('hidden');
+            document.getElementById('dict-summary-stage').classList.remove('hidden');
+            renderDictSelfCheckList();
+            updateDictMarkingStats();
+        }
+
+        function renderDictSelfCheckList() {
+            const container = document.getElementById('dict-self-check-list');
+            container.innerHTML = dictMarkingResults.map((item, idx) => {
+                const statusBorder = item.isCorrect ? 'border-slate-200 bg-white' : 'border-red-200 bg-red-50/60';
+                return `
+                <div class="flex items-center justify-between p-3 rounded-2xl border-2 ${statusBorder} transition-all">
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-6 h-6 rounded-full bg-slate-100 text-slate-600 font-black text-xs flex items-center justify-center">
+                            ${idx + 1}
+                        </span>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="font-black text-base text-slate-900">${item.word}</span>
+                                <button onclick="playWholeWordAudioUK('${item.word}', 1, activeSessionId, 1.0)" class="text-xs text-blue-600 hover:text-blue-800">🔊</button>
+                            </div>
+                            <span class="text-[11px] font-mono text-slate-400">${item.ipa}</span>
+                        </div>
+                    </div>
+                    <div class="flex gap-1.5">
+                        <button onclick="markDictWordResult(${idx}, true)" class="px-3.5 py-2 rounded-xl font-black text-xs transition-all ${item.isCorrect ? 'bg-emerald-600 text-white shadow-2xs' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'}">
+                            ✓ 對
+                        </button>
+                        <button onclick="markDictWordResult(${idx}, false)" class="px-3.5 py-2 rounded-xl font-black text-xs transition-all ${!item.isCorrect ? 'bg-red-500 text-white shadow-2xs' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'}">
+                            ✕ 錯
+                        </button>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function markDictWordResult(idx, isCorrect) {
+            dictMarkingResults[idx].isCorrect = isCorrect;
+            renderDictSelfCheckList();
+            updateDictMarkingStats();
+        }
+
+        function updateDictMarkingStats() {
+            const total = dictMarkingResults.length;
+            const correct = dictMarkingResults.filter(r => r.isCorrect).length;
+            const wrong = total - correct;
+            const pct = Math.round((correct / total) * 100);
+
+            document.getElementById('dict-summary-total-count').innerText = total;
+            document.getElementById('dict-summary-correct-count').innerText = correct;
+            document.getElementById('dict-summary-wrong-count').innerText = wrong;
+            document.getElementById('dict-summary-accuracy-percent').innerText = `${pct}%`;
+
+            const btnMistake = document.getElementById('btn-dict-practice-mistakes');
+            if (wrong > 0) {
+                btnMistake.classList.remove('hidden');
+                btnMistake.innerHTML = `<span>🔧</span> <span>練習錯題 (${wrong} 字・直通音節重組)</span>`;
+            } else {
+                btnMistake.classList.add('hidden');
+            }
+        }
+
+        function openParentEvaluationModal() {
+            const total = dictMarkingResults.length;
+            const correct = dictMarkingResults.filter(r => r.isCorrect).length;
+            const pct = Math.round((correct / total) * 100);
+
+            let earned = 0;
+            if (pct === 100) earned = 2;
+            else if (pct >= 80) earned = 1;
+            else if (pct >= 60) earned = 0.5;
+
+            const foods = [];
+            const names = [];
+            const count = Math.ceil(earned);
+
+            for (let i = 0; i < count; i++) {
+                const idx = Math.floor(Math.random() * FOOD_DATABASE.length);
+                const isHalf = (earned === 0.5 && i === 0);
+                foods.push({ emoji: FOOD_DATABASE[idx], isHalf });
+                names.push((isHalf ? '半份' : '一份') + FOOD_NAMES_ZH[idx]);
+            }
+
+            dictCalculatedReward = { earned, foods, names, pct };
+
+            document.getElementById('eval-modal-stats').innerText = `答對 ${correct} / ${total} 題 (${pct}%)`;
+            const badge = document.getElementById('eval-food-calc-badge');
+            const iconsWrap = document.getElementById('eval-food-icons-preview');
+            const sentence = document.getElementById('eval-food-sentence');
+
+            if (earned > 0) {
+                badge.innerText = `${earned} 份食物`;
+                badge.className = "text-xs font-black text-amber-700 bg-amber-100 px-2 py-0.5 rounded-md";
+                sentence.innerText = `本次成績表現可獲得：${names.join(' 和 ')}`;
+                iconsWrap.innerHTML = foods.map(f => {
+                    if (f.isHalf) return `<span class="half-food text-3xl" data-icon="${f.emoji}">${f.emoji}</span>`;
+                    return `<span class="text-3xl">${f.emoji}</span>`;
+                }).join('');
+                document.getElementById('chk-grant-pet-food').checked = true;
+            } else {
+                badge.innerText = "0 份食物 (未達 60%)";
+                badge.className = "text-xs font-black text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md";
+                sentence.innerText = "準確率未達 60%，建議帶孩子先進行錯題音節練習！";
+                iconsWrap.innerHTML = `<span class="text-3xl opacity-40">🌧️</span>`;
+                document.getElementById('chk-grant-pet-food').checked = false;
+            }
+
+            document.getElementById('parent-food-eval-modal').classList.remove('hidden');
+        }
+
+        function closeParentEvaluationModal() {
+            document.getElementById('parent-food-eval-modal').classList.add('hidden');
+        }
+
+        function confirmParentEvaluation() {
+            const willGrant = document.getElementById('chk-grant-pet-food').checked;
+            if (willGrant && dictCalculatedReward && dictCalculatedReward.earned > 0) {
+                const oldScore = getHungerScore();
+                const newScore = Math.min(6, oldScore + dictCalculatedReward.earned);
+                localStorage.setItem('phonics_hunger_score', newScore);
+                localStorage.setItem('phonics_last_fed_time', Date.now());
+                updateMenuPetStatusUI();
+                showToast(`🎉 家長已派發食物！寵物飽足度提升至 ${newScore}/6`, "success");
+            } else {
+                showToast("✓ 已完成默書紀錄 (本次不派發食物)", "info");
+            }
+
+            closeParentEvaluationModal();
+            backToDictationSetup();
+        }
+
+        function launchDictMistakeChunkPractice() {
+            const wrongWords = dictMarkingResults.filter(r => !r.isCorrect).map(r => r.word);
+            if (!wrongWords.length) return;
+            setCSDifficulty('hard');
+            startChunkScramble(wrongWords, false);
+        }
+
+        function backToDictationSetup() {
+            document.getElementById('dict-summary-stage').classList.add('hidden');
+            document.getElementById('dict-setup-card').classList.remove('hidden');
+        }
 
         async function initDB() { try{ const r=await fetch('./words.json?v='+Date.now(), {cache:'no-store'}); if(r.ok){ const rm=await r.json(); if(rm && typeof rm==='object'){ Object.keys(customWordDatabase).forEach(k=>delete customWordDatabase[k]); Object.assign(customWordDatabase, rm); document.getElementById('recommended-words-bar').innerHTML='<span class="shrink-0 text-slate-400">已套用自訂詞庫</span>'; } } }catch(e){} renderDictionary(); pSubSel(); processWord(); }
         window.addEventListener('load', ()=>{ ldSubs(); initDB(); renderProfileAvatar(); updateMenuPetStatusUI(); try{setLanguage(localStorage.getItem('phonics_lang_pref')||'zh_HK'); setTheme(localStorage.getItem('phonics_theme_pref')||'default');}catch(e){} });
