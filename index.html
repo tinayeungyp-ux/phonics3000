@@ -12,6 +12,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <!-- 引入 SortableJS 實現極致流暢的拖曳體驗 -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Nunito', sans-serif; background-color: #f8fafc; -webkit-tap-highlight-color: transparent; }
@@ -32,13 +34,14 @@
         .header-shrink { padding-top: 0.375rem !important; padding-bottom: 0.375rem !important; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
         .title-shrink { font-size: 1.25rem !important; }
         .phonics-token { display: inline-block; transition: all 0.15s ease; }
+        
         .phonics-vowel { font-weight: 900; }
         .phonics-onset, .phonics-coda { font-weight: 800; }
         .phonics-silent { opacity: 0.65; text-decoration: line-through; }
-        [data-theme="default"] .phonics-vowel.is-active { color: #ef4444; }
-        [data-theme="default"] .phonics-coda.is-active { color: #9333ea; }
-        [data-theme="default"] .phonics-onset.is-active { color: #059669; }
-        [data-theme="default"] .phonics-silent { color: #94a3b8; }
+        [data-theme="default"] .phonics-vowel.is-active { color: #ef4444; } /* Red */
+        [data-theme="default"] .phonics-coda.is-active { color: #9333ea; } /* Purple */
+        [data-theme="default"] .phonics-onset.is-active { color: #059669; } /* Green */
+        [data-theme="default"] .phonics-silent { color: #94a3b8; } /* Gray */
         [data-theme="default"] .phonics-token:not(.is-active):not(.phonics-silent) { color: #1e293b; }
         
         [data-theme="colorblind"] .phonics-onset.is-active { color: #059669; border-bottom: 2.5px solid #059669; padding-bottom: 1px; }
@@ -48,6 +51,7 @@
         [data-theme="colorblind"] .phonics-vowel:not(.is-active):not(.phonics-silent) { color: #1e293b; border-bottom: 2px double #cbd5e1; }
         [data-theme="colorblind"] .phonics-coda:not(.is-active):not(.phonics-silent) { color: #1e293b; border-bottom: 1.5px dashed #cbd5e1; }
         [data-theme="colorblind"] .phonics-silent { color: #64748b; }
+        
         [data-theme="grayscale"] body, [data-theme="grayscale"] main, [data-theme="grayscale"] header,
         [data-theme="grayscale"] aside, [data-theme="grayscale"] .bg-white, [data-theme="grayscale"] .bg-slate-50,
         [data-theme="grayscale"] .bg-slate-100, [data-theme="grayscale"] .bg-blue-50, [data-theme="grayscale"] .bg-indigo-50,
@@ -81,21 +85,17 @@
         .scramble-key-btn { width: clamp(26px, 7.5vw, 36px); height: clamp(34px, 8.5vw, 42px); background-color: #fff; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 800; font-size: clamp(12px, 3.2vw, 15px); color: #334155; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
         .scramble-key-btn:active { background-color: #e2e8f0; transform: translateY(1px); }
         .four-line-grid { background-color: #fff; background-image: linear-gradient(#f1f5f9 1px, transparent 1px), linear-gradient(#cbd5e1 1px, transparent 1px), linear-gradient(#f87171 1px, transparent 1px), linear-gradient(#cbd5e1 1px, transparent 1px); background-size: 100% 70px; background-position: 0 10px, 0 28px, 0 46px, 0 64px; }
+        
         @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }
         .animate-shake { animation: shake 0.35s ease-in-out; }
-        
         @keyframes cheerBounce { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-9px) scale(1.06); } }
         .animate-cheer { animation: cheerBounce 0.9s infinite cubic-bezier(0.28, 0.84, 0.42, 1); }
-        
         @keyframes sadWobble { 0%, 100% { transform: rotate(0deg) translateY(0); } 25% { transform: rotate(-4deg) translateY(2px); } 75% { transform: rotate(4deg) translateY(2px); } }
         .animate-sad { animation: sadWobble 1.8s infinite ease-in-out; }
-
         @keyframes happySway { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-5px) rotate(4deg); } }
         .animate-happy-sway { animation: happySway 1.6s infinite ease-in-out; }
-        
         @keyframes twinkle { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.3; transform: scale(0.7); } }
         .animate-twinkle { animation: twinkle 1s infinite ease-in-out; }
-
         @keyframes orbit3d {
             0% { transform: translateX(0) scale(1); }
             25% { transform: translateX(35px) scale(0.75); }
@@ -104,27 +104,11 @@
             100% { transform: translateX(0) scale(1); }
         }
         .avatar-excited { animation: orbit3d 1.25s ease-in-out, cheerBounce 0.9s infinite cubic-bezier(0.28, 0.84, 0.42, 1) 1.25s; }
-
-        @keyframes crownDrop {
-            0% { transform: scale(4.5) translateY(-25px); opacity: 0; }
-            100% { transform: scale(1) translateY(0); opacity: 1; }
-        }
+        @keyframes crownDrop { 0% { transform: scale(4.5) translateY(-25px); opacity: 0; } 100% { transform: scale(1) translateY(0); opacity: 1; } }
         .prop-crown-excited { animation: crownDrop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 1.25s both; }
 
-        .half-food {
-            position: relative;
-            display: inline-block;
-            opacity: 0.4;
-        }
-        .half-food::after {
-            content: attr(data-icon);
-            position: absolute;
-            left: 0;
-            top: 0;
-            opacity: 1;
-            clip-path: inset(0 50% 0 0);
-            border-right: 2.5px dashed #dc2626;
-        }
+        .half-food { position: relative; display: inline-block; opacity: 0.4; }
+        .half-food::after { content: attr(data-icon); position: absolute; left: 0; top: 0; opacity: 1; clip-path: inset(0 50% 0 0); border-right: 2.5px dashed #dc2626; }
 
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
@@ -149,28 +133,31 @@
     <div id="nav-drawer-backdrop" onclick="toggleNavMenu(false)" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-40 hidden transition-opacity"></div>
     <aside id="nav-drawer" class="fixed top-0 right-0 h-full w-72 max-w-[80vw] bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out p-4 flex flex-col justify-between overflow-y-auto">
         <div class="space-y-3.5">
-            <!-- 🐾 側邊選單最頂部：寵物狀態卡片 (Tamagotchi Menu Card) -->
-            <div id="menu-pet-status-card" class="bg-white border-2 border-indigo-100 rounded-2xl p-3 text-center space-y-2 shadow-sm transition-colors relative overflow-hidden">
-                <div class="absolute inset-0 bg-gradient-to-b from-indigo-50/50 to-transparent pointer-events-none"></div>
-                <div class="relative w-20 h-20 mx-auto flex items-center justify-center">
+            
+            <!-- 🐾 側邊選單最頂部：寵物狀態卡片 -->
+            <div id="menu-pet-status-card" class="bg-white border-2 border-slate-100 rounded-2xl p-3 text-center space-y-2.5 shadow-sm transition-colors relative overflow-hidden">
+                <div class="absolute inset-0 bg-slate-50/50 pointer-events-none"></div>
+                <div class="relative w-20 h-20 mx-auto flex items-center justify-center mt-1">
                     <div id="menu-pet-badge" class="absolute -top-1 -right-1 z-20 text-2xl select-none animate-twinkle"></div>
-                    <div id="menu-pet-frame" class="relative w-16 h-16 rounded-full border-4 overflow-hidden bg-white shadow-sm flex items-center justify-center">
+                    <div id="menu-pet-frame" class="relative w-16 h-16 rounded-full border-[3.5px] overflow-hidden bg-white shadow-sm flex items-center justify-center transition-colors duration-300">
                         <img id="menu-pet-img" src="" class="w-full h-full object-cover hidden" alt="Pet Avatar">
                         <span id="menu-pet-default" class="text-3xl">🧒</span>
                     </div>
                 </div>
                 <div class="space-y-1 relative z-10">
-                    <div id="menu-pet-name" class="font-black text-base text-slate-900 truncate">我的寵物</div>
-                    <div id="menu-pet-mood-hunger" class="text-xs font-bold leading-tight space-y-0.5 flex flex-col items-center">
-                        <div id="menu-pet-mood" class="text-indigo-800">心情: 讀取中...</div>
+                    <div id="menu-pet-name" class="font-black text-[15px] text-slate-900 truncate">我的寵物</div>
+                    
+                    <!-- 雙行排版的狀態顯示區域 (動態變色) -->
+                    <div class="flex flex-col items-center justify-center gap-0.5 leading-tight">
+                        <div id="menu-pet-mood" class="text-[11px] font-black transition-colors duration-300">心情: 讀取中...</div>
                         <div class="flex items-center gap-1">
-                            <span id="menu-pet-hunger-label" class="text-indigo-800">飽足度: 讀取中...</span>
-                            <span id="menu-pet-hunger-value" class="font-black px-1.5 py-0.5 rounded-md text-[10px]"></span>
+                            <span id="menu-pet-hunger-label" class="text-[11px] font-black transition-colors duration-300">飽足度: 讀取中...</span>
+                            <span id="menu-pet-hunger-value" class="font-black transition-colors duration-300"></span>
                         </div>
                     </div>
                 </div>
-                <div id="menu-pet-tip" class="text-[10px] font-bold text-amber-700 bg-amber-50 p-2 rounded-xl border border-amber-200 hidden relative z-10">
-                    💡 去玩「聽音拼字挑戰」贏食物餵飽我啦！
+                <div id="menu-pet-tip" class="text-[10px] font-bold text-amber-700 bg-amber-50 p-2 rounded-xl border border-amber-200 hidden relative z-10 leading-snug">
+                    💡 去玩「聽音拼字挑戰」贏取食物餵飽 <span id="menu-pet-tip-name" class="font-black"></span> 啦！
                 </div>
             </div>
 
@@ -189,6 +176,9 @@
                 <button onclick="selectNavTab('flashcard')" id="btn-tab-flashcard" class="nav-btn w-full text-left px-3 py-2 rounded-xl text-slate-700 bg-slate-50 flex items-center gap-2.5">
                     <span class="text-base shrink-0">🎴</span> <span data-i18n="nav_flashcard">智能閃卡模式</span>
                 </button>
+                <button onclick="selectNavTab('chunk-scramble')" id="btn-tab-chunk-scramble" class="nav-btn w-full text-left px-3 py-2 rounded-xl text-slate-700 bg-slate-50 flex items-center gap-2.5">
+                    <span class="text-base shrink-0">🧩</span> <span>音節字塊重組</span>
+                </button>
                 <button onclick="selectNavTab('scramble')" id="btn-tab-scramble" class="nav-btn w-full text-left px-3 py-2 rounded-xl text-slate-700 bg-slate-50 flex items-center gap-2.5">
                     <span class="text-base shrink-0">✍️</span> <span data-i18n="nav_scramble">聽音拼字挑戰</span>
                 </button>
@@ -203,7 +193,7 @@
                 </button>
                 <div class="text-[11px] font-black text-slate-400 px-2.5 pt-1.5 uppercase tracking-wider" data-i18n="cat_account">帳號與設定</div>
                 <button onclick="selectNavTab('profile')" id="btn-tab-profile" class="nav-btn w-full text-left px-3 py-2 rounded-xl text-slate-700 bg-slate-50 flex items-center gap-2.5 border border-slate-200">
-                    <span class="text-base shrink-0">👤</span> <span data-i18n="nav_profile">會員專區與頭像設定</span>
+                    <span class="text-base shrink-0">👤</span> <span data-i18n="nav_profile">會員專區與設定</span>
                 </button>
             </div>
             <div class="pt-2 border-t border-slate-100 space-y-2.5">
@@ -234,7 +224,7 @@
             </div>
         </div>
         <div class="pt-3 border-t border-slate-100 text-center space-y-0.5">
-            <div class="text-[11px] font-black text-indigo-600">v5.0.7 · Auth UI & Tamagotchi ✓</div>
+            <div class="text-[11px] font-black text-indigo-600">v5.2.0 · Smart Extractor & UI ✓</div>
             <div class="text-[10px] font-bold text-slate-400">Phonics 3000 · Science of Reading</div>
         </div>
     </aside>
@@ -242,11 +232,12 @@
     <main class="flex-1 overflow-auto p-3.5 sm:p-6 md:p-8">
         <div class="max-w-4xl mx-auto space-y-4 sm:space-y-6">
 
+            <!-- 🏠 Main Engine Tab -->
             <div id="view-main" class="tab-content active space-y-4 sm:space-y-6">
-                <!-- 閃卡返回條 -->
+                <!-- Return to Flashcard Bar -->
                 <div id="main-return-to-fc-bar" class="hidden bg-gradient-to-r from-indigo-50 to-blue-50 border-2 border-indigo-200 rounded-2xl p-3 flex items-center justify-between shadow-xs">
                     <div class="flex items-center gap-2 text-xs font-black text-indigo-900">
-                        <span class="text-lg">🎴</span><span>正在深入拆解閃卡單字：<span id="return-fc-word-label" class="underline font-mono text-indigo-700"></span></span>
+                        <span class="text-lg">🎴</span><span>深入拆解閃卡單字：<span id="return-fc-word-label" class="underline font-mono text-indigo-700"></span></span>
                     </div>
                     <button onclick="returnToFlashcardSession()" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs rounded-xl shadow-xs flex items-center gap-1.5 transition-all">
                         <span>⬅️ 返回閃卡</span><span id="return-fc-progress-pill" class="bg-indigo-700/70 text-[10px] px-1.5 py-0.5 rounded font-mono"></span>
@@ -256,14 +247,19 @@
                 <div class="bg-white p-3.5 sm:p-4 rounded-2xl sm:rounded-3xl shadow-xs border-2 border-slate-100 space-y-2.5">
                     <div class="flex gap-2">
                         <div class="relative flex-1">
-                            <input type="text" id="word-input" class="w-full pl-3.5 pr-10 py-2.5 sm:py-3 border-2 border-slate-200 rounded-xl focus:border-blue-500 font-black text-base sm:text-lg bg-slate-50 focus:bg-white" placeholder="輸入單字直接拆解..." value="ambulance" onkeypress="if(event.key === 'Enter') processWord()">
+                            <input type="text" id="word-input" class="w-full pl-3.5 pr-10 py-2.5 sm:py-3 border-2 border-slate-200 rounded-xl focus:border-blue-500 font-black text-base sm:text-lg bg-slate-50 focus:bg-white" placeholder="輸入單字直接拆解..." value="complete" onkeypress="if(event.key === 'Enter') processWord()">
                             <button onclick="document.getElementById('word-input').value=''; document.getElementById('word-input').focus();" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 font-bold">✕</button>
                         </div>
                         <button onclick="processWord()" class="px-5 sm:px-7 py-2.5 sm:py-3 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl shadow-sm text-sm sm:text-base flex items-center gap-1.5">
                             <span>🔍</span><span data-i18n="btn_decompose">拆解</span>
                         </button>
                     </div>
-                    <div id="recommended-words-bar" class="flex items-center gap-1.5 overflow-x-auto text-[11px] font-bold text-slate-500 no-scrollbar"></div>
+                    <div id="recommended-words-bar" class="flex items-center gap-1.5 overflow-x-auto text-[11px] font-bold text-slate-500 no-scrollbar">
+                        <span class="shrink-0">熱門：</span>
+                        <button onclick="quickInputWord('ambulance')" class="shrink-0 px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded-lg">ambulance</button>
+                        <button onclick="quickInputWord('government')" class="shrink-0 px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded-lg">government</button>
+                        <button onclick="quickInputWord('knowledge')" class="shrink-0 px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded-lg">knowledge</button>
+                    </div>
                 </div>
 
                 <div class="bg-gradient-to-b from-blue-50/70 to-indigo-50/70 rounded-2xl sm:rounded-3xl p-5 sm:p-7 text-center border-2 border-blue-100 shadow-xs relative">
@@ -272,17 +268,14 @@
                             <span id="ipa-source-badge" class="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full border flex items-center gap-1 bg-emerald-50 text-emerald-700 border-emerald-200">
                                 <span>🟢</span> <span data-i18n="badge_builtin">內建標準庫</span>
                             </span>
-                            <span id="ipa-integrity-badge" class="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full border flex items-center gap-1 bg-emerald-50 text-emerald-700 border-emerald-200">
-                                <span>✓</span> <span data-i18n="badge_integrity">音節合拼 100% 吻合</span>
-                            </span>
                         </div>
                         <span id="display-syllable-count" class="text-xs font-bold text-slate-400"></span>
                     </div>
 
-                    <h1 id="display-word" class="fluid-word-title font-black text-slate-900 tracking-tight mb-1 select-text">ambulance</h1>
+                    <h1 id="display-word" class="fluid-word-title font-black text-slate-900 tracking-tight mb-1 select-text">complete</h1>
                     
                     <div class="flex items-center justify-center gap-2 sm:gap-3 flex-wrap mb-3">
-                        <div id="display-ipa" class="text-base sm:text-xl font-bold text-slate-700 font-mono bg-white inline-block px-3 sm:px-4 py-1 rounded-xl shadow-2xs border border-slate-200">/ˈæmbjələns/</div>
+                        <div id="display-ipa" class="text-base sm:text-xl font-bold text-slate-700 font-mono bg-white inline-block px-3 sm:px-4 py-1 rounded-xl shadow-2xs border border-slate-200">/kəmˈpliːt/</div>
                         <div class="flex items-center gap-1 bg-white p-1 rounded-2xl border border-slate-200 shadow-2xs">
                             <button onclick="triggerStep4TTS(1.0)" class="w-9 h-9 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-600 flex items-center justify-center transition-all" title="聆聽全字原音 (1.0x)">🔊</button>
                             <button onclick="triggerStep4TTS(0.5)" class="w-9 h-9 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-700 flex items-center justify-center transition-all text-lg font-bold" title="超慢速發音 (0.5x)">🐢</button>
@@ -346,7 +339,7 @@
             <div id="view-flashcard" class="tab-content bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-xs border-2 border-slate-100 space-y-4">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-slate-100">
                     <div>
-                        <h2 class="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2"><span>🎴</span> <span data-i18n="fc_heading">智能閃卡學習模式</span></h2>
+                        <h2 class="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2"><span>🎴</span> <span data-i18n="fc_heading">智能閃卡模式</span></h2>
                         <p class="text-slate-500 font-semibold text-xs sm:text-sm" data-i18n="fc_subheading">自由挑選自訂課文清單，專注字素與音節對齊發音。</p>
                     </div>
                     <div id="fc-progress-badge" class="bg-indigo-50 text-indigo-700 font-black px-3.5 py-1 rounded-xl text-xs sm:text-sm border border-indigo-200"></div>
@@ -401,10 +394,94 @@
                 </div>
             </div>
 
+            <!-- 🧩 音節字塊重組 (Chunk Scramble) 模組 -->
+            <div id="view-chunk-scramble" class="tab-content bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-xs border-2 border-slate-100 space-y-4">
+                <div class="flex justify-between items-center border-b border-slate-100 pb-2">
+                    <div>
+                        <h2 class="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2"><span>🧩</span> <span>音節字塊重組</span></h2>
+                        <p class="text-xs text-slate-500 font-semibold mt-0.5">依照發音結構 (頭音與韻部)，將打亂的字塊拼湊成完整的單字。</p>
+                    </div>
+                </div>
+                
+                <div id="cs-setup-box" class="max-w-xl mx-auto bg-slate-50 border-2 border-slate-200 rounded-3xl p-5 sm:p-7 space-y-4">
+                    <div class="space-y-2">
+                        <label class="block text-xs font-black text-slate-700 uppercase tracking-wider">選擇題庫清單範圍：</label>
+                        <div id="cs-subsets-checkboxes" class="flex flex-wrap gap-2 max-h-32 overflow-y-auto p-1"></div>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <label class="block text-xs font-black text-slate-700 uppercase tracking-wider">難度選擇：</label>
+                        <div class="flex gap-2">
+                            <button onclick="setCSDifficulty('easy', event)" class="cs-diff-btn flex-1 py-2 bg-emerald-600 text-white border-2 border-emerald-600 rounded-xl font-black text-xs transition-colors">🟢 簡單 (頭音 + 韻部)</button>
+                            <button onclick="setCSDifficulty('hard', event)" class="cs-diff-btn flex-1 py-2 bg-white border-2 border-slate-200 text-slate-700 rounded-xl font-black text-xs transition-colors">🔴 困難 (全組件拆解)</button>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-xs font-black text-slate-700 uppercase tracking-wider">挑戰題數：</label>
+                        <div class="flex gap-2 flex-wrap">
+                            <button onclick="setCSQuestionCount(5, event)" class="cs-count-btn px-4 py-2 bg-white border-2 border-slate-200 rounded-xl font-black text-xs text-slate-700">5 題</button>
+                            <button onclick="setCSQuestionCount(10, event)" class="cs-count-btn px-4 py-2 bg-emerald-600 text-white border-2 border-emerald-600 rounded-xl font-black text-xs">10 題</button>
+                            <button onclick="setCSQuestionCount(20, event)" class="cs-count-btn px-4 py-2 bg-white border-2 border-slate-200 rounded-xl font-black text-xs text-slate-700">20 題</button>
+                            <button onclick="setCSQuestionCount(999, event)" class="cs-count-btn px-4 py-2 bg-white border-2 border-slate-200 rounded-xl font-black text-xs text-slate-700">全部字詞</button>
+                        </div>
+                    </div>
+                    <div class="pt-3 border-t border-slate-200">
+                        <button onclick="startChunkScramble()" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-2xl shadow-sm text-base flex items-center justify-center gap-2 active:scale-98 transition-colors">
+                            <span>🚀</span> <span>開始重組練習</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="cs-game-arena" class="hidden max-w-xl mx-auto space-y-5">
+                    <div class="flex justify-between items-center">
+                        <span id="cs-progress" class="text-sm font-black text-slate-700"></span>
+                        <button onclick="quitChunkScramble()" class="text-xs font-bold text-slate-400 hover:text-red-500 px-2 py-1">結束練習</button>
+                    </div>
+                    
+                    <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                        <div id="cs-progress-fill" class="bg-emerald-600 h-2 rounded-full transition-all duration-300"></div>
+                    </div>
+
+                    <div class="bg-indigo-50/50 p-4 rounded-2xl border border-indigo-100 text-center space-y-2.5 relative">
+                        <div class="flex justify-center">
+                            <button onclick="playWholeWordAudioUK(csQs[csIdx], 1, activeSessionId, 1.0)" class="w-12 h-12 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl flex items-center justify-center text-xl shadow-md active:scale-95 transition-all">🔊</button>
+                        </div>
+                        <p id="cs-hint-def" class="text-xs font-semibold text-slate-600">聆聽發音並重組字塊</p>
+                        <div class="absolute top-2 right-2">
+                            <label class="flex items-center gap-1.5 cursor-pointer text-[11px] font-bold text-slate-500 bg-white border border-slate-200 px-2.5 py-1 rounded-lg hover:bg-slate-50 transition-colors">
+                                <input type="checkbox" id="cs-audio-toggle" class="w-3 h-3 accent-indigo-600">
+                                🎵 點擊字塊發音
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <!-- 拼裝區 (Slots) - 支援 SortableJS 拖曳 -->
+                        <div class="space-y-1.5">
+                            <div class="text-[11px] font-black text-slate-400 uppercase px-1">目標單字 (可長按拖曳排列)</div>
+                            <div id="cs-slots-container" class="min-h-[70px] p-2.5 bg-slate-100/70 rounded-2xl border-2 border-dashed border-slate-300 flex flex-wrap justify-center items-center gap-2"></div>
+                        </div>
+
+                        <!-- 選擇區 (Pool) -->
+                        <div class="space-y-1.5">
+                            <div class="text-[11px] font-black text-slate-400 uppercase px-1">點選下方字塊填入</div>
+                            <div id="cs-pool-container" class="min-h-[80px] p-2.5 flex flex-wrap justify-center items-center gap-2"></div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-2 pt-2 border-t border-slate-100">
+                        <button id="cs-check-btn" onclick="checkCSAnswer()" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl text-sm shadow-xs transition-colors">檢查答案</button>
+                        <button id="cs-next-btn" onclick="advanceCSQuestion()" class="hidden w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-xl text-sm shadow-xs transition-colors">下一題 ➡️</button>
+                        <div id="cs-feedback" class="text-center font-black text-sm h-6 flex items-center justify-center"></div>
+                    </div>
+                </div>
+            </div>
+
             <div id="view-scramble" class="tab-content bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-xs border-2 border-slate-100 space-y-4">
                 <div id="scramble-setup-box" class="max-w-xl mx-auto bg-slate-50 border-2 border-slate-200 rounded-3xl p-5 sm:p-7 space-y-4">
                     <div class="text-center space-y-1 pb-2 border-b border-slate-200">
-                        <h2 class="font-black text-lg sm:text-xl text-slate-900" data-i18n="scramble_heading">✍️ 聽音重組拼字挑戰</h2>
+                        <h2 class="font-black text-lg sm:text-xl text-slate-900" data-i18n="scramble_heading">✍️ 聽音拼字挑戰</h2>
                         <p class="text-xs text-slate-500" data-i18n="scramble_subheading">聆聽標準發音，透過字母瓷磚、四線格手寫或鍵盤拼出單字</p>
                     </div>
                     <div class="space-y-1.5">
@@ -474,7 +551,7 @@
                     </div>
                     <div class="bg-slate-50 rounded-2xl p-4 text-center border-2 border-slate-200 shadow-xs space-y-2.5">
                         <div class="flex items-center justify-between">
-                            <span class="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider" data-i18n="scramble_audio_hint">聽音重組 (Google UK)</span>
+                            <span class="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider" data-i18n="scramble_audio_hint">聽音拼寫 (Google UK)</span>
                             <span id="scramble-repeat-indicator" class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">播音 2 次</span>
                         </div>
                         <div class="flex justify-center items-center gap-2 sm:gap-3 flex-wrap">
@@ -491,7 +568,6 @@
                         </div>
                     </div>
 
-                    <!-- 三大輸入模式導航條 -->
                     <div class="flex items-center justify-between bg-slate-100 p-1.5 rounded-2xl border border-slate-200">
                         <span class="text-[11px] font-black text-slate-500 px-2" data-i18n="input_mode_label">輸入模式：</span>
                         <div class="flex gap-1 flex-1 justify-end">
@@ -688,7 +764,7 @@
 
             <div id="view-profile" class="tab-content bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-xs border-2 border-slate-100 space-y-5 max-w-xl mx-auto">
                 <div class="text-center space-y-1 pb-3 border-b border-slate-100">
-                    <h2 class="font-black text-lg text-slate-900" data-i18n="profile_heading">👤 會員專區與頭像設定</h2>
+                    <h2 class="font-black text-lg text-slate-900" data-i18n="profile_heading">👤 會員專區與設定</h2>
                     <p class="text-xs text-slate-500" data-i18n="profile_subheading">自訂專屬頭像、小寵物暱稱與激勵表情反應</p>
                 </div>
 
@@ -705,7 +781,7 @@
                         <div class="relative w-24 h-24 mx-auto sm:mx-0 shrink-0 flex items-center justify-center">
                             <div id="profile-avatar-aura" class="absolute inset-0 rounded-full transition-all duration-300"></div>
                             <div id="profile-prop-top" class="absolute -top-3.5 z-20 text-3xl select-none">☀️</div>
-                            <div id="profile-avatar-frame" class="relative w-20 h-20 rounded-full border-4 border-amber-400 overflow-hidden bg-white shadow-md flex items-center justify-center">
+                            <div id="profile-avatar-frame" class="relative w-20 h-20 rounded-full border-[3.5px] border-amber-400 overflow-hidden bg-white shadow-md flex items-center justify-center">
                                 <img id="profile-avatar-img" src="" class="w-full h-full object-cover hidden" alt="Student Avatar">
                                 <span id="profile-avatar-default" class="text-3xl">🧒</span>
                             </div>
@@ -715,7 +791,7 @@
                         <div class="space-y-2 flex-1 w-full">
                             <div>
                                 <label class="text-[11px] font-extrabold text-slate-600 block mb-1">🐾 寵物 / 小主人暱稱：</label>
-                                <input type="text" id="user-nickname-input" oninput="saveUserNickname(this.value)" placeholder="輸入寵物名字 (例如: Crystal237)" class="w-full px-3 py-2 border-2 border-slate-200 rounded-xl font-black text-xs sm:text-sm bg-white focus:border-indigo-500">
+                                <input type="text" id="user-nickname-input" oninput="saveUserNickname(this.value)" placeholder="輸入寵物名字 (例如: Crystal237)" class="w-full px-3 py-2 border-2 border-slate-200 rounded-xl font-black text-xs sm:text-sm bg-white focus:border-indigo-500 transition-colors">
                             </div>
                             <div class="flex gap-2 justify-center sm:justify-start flex-wrap">
                                 <label class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl text-xs shadow-xs cursor-pointer active:scale-95 flex items-center gap-1 transition-all">
@@ -723,23 +799,23 @@
                                     <input type="file" id="user-avatar-upload" accept="image/*" class="hidden" onchange="handleAvatarUpload(event)">
                                 </label>
                                 <button onclick="removeCustomAvatar()" class="px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-700 font-bold rounded-xl border border-slate-200 text-xs transition-all">
-                                    🧹 重設
+                                    🧹 重設頭像
                                 </button>
                             </div>
                         </div>
                     </div>
 
                     <div class="pt-2 border-t border-indigo-100 space-y-1.5">
-                        <span class="text-[11px] font-black text-slate-500 block">✨ 點選測試成績表情動畫：</span>
+                        <span class="text-[11px] font-black text-slate-500 block">✨ 點選測試成績表情動畫 (與側邊欄同步變更)：</span>
                         <div class="grid grid-cols-3 gap-1.5 text-xs">
-                            <button onclick="previewAvatarEmotion('excited')" class="py-1.5 px-2 rounded-xl font-black bg-white border border-indigo-200 hover:bg-amber-50 text-amber-900 flex items-center justify-center gap-1 shadow-2xs">
-                                <span>🏆</span> <span>100分</span>
+                            <button onclick="previewAvatarEmotion('excited')" class="py-1.5 px-2 rounded-xl font-black bg-white border border-indigo-200 hover:bg-amber-50 text-amber-900 flex items-center justify-center gap-1 shadow-2xs transition-colors">
+                                <span>☀️</span> <span>滿分狀態</span>
                             </button>
-                            <button onclick="previewAvatarEmotion('happy')" class="py-1.5 px-2 rounded-xl font-black bg-white border border-indigo-200 hover:bg-blue-50 text-blue-900 flex items-center justify-center gap-1 shadow-2xs">
-                                <span>😊</span> <span>80分</span>
+                            <button onclick="previewAvatarEmotion('happy')" class="py-1.5 px-2 rounded-xl font-black bg-white border border-indigo-200 hover:bg-blue-50 text-blue-900 flex items-center justify-center gap-1 shadow-2xs transition-colors">
+                                <span>😊</span> <span>開心愉快</span>
                             </button>
-                            <button onclick="previewAvatarEmotion('sad')" class="py-1.5 px-2 rounded-xl font-black bg-white border border-indigo-200 hover:bg-slate-100 text-slate-700 flex items-center justify-center gap-1 shadow-2xs">
-                                <span>🌧️</span> <span>&lt;60分</span>
+                            <button onclick="previewAvatarEmotion('sad')" class="py-1.5 px-2 rounded-xl font-black bg-white border border-indigo-200 hover:bg-slate-100 text-slate-700 flex items-center justify-center gap-1 shadow-2xs transition-colors">
+                                <span>🌧️</span> <span>好虛弱...</span>
                             </button>
                         </div>
                     </div>
@@ -772,8 +848,8 @@
             
             <div id="summary-avatar-stage" class="relative mx-auto w-28 h-28 my-1 flex items-center justify-center select-none">
                 <div id="summary-avatar-aura" class="absolute inset-0 rounded-full transition-all duration-500"></div>
-                <div id="summary-prop-top" class="absolute -top-3.5 z-20 text-4xl">☀️</div>
-                <div id="summary-avatar-frame" class="relative w-24 h-24 rounded-full border-4 overflow-hidden bg-slate-100 shadow-lg flex items-center justify-center">
+                <div id="summary-prop-top" class="absolute -top-3.5 z-20 text-4xl">👑</div>
+                <div id="summary-avatar-frame" class="relative w-24 h-24 rounded-full border-[3.5px] overflow-hidden bg-slate-100 shadow-lg flex items-center justify-center">
                     <img id="summary-avatar-img" src="" class="w-full h-full object-cover hidden" alt="Student Avatar">
                     <span id="summary-avatar-default" class="text-4xl">🧒</span>
                 </div>
@@ -806,14 +882,14 @@
             </div>
 
             <div class="space-y-2 pt-1">
-                <button onclick="restartScrambleQuiz()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl shadow-xs text-xs sm:text-sm flex items-center justify-center gap-1.5 active:scale-95">
+                <button onclick="restartScrambleQuiz()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl shadow-xs text-xs sm:text-sm flex items-center justify-center gap-1.5 active:scale-95 transition-colors">
                     <span>🔄</span> <span>再次挑戰同組題庫</span>
                 </button>
                 <div class="flex gap-2">
-                    <button onclick="closeScrambleSummaryModal(true)" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs">
+                    <button onclick="closeScrambleSummaryModal(true)" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition-colors">
                         ⚙️ 更換題庫
                     </button>
-                    <button onclick="quitScrambleToMainEngine()" class="flex-1 py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-black rounded-xl text-xs">
+                    <button onclick="quitScrambleToMainEngine()" class="flex-1 py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-black rounded-xl text-xs transition-colors">
                         🏠 回主頁
                     </button>
                 </div>
@@ -863,9 +939,6 @@
             updateSyllableDisplay(currentStepLevel); if (document.getElementById('view-flashcard')?.classList.contains('active')) renderCurrentFlashcard();
         }
 
-        // ==========================================
-        // 🐾 電子寵物餵食與暱稱狀態系統 (Tamagotchi)
-        // ==========================================
         const FOOD_DATABASE = [
             '🍕','🍣','🍜','🍰','🥩','🍔','🍟','🍗','🍩','🥞',
             '🌮','🍙','🥟','🍦','🌭','🥗','🥐','🧇','🍢','🍛',
@@ -893,8 +966,6 @@
         function getHungerScore() {
             const savedTime = localStorage.getItem('phonics_last_fed_time');
             let score = parseFloat(localStorage.getItem('phonics_hunger_score'));
-            
-            // 修改點：預設 0/6 (新玩家極度肚餓)
             if (isNaN(score)) score = 0; 
             
             if (!savedTime) {
@@ -902,12 +973,9 @@
                 localStorage.setItem('phonics_hunger_score', score);
                 return score;
             }
-            
             const now = Date.now();
             const diffMs = now - parseInt(savedTime);
             const hoursPassed = diffMs / (1000 * 60 * 60);
-            
-            // 每 4 小時自動減 1 格食物
             const foodsToDeduct = Math.floor(hoursPassed / 4); 
             
             if (foodsToDeduct > 0) {
@@ -921,8 +989,6 @@
 
         function calculateFoodReward(pct) {
             let earnedFoodCount = 0;
-            
-            // 修正獎勵邏輯：100分得 2 份, 80-99分得 1 份, 60-79分得半份(0.5)
             if (pct === 100) earnedFoodCount = 2;
             else if (pct >= 80) earnedFoodCount = 1;   
             else if (pct >= 60) earnedFoodCount = 0.5; 
@@ -936,8 +1002,6 @@
             const foods = [];
             const namesZh = [];
             const namesEn = [];
-            
-            // 計算視覺上需要抽取的食物數量 (0.5 需要抽 1 款展示為半透明)
             const displayCount = Math.ceil(actualEarned);
             
             for(let i=0; i<displayCount; i++) {
@@ -959,9 +1023,7 @@
             return { earned: actualEarned, foods: foods, namesZh: namesZh, namesEn: namesEn, currentScore: currentScore };
         }
 
-        // 🎨 0/6 至 6/6 狀態對應配置 (動態顏色與中英文雙語切換)
         function getPetStatusConfig(score) {
-            // 動態顏色邏輯：5-6綠色，2-4橙色，0-1紅色
             let borderColorClass = '';
             let textValueClass = '';
             
@@ -979,8 +1041,8 @@
             if (score >= 6) {
                 return {
                     borderColor: borderColorClass, textValueColor: textValueClass, badge: '☀️',
-                    moodZh: '元氣滿滿~！', hungerZh: '極度飽足',
-                    moodEn: 'Joyful / Ecstatic', hungerEn: 'Satiated'
+                    moodZh: '元氣滿滿！', hungerZh: '極度飽足',
+                    moodEn: 'Joyful', hungerEn: 'Satiated'
                 };
             } else if (score >= 5) {
                 return {
@@ -1034,22 +1096,30 @@
             const badgeEl = document.getElementById('menu-pet-badge');
             const frameEl = document.getElementById('menu-pet-frame');
             const tipEl = document.getElementById('menu-pet-tip');
+            const tipNameEl = document.getElementById('menu-pet-tip-name');
             const imgEl = document.getElementById('menu-pet-img');
             const defEl = document.getElementById('menu-pet-default');
 
             if (nameEl) nameEl.innerText = name;
             if (badgeEl) badgeEl.innerText = cfg.badge;
+            if (tipNameEl) tipNameEl.innerText = name;
             
-            if (moodEl) moodEl.innerText = isEn ? `Mood: ${cfg.moodEn}` : `心情: ${cfg.moodZh}`;
-            if (hungerLabelEl) hungerLabelEl.innerText = isEn ? `Hunger: ${cfg.hungerEn}` : `飽足度: ${cfg.hungerZh}`;
+            if (moodEl) {
+                moodEl.innerText = isEn ? `Mood: ${cfg.moodEn}` : `心情: ${cfg.moodZh}`;
+                moodEl.className = `text-[11px] font-black transition-colors duration-300 ${cfg.textValueColor.split(' ')[0]}`;
+            }
+            if (hungerLabelEl) {
+                hungerLabelEl.innerText = isEn ? `Hunger: ${cfg.hungerEn}` : `飽足度: ${cfg.hungerZh}`;
+                hungerLabelEl.className = `text-[11px] font-black transition-colors duration-300 ${cfg.textValueColor.split(' ')[0]}`;
+            }
             
             if (hungerValueEl) {
                 hungerValueEl.innerText = `(${score}/6)`;
-                hungerValueEl.className = `font-black px-1.5 py-0.5 rounded-md text-[10px] ${cfg.textValueColor}`;
+                hungerValueEl.className = `font-black px-1.5 py-0.5 rounded-md text-[10px] transition-colors duration-300 ${cfg.textValueColor}`;
             }
 
             if (frameEl) {
-                frameEl.className = `relative w-16 h-16 rounded-full border-4 overflow-hidden bg-white shadow-sm flex items-center justify-center ${cfg.borderColor}`;
+                frameEl.className = `relative w-16 h-16 rounded-full border-[3.5px] overflow-hidden bg-white shadow-sm flex items-center justify-center transition-colors duration-300 ${cfg.borderColor}`;
             }
 
             const sv = localStorage.getItem(USER_AVATAR_STORAGE_KEY);
@@ -1064,9 +1134,6 @@
             if (tipEl) {
                 if (score < 6) {
                     tipEl.classList.remove('hidden');
-                    tipEl.innerText = isEn ? 
-                        `💡 Play "Spelling Challenge" to feed ${name}!` : 
-                        `💡 去玩「聽音拼字挑戰」贏取食物餵飽 ${name} 啦！`;
                 } else {
                     tipEl.classList.add('hidden');
                 }
@@ -1147,6 +1214,7 @@
             if(role==='coda') return f ? {s:25, e:100, oMs:0} : {s:45, e:100, oMs:0}; return {s:0, e:100, oMs:0};
         }
         function preLoad(u) { return new Promise(r => { if(!u)return r(null); const a=new Audio(u); a.preload="auto"; if(a.readyState>=2) r(a); else{ a.onloadeddata=()=>r(a); a.onerror=()=>r(null); setTimeout(()=>r(a),500); } }); }
+        
         function pS(a, r, sid, oCb=null) {
             return new Promise(res => {
                 if(!a || sid!==activeSessionId){ if(oCb)oCb(); return res(); }
@@ -1178,38 +1246,44 @@
             for(let i=0; i<it.length; i++) { if(sid!==activeSessionId || !as[i]) continue; await new Promise(rNx=>{ let d=false; const tr=()=>{if(!d){d=true;rNx();}}; pS(as[i], it[i].rng, sid, i<it.length-1?tr:null).then(tr); }); }
         }
 
-        async function rSeq(stp) {
-            stopAllPlayback(); const s=activeSessionId; if(!currentAnalysis||!currentAnalysis.chunks.length)return;
-            document.getElementById(`step-btn-${stp}`)?.classList.add('playing');
-            for(let r=1; r<=2; r++) {
-                if(s!==activeSessionId) return; updateStatus(`Playing Step ${stp}...`, true);
-                for(let i=0; i<currentAnalysis.chunks.length; i++) {
-                    if(s!==activeSessionId) return; const c=document.getElementById(`chunk-card-${i}`); c?.classList.add('playing');
-                    await pStepA(currentAnalysis.chunks[i], stp, s); c?.classList.remove('playing');
-                    if(i<currentAnalysis.chunks.length-1) await new Promise(re=>setTimeout(re,450));
-                }
-                if(r===1) await new Promise(re=>setTimeout(re,650));
+        function extG(sy) {
+            if(!sy) return {oL:"", vL:"", cL:""};
+            let o=0, l=sy.toLowerCase();
+            if(l.startsWith("squ")) o=3; else if(l.startsWith("qu")) o=2;
+            let m = sy.substring(o).match(/[aeiou]+[yw]?/i);
+            if(!m) m = sy.substring(o).match(/y/i); 
+            if(m) {
+                let vs = o + m.index, vl = m[0].length;
+                return { oL: sy.substring(0, vs), vL: sy.substring(vs, vs + vl), cL: sy.substring(vs + vl) };
             }
-            if(s===activeSessionId){ clearVisualHighlights(); updateStatus('Ready'); }
+            return { oL: "", vL: sy, cL: "" };
         }
-        function triggerStep4TTS(sp=1.0) { stopAllPlayback(); document.getElementById('step-btn-4')?.classList.add('playing'); playWholeWordAudioUK(document.getElementById('display-word').innerText, 2, activeSessionId, sp); }
-        function triggerStep(stp) { updateSyllableDisplay(stp); if(stp<=3) rSeq(stp); else triggerStep4TTS(1.0); }
 
         function pT(c, idx, t, w) {
             const rl = c.letters||"", tk=[]; const sMap = new Map((c.silentTokens||[]).map(x=>[x.char.toLowerCase(), x.note]));
             let r=rl, pO=c.onsetLet||"", pV=c.vowelLet||"";
+            
+            if (!pO && pV === rl) {
+                const ext = extG(rl);
+                pO = ext.oL;
+                pV = ext.vL;
+            }
+
             if(pO && r.toLowerCase().startsWith(pO.toLowerCase())) { tk.push({c:r.slice(0,pO.length), t:"onset"}); r=r.slice(pO.length); }
             if(pV && r.toLowerCase().startsWith(pV.toLowerCase())) { tk.push({c:r.slice(0,pV.length), t:"vowel"}); r=r.slice(pV.length); }
+            
             if(r.length>0) {
-                const isME = r.toLowerCase().endsWith('e') && !pV.toLowerCase().endsWith('e') && c.vowel!=='i' && c.vowel!=='iː' && c.vowel!=='e';
+                const isME = r.toLowerCase().endsWith('e') && r.length >= 2 && !pV.toLowerCase().endsWith('e') && c.vowel!=='i' && c.vowel!=='iː' && c.vowel!=='e';
                 for(let i=0; i<r.length; i++) {
-                    const ch=r[i]; if(sMap.has(ch.toLowerCase())) tk.push({c:ch, t:"silent", note:sMap.get(ch.toLowerCase())});
+                    const ch=r[i];
+                    if(sMap.has(ch.toLowerCase())) tk.push({c:ch, t:"silent", note:sMap.get(ch.toLowerCase())});
                     else if(isME && i===r.length-1) tk.push({c:ch, t:"silent", note:"Magic e"});
                     else tk.push({c:ch, t:"coda"});
                 }
             }
             return tk;
         }
+
         function rTH(tk, st) {
             return tk.map(t=>{
                 if(t.t==='silent') return `<span class="phonics-token phonics-silent mx-[0.5px]">${t.c}</span>`;
@@ -1239,6 +1313,23 @@
                 </div>`;
             }).join('');
         }
+
+        async function rSeq(stp) {
+            stopAllPlayback(); const s=activeSessionId; if(!currentAnalysis||!currentAnalysis.chunks.length)return;
+            document.getElementById(`step-btn-${stp}`)?.classList.add('playing');
+            for(let r=1; r<=2; r++) {
+                if(s!==activeSessionId) return; updateStatus(`Playing Step ${stp}...`, true);
+                for(let i=0; i<currentAnalysis.chunks.length; i++) {
+                    if(s!==activeSessionId) return; const c=document.getElementById(`chunk-card-${i}`); c?.classList.add('playing');
+                    await pStepA(currentAnalysis.chunks[i], stp, s); c?.classList.remove('playing');
+                    if(i<currentAnalysis.chunks.length-1) await new Promise(re=>setTimeout(re,450));
+                }
+                if(r===1) await new Promise(re=>setTimeout(re,650));
+            }
+            if(s===activeSessionId){ clearVisualHighlights(); updateStatus('Ready'); }
+        }
+        function triggerStep4TTS(sp=1.0) { stopAllPlayback(); document.getElementById('step-btn-4')?.classList.add('playing'); playWholeWordAudioUK(document.getElementById('display-word').innerText, 2, activeSessionId, sp); }
+        function triggerStep(stp) { updateSyllableDisplay(stp); if(stp<=3) rSeq(stp); else triggerStep4TTS(1.0); }
         async function playIndividualChunk(idx) {
             stopAllPlayback(); const s=activeSessionId; if(!currentAnalysis||!currentAnalysis.chunks[idx]) return; const c=currentAnalysis.chunks[idx];
             if(document.getElementById('view-main').classList.contains('active')){ updateSyllableDisplay(3); document.getElementById(`chunk-card-${idx}`)?.classList.add('playing'); }
@@ -1341,7 +1432,7 @@
         }
 
         function processWord() {
-            const raw=document.getElementById('word-input').value.trim(), w=raw.toLowerCase()||"something"; stopAllPlayback();
+            const raw=document.getElementById('word-input').value.trim(), w=raw.toLowerCase()||"complete"; stopAllPlayback();
             currentAnalysis = customWordDatabase[w] ? JSON.parse(JSON.stringify(customWordDatabase[w])) : dWAuto(w);
             document.getElementById('display-word').innerText = currentAnalysis.word;
             document.getElementById('display-ipa').innerText = currentAnalysis.ipa;
@@ -1355,15 +1446,17 @@
         function clearVisualHighlights() { document.querySelectorAll('.chunk-card, .step-btn').forEach(b=>b.classList.remove('playing')); }
         function updateStatus(msg, isB=false) { const el=document.getElementById('play-status'); if(el) el.innerHTML = isB ? `<span class="animate-spin mr-1">⏳</span><span>${msg}</span>` : msg; }
         function toggleNavMenu(s) { document.getElementById('nav-drawer-backdrop')?.classList.toggle('hidden',!s); document.getElementById('nav-drawer')?.classList.toggle('translate-x-full',!s); updateMenuPetStatusUI(); }
+        
         function selectNavTab(tid, resFC=false) {
             stopAllPlayback(); document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active')); document.getElementById(`btn-tab-${tid}`)?.classList.add('active');
             document.querySelectorAll('.tab-content').forEach(v=>v.classList.remove('active')); document.getElementById(`view-${tid}`)?.classList.add('active'); toggleNavMenu(false);
-            const ic={main:'🏠',dictionary:'📖',extractor:'📝',ipa:'📊',flashcard:'🎴',scramble:'✍️',profile:'👤'}; const lbl=document.getElementById('nav-active-label'); if(lbl&&ic[tid]) lbl.innerText=ic[tid];
+            const ic={main:'🏠',dictionary:'📖',extractor:'📝',ipa:'📊',flashcard:'🎴',scramble:'✍️', 'chunk-scramble':'🧩', profile:'👤'}; const lbl=document.getElementById('nav-active-label'); if(lbl&&ic[tid]) lbl.innerText=ic[tid];
             if(tid!=='main' && !resFC) document.getElementById('main-return-to-fc-bar')?.classList.add('hidden');
             if(tid==='ipa' && document.getElementById('grid-vowels').innerHTML==='') renderIPAChart();
             if(tid==='dictionary') renderDictionary();
             if(tid==='flashcard') { renderFlashcardSubsetSelectors(); if(!resFC) reloadFlashcards(); else renderCurrentFlashcard(); }
             if(tid==='scramble') renderScrambleSubsetSelectors();
+            if(tid==='chunk-scramble') renderCSSubsetSelectors();
             if(tid==='profile') { renderProfileAvatar(); }
             updateMenuPetStatusUI();
         }
@@ -1402,207 +1495,259 @@
         let hwCanvas=null, hwCtx=null, isDwg=false, hwStks=0;
         let isQuestionLocked = false, autoCheckTimeout = null, hintGiven = false;
 
-        function renderScrambleSubsetSelectors() {
-            const c=document.getElementById('scramble-subsets-checkboxes'); if(!c)return;
-            const all=[{id:'__ALL__', name:'全部核心庫', count:Object.keys(customWordDatabase).length}, ...Object.values(userSubsets).map(s=>({id:s.id, name:s.name, count:s.words.length}))];
-            c.innerHTML=all.map(s=>`<label class="cursor-pointer text-xs font-bold px-3 py-1.5 rounded-xl border-2 flex items-center gap-1.5 ${selSSubsets.has(s.id)?'bg-blue-600 text-white border-blue-600':'bg-white text-slate-700 border-slate-200'}"><input type="checkbox" ${selSSubsets.has(s.id)?'checked':''} onchange="toggleScrambleSubset('${s.id}')" class="w-3.5 h-3.5 rounded accent-blue-500"><span>📁 ${s.name} (${s.count})</span></label>`).join('');
+        let csQs = [], csIdx = 0, csTargetWord = "";
+        let csSlots = [], csPool = [];
+        let selCSSubsets = new Set(['__ALL__']);
+        let csLimit = 10;
+        let csDifficulty = 'easy'; // 新增難度狀態變數
+        let csSortableInstance = null; // SortableJS 實例儲存變數
+
+        function renderCSSubsetSelectors() {
+            const c = document.getElementById('cs-subsets-checkboxes'); if(!c)return;
+            const all = [{id:'__ALL__', name:'全部核心庫', count:Object.keys(customWordDatabase).length}, ...Object.values(userSubsets).map(s=>({id:s.id, name:s.name, count:s.words.length}))];
+            c.innerHTML = all.map(s=>`<label class="cursor-pointer text-xs font-bold px-3 py-1.5 rounded-xl border-2 flex items-center gap-1.5 ${selCSSubsets.has(s.id)?'bg-emerald-600 text-white border-emerald-600':'bg-white text-slate-700 border-slate-200'} transition-colors"><input type="checkbox" ${selCSSubsets.has(s.id)?'checked':''} onchange="toggleCSSubset('${s.id}')" class="w-3.5 h-3.5 rounded accent-emerald-500"><span>📁 ${s.name} (${s.count})</span></label>`).join('');
         }
-        function toggleScrambleSubset(id) { if(selSSubsets.has(id))selSSubsets.delete(id); else selSSubsets.add(id); if(!selSSubsets.size)selSSubsets.add('__ALL__'); renderScrambleSubsetSelectors(); }
-        function setScrambleVoiceRepeats(n,e) { sVRep=n; document.querySelectorAll('.scramble-repeat-btn').forEach(b=>b.className="scramble-repeat-btn flex-1 py-2 bg-white border-2 border-slate-200 rounded-xl font-black text-xs text-slate-700"); e.currentTarget.className="scramble-repeat-btn flex-1 py-2 bg-blue-600 text-white border-2 border-blue-600 rounded-xl font-black text-xs"; }
-        function setScrambleTimer(s,e) { sTimerS=s; document.querySelectorAll('.scramble-timer-btn').forEach(b=>b.className="scramble-timer-btn py-2 bg-white border-2 border-slate-200 rounded-xl font-black text-xs text-slate-700"); e.currentTarget.className="scramble-timer-btn py-2 bg-blue-600 text-white border-2 border-blue-600 rounded-xl font-black text-xs"; }
-        function setScrambleQuestionCount(c,e) { sLimit=c; document.querySelectorAll('.scramble-count-btn').forEach(b=>b.className="scramble-count-btn px-4 py-2 bg-white border-2 border-slate-200 rounded-xl font-black text-xs text-slate-700"); e.currentTarget.className="scramble-count-btn px-4 py-2 bg-blue-600 text-white border-2 border-blue-600 rounded-xl font-black text-xs"; }
-        function setScrambleInputMode(m,e) { sInMode=m; document.querySelectorAll('.scramble-mode-pref-btn').forEach(b=>b.className="scramble-mode-pref-btn px-3 py-2 bg-white text-slate-700 border-2 border-slate-200 rounded-xl font-black text-xs flex flex-col items-center gap-1"); e.currentTarget.className="scramble-mode-pref-btn px-3 py-2 bg-blue-600 text-white border-2 border-blue-600 rounded-xl font-black text-xs flex flex-col items-center gap-1 shadow-xs"; }
+        function toggleCSSubset(id) { if(selCSSubsets.has(id))selCSSubsets.delete(id); else selCSSubsets.add(id); if(!selCSSubsets.size)selCSSubsets.add('__ALL__'); renderCSSubsetSelectors(); }
+        function setCSQuestionCount(c, e) { csLimit = c; document.querySelectorAll('.cs-count-btn').forEach(b=>b.className="cs-count-btn px-4 py-2 bg-white border-2 border-slate-200 rounded-xl font-black text-xs text-slate-700"); e.currentTarget.className="cs-count-btn px-4 py-2 bg-emerald-600 text-white border-2 border-emerald-600 rounded-xl font-black text-xs"; }
         
-        function startScrambleGame() {
-            const st=new Set(); if(selSSubsets.has('__ALL__')) Object.keys(customWordDatabase).forEach(w=>st.add(w.toLowerCase()));
-            selSSubsets.forEach(id=>id!=='__ALL__'&&userSubsets[id]?.words.forEach(w=>st.add(w.toLowerCase())));
-            let cnd=Array.from(st).filter(w=>w.length>=3 && /^[a-z]+$/i.test(w)); if(!cnd.length) return showToast("清單無有效單字", "warning");
+        function setCSDifficulty(lvl, e) {
+            csDifficulty = lvl;
+            document.querySelectorAll('.cs-diff-btn').forEach(b => b.className = "cs-diff-btn flex-1 py-2 bg-white border-2 border-slate-200 text-slate-700 rounded-xl font-black text-xs transition-colors");
+            const activeColor = lvl === 'easy' ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-red-500 text-white border-red-500';
+            e.currentTarget.className = `cs-diff-btn flex-1 py-2 ${activeColor} rounded-xl font-black text-xs transition-colors`;
+        }
+
+        // 💡 核心引擎綁定：呼叫 pT 函數將音節精準拆分為 [頭音] + [韻部] 或 全組件
+        function getEngineDerivedChunks(analysis) {
+            let result = [];
+            if(!analysis || !analysis.chunks) return result;
+            
+            analysis.chunks.forEach((c, idx) => {
+                // 直接使用主頁負責上色的 pT 函數取得所有 Token 的精確分類
+                const tokens = pT(c, idx, analysis.chunks.length, analysis.word);
+                
+                if (csDifficulty === 'easy') {
+                    // Level 1: 簡單模式 (頭音 + 韻部)
+                    let onsetPart = "";
+                    let rhymePart = ""; 
+
+                    tokens.forEach(tk => {
+                        if (tk.t === 'onset' && rhymePart === "") {
+                            onsetPart += tk.c;
+                        } else {
+                            rhymePart += tk.c;
+                        }
+                    });
+
+                    if (onsetPart) result.push(onsetPart);
+                    if (rhymePart) result.push(rhymePart);
+                } else {
+                    // Level 2: 困難模式 (全組件拆解)
+                    // 將相鄰且屬性相同的 Token 合併 (例如尾音 n 同 g 合併成 ng)
+                    if (tokens.length === 0) return;
+                    let currentType = tokens[0].t;
+                    let currentStr = tokens[0].c;
+                    
+                    for (let i = 1; i < tokens.length; i++) {
+                        if (tokens[i].t === currentType) {
+                            currentStr += tokens[i].c; // 屬性相同，痴埋一齊
+                        } else {
+                            result.push(currentStr); // 屬性改變，推入結果陣列
+                            currentType = tokens[i].t;
+                            currentStr = tokens[i].c;
+                        }
+                    }
+                    if (currentStr) result.push(currentStr);
+                }
+            });
+            return result;
+        }
+
+        function startChunkScramble() {
+            const st = new Set(); if(selCSSubsets.has('__ALL__')) Object.keys(customWordDatabase).forEach(w=>st.add(w.toLowerCase()));
+            selCSSubsets.forEach(id=>id!=='__ALL__'&&userSubsets[id]?.words.forEach(w=>st.add(w.toLowerCase())));
+            
+            let cnd = Array.from(st).filter(w => { 
+                const analysis = customWordDatabase[w] || dWAuto(w); 
+                // 只要主引擎能拆出兩塊(含)以上的 [頭音/韻部] 磚塊，就符合遊戲資格
+                return getEngineDerivedChunks(analysis).length > 1; 
+            }); 
+            
+            if(!cnd.length) { 
+                return showToast("清單中無可拆解的字詞供練習！", "warning"); 
+            }
             
             for(let i=cnd.length-1; i>0; i--){const j=Math.floor(Math.random()*(i+1)); [cnd[i],cnd[j]]=[cnd[j],cnd[i]];}
-            sQs = cnd.slice(0, Math.min(cnd.length, sLimit)); 
+            csQs = cnd.slice(0, Math.min(cnd.length, csLimit)); 
             
-            sIdx=0; sScore=0; sStreak=0; mStreak=0; isQuestionLocked=false;
-            document.getElementById('scramble-setup-box').classList.add('hidden'); document.getElementById('scramble-game-arena').classList.remove('hidden');
-            loadCurSQuestion();
-        }
-        function quitScrambleGame() {
-            clearInterval(sTimerIv); clearTimeout(autoCheckTimeout); isQuestionLocked=false;
-            document.getElementById('scramble-setup-box').classList.remove('hidden'); document.getElementById('scramble-game-arena').classList.add('hidden');
-        }
-        function loadCurSQuestion() {
-            clearInterval(sTimerIv); clearTimeout(autoCheckTimeout); isQuestionLocked=false; hintGiven=false; tWord=sQs[sIdx].toLowerCase(); tSlots=new Array(tWord.length).fill(null); curSlotIdx=0;
-            const ls=tWord.split(''); let sc=[...ls]; while(sc.join('')===tWord && ls.length>1) for(let i=sc.length-1; i>0; i--){const j=Math.floor(Math.random()*(i+1));[sc[i],sc[j]]=[sc[j],sc[i]];}
-            availTiles=sc.map((c,i)=>({id:`t_${i}`, letter:c, isUsed:false}));
-            document.getElementById('scramble-q-progress').innerText=`題目 ${sIdx+1} / ${sQs.length}`; document.getElementById('scramble-streak-badge').innerText=`🔥 連對: ${sStreak}`;
-            document.getElementById('scramble-progress-fill').style.width=`${((sIdx+1)/sQs.length)*100}%`;
-            document.getElementById('scramble-feedback').innerText=''; document.getElementById('scramble-feedback').className="text-center font-black text-xs sm:text-sm h-5 transition-all";
-            const e=customWordDatabase[tWord]||dWAuto(tWord); document.getElementById('scramble-pos-badge').innerText=e.pos||'word'; document.getElementById('scramble-hint-def').innerText=e.definition||'聆聽發音並拼出完整單字。';
-            switchActiveScrambleInputMode(sInMode); renderScrambleSlots(); renderScrambleTiles(); clearHandwritingCanvas(); updateHWStatus();
-            startSTimer(); setTimeout(()=>triggerScramblePlaySequence(1.0), 300);
-        }
-        function triggerScramblePlaySequence(sp=1.0) { if(tWord){ stopAllPlayback(); playWholeWordAudioUK(tWord, sVRep, activeSessionId, sp); } }
-        function startSTimer() {
-            const p=document.getElementById('scramble-timer-pill'), s=document.getElementById('scramble-timer-seconds');
-            if(sTimerS<=0){ p?.classList.add('hidden'); return; } p?.classList.remove('hidden'); let r=sTimerS; if(s)s.innerText=r;
-            sTimerIv=setInterval(()=>{
-                if(isQuestionLocked) return; r--; if(s)s.innerText=r;
-                if(r<=0) {
-                    clearInterval(sTimerIv); isQuestionLocked=true; const fb=document.getElementById('scramble-feedback');
-                    if(fb){fb.innerText=`⏱️ 時間到！正確答案: ${tWord.toUpperCase()}`; fb.className="text-center font-black text-xs sm:text-sm h-5 text-red-500 animate-shake";}
-                    sStreak=0; setTimeout(()=>advanceSQuestion(), 2000);
-                }
-            }, 1000);
-        }
-        function renderScrambleSlots() {
-            const c=document.getElementById('scramble-slots-container'); if(!c)return;
-            c.innerHTML=tSlots.map((s,i)=>{
-                const a = (i===curSlotIdx && sInMode==='keyboard');
-                if(s) return `<button onclick="handleSlotClick(${i})" class="scramble-box-slot rounded-md bg-white border-2 border-slate-700 text-slate-900 font-black text-xl flex items-center justify-center ${a?'ring-2 ring-blue-500':''}">${s.letter}</button>`;
-                return `<button onclick="handleSlotClick(${i})" class="scramble-box-slot rounded-md bg-white border-2 border-dashed border-slate-300 text-slate-300 font-mono text-base flex items-center justify-center ${a?'ring-2 ring-blue-500':''}">${a?'|':'_'}</button>`;
-            }).join(''); updateHWStatus();
-        }
-        function updateHWStatus() { document.getElementById('hw-filled-count-text').innerText=`${tSlots.filter(s=>s).length}/${tSlots.length}`; const e=tSlots.findIndex(s=>!s); document.getElementById('hw-next-slot-tip').innerText=(e===-1)?"✓ 已填滿":`從第 ${e+1} 格填起`; }
-        function handleSlotClick(i) { if(isQuestionLocked)return; curSlotIdx=i; if(sInMode==='keyboard')document.getElementById('scramble-hidden-keyboard-input')?.focus(); else rmSlot(i); renderScrambleSlots(); }
-        function renderScrambleTiles() { const c=document.getElementById('scramble-tiles-pool'); if(c) c.innerHTML=availTiles.map(t=>t.isUsed?`<div class="scramble-box-tile rounded-md bg-slate-100 border border-slate-200 text-slate-300 font-bold text-lg flex items-center justify-center opacity-30 select-none">${t.letter}</div>`:`<button onclick="plTile('${t.id}')" class="scramble-box-tile rounded-md bg-slate-50 hover:bg-blue-50 text-slate-800 font-black text-lg border-2 border-slate-300 flex items-center justify-center">${t.letter}</button>`).join(''); }
-        function plTile(id) {
-            if(isQuestionLocked)return; const t=availTiles.find(x=>x.id===id); if(!t||t.isUsed)return; const i=tSlots.findIndex(s=>!s); if(i===-1)return;
-            t.isUsed=true; tSlots[i]={tileId:t.id, letter:t.letter}; curSlotIdx=Math.min(tSlots.length-1, i+1); renderScrambleSlots(); renderScrambleTiles();
-            clearTimeout(autoCheckTimeout); if(!tSlots.includes(null)) autoCheckTimeout=setTimeout(()=>checkScrambleAnswer(), 200);
-        }
-        function rmSlot(i) { if(isQuestionLocked)return; const s=tSlots[i]; if(!s)return; const t=availTiles.find(x=>x.id===s.tileId); if(t)t.isUsed=false; tSlots[i]=null; curSlotIdx=i; renderScrambleSlots(); renderScrambleTiles(); }
-        function resetCurrentScrambleSlots() { if(isQuestionLocked)return; clearTimeout(autoCheckTimeout); tSlots.fill(null); availTiles.forEach(t=>t.isUsed=false); curSlotIdx=0; renderScrambleSlots(); renderScrambleTiles(); clearHandwritingCanvas(); document.getElementById('scramble-feedback').innerText=''; }
-
-        function isTwoLettersSwapped(a, b) {
-            if(!a || !b || a.length !== b.length) return false;
-            let diffs = [];
-            for(let i=0; i<a.length; i++) {
-                if(a[i] !== b[i]) diffs.push(i);
-            }
-            if(diffs.length === 2) {
-                let [i, j] = diffs;
-                return (a[i] === b[j] && a[j] === b[i]);
-            }
-            return false;
+            csIdx = 0;
+            document.getElementById('cs-setup-box').classList.add('hidden'); 
+            document.getElementById('cs-game-arena').classList.remove('hidden');
+            loadCurCSQuestion();
         }
 
-        function checkScrambleAnswer() {
-            if(isQuestionLocked)return; clearTimeout(autoCheckTimeout);
-            const cur = tSlots.map(s=>s?s.letter:'').join('').toLowerCase(); const fb = document.getElementById('scramble-feedback');
-            if(cur.length<tWord.length) { if(fb){fb.innerText="請填入全部字母！"; fb.className="text-center font-black text-xs sm:text-sm h-5 text-amber-600";} return; }
+        function loadCurCSQuestion() {
+            csTargetWord = csQs[csIdx].toLowerCase();
+            const analysis = customWordDatabase[csTargetWord] || dWAuto(csTargetWord);
             
-            if(cur===tWord) {
-                isQuestionLocked=true; clearInterval(sTimerIv); sScore+=10; sStreak++; if(sStreak>mStreak)mStreak=sStreak;
-                document.getElementById('scramble-streak-badge').innerText=`🔥 連對: ${sStreak}`;
-                if(fb){fb.innerText="🎉 太棒了，拼寫完全正確！"; fb.className="text-center font-black text-xs sm:text-sm h-5 text-emerald-600";}
-                setTimeout(()=>advanceSQuestion(), 1200);
-            } else {
-                const cEl=document.getElementById('scramble-slots-container'); cEl?.classList.remove('animate-shake'); void cEl?.offsetWidth; cEl?.classList.add('animate-shake');
-                if(isTwoLettersSwapped(cur, tWord) && !hintGiven) {
-                    hintGiven=true;
-                    if(fb){fb.innerText="💡 提示：有 2 個字母嘅位置調轉咗，仔細睇下再改！"; fb.className="text-center font-black text-xs sm:text-sm h-5 text-amber-600 animate-shake";}
+            // 使用新版綁定引擎的字塊擷取器
+            const rawChunks = getEngineDerivedChunks(analysis);
+            
+            csPool = rawChunks.map((text, i) => ({ id: `cs_t_${i}`, text: text, isUsed: false }));
+            
+            // 打亂 Pool
+            for(let i=csPool.length-1; i>0; i--){const j=Math.floor(Math.random()*(i+1)); [csPool[i],csPool[j]]=[csPool[j],csPool[i]];}
+            
+            csSlots = new Array(rawChunks.length).fill(null);
+            
+            document.getElementById('cs-progress').innerText = `題目 ${csIdx + 1} / ${csQs.length}`;
+            document.getElementById('cs-progress-fill').style.width = `${((csIdx+1)/csQs.length)*100}%`;
+            
+            let hint = analysis.definition || '聆聽發音並重組字塊。';
+            if (hint.length > 50) hint = hint.substring(0, 47) + '...';
+            document.getElementById('cs-hint-def').innerText = hint;
+            
+            document.getElementById('cs-feedback').innerText = '';
+            document.getElementById('cs-next-btn').classList.add('hidden');
+            document.getElementById('cs-check-btn').classList.remove('hidden');
+            
+            renderCSArena();
+            setTimeout(() => playWholeWordAudioUK(csTargetWord, 1, activeSessionId, 1.0), 300);
+        }
+
+        function renderCSArena() {
+            // Render Slots
+            const slotsHtml = csSlots.map((slot, i) => {
+                if (slot) {
+                    return `<button data-id="${slot.id}" onclick="handleCSSlotClick('${slot.id}')" class="cs-active-tile px-4 py-2.5 bg-white border-2 border-slate-400 border-b-4 text-black font-black text-[22px] rounded-xl hover:bg-slate-50 active:border-b-2 active:translate-y-[2px] transition-all cursor-grab active:cursor-grabbing select-none">${slot.text}</button>`;
                 } else {
-                    isQuestionLocked=true; clearInterval(sTimerIv); sStreak=0; document.getElementById('scramble-streak-badge').innerText=`🔥 連對: 0`;
-                    if(fb){fb.innerText=`❌ 答案不正確！正確拼寫是: ${tWord.toUpperCase()}`; fb.className="text-center font-black text-xs sm:text-sm h-5 text-red-500 animate-shake";}
-                    setTimeout(()=>advanceSQuestion(), 2000);
+                    return `<div class="empty-slot min-w-[64px] h-[52px] bg-slate-200/80 rounded-xl border-b-4 border-slate-300/60 shadow-inner"></div>`;
                 }
-            }
-        }
-        function advanceSQuestion() { sIdx++; if(sIdx<sQs.length) loadCurSQuestion(); else { clearInterval(sTimerIv); showSRewardModal(); } }
+            }).join('');
+            document.getElementById('cs-slots-container').innerHTML = slotsHtml;
 
-        function showSRewardModal() {
-            const tot=sQs.length, max=tot*10, fin=Math.min(sScore, max), pct=Math.min(100, Math.round((fin/max)*100));
-            document.getElementById('summary-score-value').innerText=`${fin} / ${max}`; document.getElementById('summary-accuracy-value').innerText=`${pct}%`; document.getElementById('summary-streak-value').innerText=mStreak;
-            const stE=document.getElementById('summary-stars'), prE=document.getElementById('summary-praise-text'), hdE=document.getElementById('summary-headline-text');
-            
-            const reward = calculateFoodReward(pct);
-            const foodSentEl = document.getElementById('reward-food-sentence');
-            const foodIconsEl = document.getElementById('reward-food-icons');
-            
-            const isEn = (currentLang === 'en');
-            if(reward && reward.earned > 0) {
-                if(isEn) {
-                    foodSentEl.innerText = `You earned ${reward.namesEn.join(' and ')}!`;
+            // Render Pool
+            const poolHtml = csPool.map(tile => {
+                if (tile.isUsed) {
+                    return `<div class="px-4 py-2.5 bg-slate-200 border-2 border-slate-200/50 rounded-xl text-transparent font-black text-[22px] select-none shadow-none">${tile.text}</div>`;
                 } else {
-                    foodSentEl.innerText = `你這次獲得${reward.namesZh.join('與')}！`;
+                    return `<button onclick="handleCSPoolClick('${tile.id}')" class="px-4 py-2.5 bg-white border-2 border-slate-400 border-b-4 text-black font-black text-[22px] rounded-xl hover:bg-slate-50 active:border-b-2 active:translate-y-[2px] transition-all cursor-pointer select-none">${tile.text}</button>`;
                 }
-                let iconHtml = '';
-                reward.foods.forEach(f => {
-                    if(f.isHalf) {
-                        iconHtml += `<span class="half-food text-3xl" data-icon="${f.emoji}">${f.emoji}</span>`;
-                    } else {
-                        iconHtml += `<span class="text-3xl">${f.emoji}</span>`;
+            }).join('');
+            document.getElementById('cs-pool-container').innerHTML = poolHtml;
+
+            // 初始化或更新 SortableJS 拖曳功能
+            const container = document.getElementById('cs-slots-container');
+            if (csSortableInstance) {
+                csSortableInstance.destroy();
+            }
+            if (window.Sortable) {
+                csSortableInstance = new Sortable(container, {
+                    animation: 200,
+                    filter: '.empty-slot', // 禁止拖曳空槽
+                    ghostClass: 'opacity-40', // 拖曳時的半透明效果
+                    onEnd: function (evt) {
+                        // 拖曳結束後，讀取畫面上最新嘅順序，同步返去 csSlots 陣列
+                        const newCsSlots = [];
+                        Array.from(container.children).forEach(el => {
+                            const tileId = el.getAttribute('data-id');
+                            if (tileId) {
+                                const tile = csPool.find(t => t.id === tileId);
+                                newCsSlots.push(tile ? { id: tile.id, text: tile.text } : null);
+                            } else {
+                                newCsSlots.push(null);
+                            }
+                        });
+                        csSlots = newCsSlots;
+                        document.getElementById('cs-feedback').innerText = '';
                     }
                 });
-                foodIconsEl.innerHTML = iconHtml;
-            } else {
-                if(isEn) {
-                    foodSentEl.innerText = pct >= 60 ? `Hunger is full (6/6). Keep it up!` : `Score below 60%. Practice more for food!`;
-                } else {
-                    foodSentEl.innerText = pct >= 60 ? `飽足度已滿 (6/6)，繼續保持！` : `分數未達 60 分，再加加油贏取食物！`;
-                }
-                foodIconsEl.innerHTML = `<span class="text-xs text-slate-400">🍽️ 暫無獲得食物</span>`;
             }
-
-            const sAva = localStorage.getItem(USER_AVATAR_STORAGE_KEY), img = document.getElementById('summary-avatar-img'), def = document.getElementById('summary-avatar-default');
-            if(sAva){ if(img){img.src=sAva; img.classList.remove('hidden');} if(def)def.classList.add('hidden'); }
-            else { if(img){img.src=""; img.classList.add('hidden');} if(def)def.classList.remove('hidden'); }
-
-            let em = "excited", crownMode = false;
-            // 修正：只有 100% 挑戰滿分才顯示皇冠
-            if(pct===100){ 
-                em="excited"; crownMode = true;
-                hdE.innerText=isEn?"🏆 Perfect Score!":"🏆 完美大滿貫！"; stE.innerText="⭐⭐⭐"; prE.innerText=isEn?"Outstanding! You are a Phonics Master!":"表現卓越!你係 Phonics 大師!"; 
-            } else if(pct>=80){ 
-                em="happy"; 
-                hdE.innerText=isEn?"🎉 Challenge Succeeded!":"🎉 挑戰大成功！"; stE.innerText="⭐⭐"; prE.innerText=isEn?"Great job! Solid foundation!":"表現極之出色!基礎好扎實!"; 
-            } else if(pct>=60){ 
-                em="encouraged"; 
-                hdE.innerText=isEn?"💪 Well done, keep going!":"💪 做得好，繼續努力！"; stE.innerText="⭐"; prE.innerText=isEn?"Listen more to improve!":"多聽幾次頭尾音會更厲害！"; 
-            } else { 
-                em="sad"; 
-                hdE.innerText=isEn?"🌱 Keep trying!":"🌱 唔好氣餒，再接再厲！"; stE.innerText="🌱"; prE.innerText=isEn?"Review flashcards first!":"建議先到閃卡溫習單字拆解！"; 
-            }
-
-            applyEmotionStylesToStage('summary', em, crownMode);
-            document.getElementById('scramble-summary-modal')?.classList.remove('hidden');
         }
 
-        // 修改：增加支援傳遞自訂 badge icon 的能力
-        function applyEmotionStylesToStage(prefix, emotion, crownMode = false) {
-            const au = document.getElementById(`${prefix}-avatar-aura`), pTop = document.getElementById(`${prefix}-prop-top`), pSide = document.getElementById(`${prefix}-prop-side`), frm = document.getElementById(`${prefix}-avatar-frame`), ig = document.getElementById(`${prefix}-avatar-img`);
-            if(!frm||!pTop||!pSide||!au) return;
+        function playCSChunkAudio(text) {
+            if (!window.speechSynthesis) return;
+            window.speechSynthesis.cancel();
+            const ut = new SpeechSynthesisUtterance(text.toLowerCase());
+            ut.lang = 'en-GB';
+            ut.rate = 0.85;
+            window.speechSynthesis.speak(ut);
+        }
+
+        function handleCSPoolClick(id) {
+            const tile = csPool.find(t => t.id === id);
+            if (!tile || tile.isUsed) return;
             
-            frm.classList.remove('animate-cheer', 'animate-sad', 'avatar-excited', 'animate-happy-sway');
-            pTop.classList.remove('prop-crown-excited', 'animate-twinkle');
-            pSide.classList.remove('animate-twinkle');
-            frm.classList.remove('border-amber-400', 'border-blue-500', 'border-emerald-400', 'border-slate-400');
-            void frm.offsetWidth; void pTop.offsetWidth;
+            const emptyIdx = csSlots.indexOf(null);
+            if (emptyIdx === -1) return; 
+            
+            if (document.getElementById('cs-audio-toggle').checked) playCSChunkAudio(tile.text);
 
-            if(crownMode || emotion==='excited') {
-                pTop.innerText = crownMode ? "👑" : "☀️"; pSide.innerText="✨"; au.className="absolute inset-0 rounded-full bg-amber-400/30 blur-md animate-pulse";
-                frm.classList.add('border-amber-400', 'avatar-excited');
-                pTop.classList.add('prop-crown-excited');
-                if(ig) ig.style.filter="brightness(1.04) contrast(1.02)";
-            } else if(emotion==='happy') {
-                pTop.innerText="🌟"; pSide.innerText="👍"; au.className="absolute inset-0 rounded-full bg-blue-400/20 blur-sm";
-                frm.classList.add('border-blue-500', 'animate-happy-sway');
-                pTop.classList.add('animate-twinkle');
-                if(ig) ig.style.filter="none";
-            } else if(emotion==='encouraged') {
-                pTop.innerText="🌱"; pSide.innerText="💪"; au.className="absolute inset-0 rounded-full bg-emerald-400/20 blur-sm";
-                frm.classList.add('border-emerald-400');
-                if(ig) ig.style.filter="none";
+            tile.isUsed = true;
+            csSlots[emptyIdx] = { id: tile.id, text: tile.text };
+            renderCSArena();
+            document.getElementById('cs-feedback').innerText = '';
+        }
+
+        function handleCSSlotClick(id) {
+            // 透過 ID 尋找該字塊目前在哪個格子 (就算拖曳改過位，依然搵得返)
+            const idx = csSlots.findIndex(s => s && s.id === id);
+            if (idx === -1) return;
+            const slot = csSlots[idx];
+            
+            if (document.getElementById('cs-audio-toggle').checked) playCSChunkAudio(slot.text);
+
+            // 將字塊放回下方字庫
+            const tile = csPool.find(t => t.id === slot.id);
+            if (tile) tile.isUsed = false;
+            
+            csSlots[idx] = null;
+            renderCSArena();
+            document.getElementById('cs-feedback').innerText = '';
+        }
+
+        function checkCSAnswer() {
+            if (csSlots.includes(null)) {
+                const fb = document.getElementById('cs-feedback');
+                fb.innerText = "請將所有字塊放入格子內！";
+                fb.className = "text-center font-black text-sm h-6 text-amber-600";
+                return;
+            }
+
+            const userWord = csSlots.map(s => s.text).join('').toLowerCase();
+            const fb = document.getElementById('cs-feedback');
+            
+            if (userWord === csTargetWord) {
+                fb.innerText = "🎉 拼讀完全正確！";
+                fb.className = "text-center font-black text-sm h-6 text-emerald-600 animate-cheer";
+                document.getElementById('cs-check-btn').classList.add('hidden');
+                document.getElementById('cs-next-btn').classList.remove('hidden');
             } else {
-                pTop.innerText="🌧️"; pSide.innerText="💧"; au.className="absolute inset-0 rounded-full bg-slate-400/20 blur-sm";
-                frm.classList.add('border-slate-400', 'animate-sad');
-                if(ig) ig.style.filter="saturate(0.65) brightness(0.92)";
+                fb.innerText = "❌ 順序似乎不對，再試一下！";
+                fb.className = "text-center font-black text-sm h-6 text-red-500 animate-shake";
+                const cEl = document.getElementById('cs-slots-container');
+                cEl?.classList.remove('animate-shake'); void cEl?.offsetWidth; cEl?.classList.add('animate-shake');
             }
         }
 
-        function previewAvatarEmotion(e) { applyEmotionStylesToStage('profile', e, e==='excited'); }
-        function restartScrambleQuiz() { document.getElementById('scramble-summary-modal')?.classList.add('hidden'); startScrambleGame(); }
-        function closeScrambleSummaryModal(bt) { document.getElementById('scramble-summary-modal')?.classList.add('hidden'); if(bt)quitScrambleGame(); }
-        function quitScrambleToMainEngine() { closeScrambleSummaryModal(false); quitScrambleGame(); selectNavTab('main'); }
+        function advanceCSQuestion() {
+            csIdx++;
+            if (csIdx < csQs.length) {
+                loadCurCSQuestion();
+            } else {
+                const fb = document.getElementById('cs-feedback');
+                fb.innerText = "🌟 練習圓滿完成！";
+                fb.className = "text-center font-black text-sm h-6 text-indigo-600";
+                document.getElementById('cs-next-btn').classList.add('hidden');
+                setTimeout(() => quitChunkScramble(), 2000);
+            }
+        }
+
+        function quitChunkScramble() {
+            document.getElementById('cs-game-arena').classList.add('hidden');
+            document.getElementById('cs-setup-box').classList.remove('hidden');
+            stopAllPlayback();
+        }
 
         function switchActiveScrambleInputMode(m) {
             sInMode=m; const aCls="px-3 py-1.5 rounded-xl font-black text-xs bg-white text-blue-600 shadow-xs border border-slate-300 ring-2 ring-blue-500/20 transition-all";
