@@ -107,8 +107,8 @@
         @keyframes crownDrop { 0% { transform: scale(4.5) translateY(-25px); opacity: 0; } 100% { transform: scale(1) translateY(0); opacity: 1; } }
         .prop-crown-excited { animation: crownDrop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 1.25s both; }
 
-        .half-food { position: relative; display: inline-block; opacity: 0.4; }
-        .half-food::after { content: attr(data-icon); position: absolute; left: 0; top: 0; opacity: 1; clip-path: inset(0 50% 0 0); border-right: 2.5px dashed #dc2626; }
+        .half-food { position: relative; display: inline-block; opacity: 0.35; }
+        .half-food::after { content: attr(data-icon); position: absolute; left: 0; top: 0; opacity: 1; clip-path: inset(0 50% 0 0); border-right: 2px dashed #dc2626; }
 
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
@@ -224,7 +224,7 @@
             </div>
         </div>
         <div class="pt-3 border-t border-slate-100 text-center space-y-0.5">
-            <div class="text-[11px] font-black text-indigo-600">v5.2.0 · Smart Extractor & UI ✓</div>
+            <div class="text-[11px] font-black text-indigo-600">v5.3.0 · Tile Scramble & Drag ✓</div>
             <div class="text-[10px] font-bold text-slate-400">Phonics 3000 · Science of Reading</div>
         </div>
     </aside>
@@ -1495,6 +1495,78 @@
         let hwCanvas=null, hwCtx=null, isDwg=false, hwStks=0;
         let isQuestionLocked = false, autoCheckTimeout = null, hintGiven = false;
 
+        function renderScrambleSubsetSelectors() {
+            const c=document.getElementById('scramble-subsets-checkboxes'); if(!c)return;
+            const all=[{id:'__ALL__', name:'全部核心庫', count:Object.keys(customWordDatabase).length}, ...Object.values(userSubsets).map(s=>({id:s.id, name:s.name, count:s.words.length}))];
+            c.innerHTML=all.map(s=>`<label class="cursor-pointer text-xs font-bold px-3 py-1.5 rounded-xl border-2 flex items-center gap-1.5 ${selSSubsets.has(s.id)?'bg-blue-600 text-white border-blue-600':'bg-white text-slate-700 border-slate-200'}"><input type="checkbox" ${selSSubsets.has(s.id)?'checked':''} onchange="toggleScrambleSubset('${s.id}')" class="w-3.5 h-3.5 rounded accent-blue-500"><span>📁 ${s.name} (${s.count})</span></label>`).join('');
+        }
+        function toggleScrambleSubset(id) { if(selSSubsets.has(id))selSSubsets.delete(id); else selSSubsets.add(id); if(!selSSubsets.size)selSSubsets.add('__ALL__'); renderScrambleSubsetSelectors(); }
+        function setScrambleVoiceRepeats(r, e) { sVRep=r; document.querySelectorAll('.scramble-repeat-btn').forEach(b=>b.className="scramble-repeat-btn flex-1 py-2 bg-white border-2 border-slate-200 rounded-xl font-black text-xs text-slate-700"); e.currentTarget.className="scramble-repeat-btn flex-1 py-2 bg-blue-600 text-white border-2 border-blue-600 rounded-xl font-black text-xs"; }
+        function setScrambleTimer(s, e) { sTimerS=s; document.querySelectorAll('.scramble-timer-btn').forEach(b=>b.className="scramble-timer-btn py-2 bg-white border-2 border-slate-200 rounded-xl font-black text-xs text-slate-700"); e.currentTarget.className="scramble-timer-btn py-2 bg-blue-600 text-white border-2 border-blue-600 rounded-xl font-black text-xs"; }
+        function setScrambleQuestionCount(c, e) { sLimit=c; document.querySelectorAll('.scramble-count-btn').forEach(b=>b.className="scramble-count-btn px-4 py-2 bg-white border-2 border-slate-200 rounded-xl font-black text-xs text-slate-700"); e.currentTarget.className="scramble-count-btn px-4 py-2 bg-blue-600 text-white border-2 border-blue-600 rounded-xl font-black text-xs"; }
+        function setScrambleInputMode(m, e) { sInMode=m; document.querySelectorAll('.scramble-mode-pref-btn').forEach(b=>b.className="scramble-mode-pref-btn px-3 py-2 bg-white text-slate-700 border-2 border-slate-200 rounded-xl font-black text-xs flex flex-col items-center gap-1 hover:border-blue-500"); e.currentTarget.className="scramble-mode-pref-btn px-3 py-2 bg-blue-600 text-white border-2 border-blue-600 rounded-xl font-black text-xs flex flex-col items-center gap-1 shadow-xs"; }
+        
+        function startScrambleGame() {
+            const st=new Set(); if(selSSubsets.has('__ALL__')) Object.keys(customWordDatabase).forEach(w=>st.add(w.toLowerCase())); selSSubsets.forEach(id=>id!=='__ALL__'&&userSubsets[id]?.words.forEach(w=>st.add(w.toLowerCase())));
+            let cnd=Array.from(st); if(!cnd.length) return showToast("清單中無字詞供練習！", "warning");
+            for(let i=cnd.length-1; i>0; i--){const j=Math.floor(Math.random()*(i+1)); [cnd[i],cnd[j]]=[cnd[j],cnd[i]];} sQs=cnd.slice(0, Math.min(cnd.length, sLimit));
+            sIdx=0; sScore=0; sStreak=0; mStreak=0;
+            document.getElementById('scramble-setup-box').classList.add('hidden'); document.getElementById('scramble-game-arena').classList.remove('hidden');
+            document.getElementById('scramble-streak-badge').innerText=`連對: 0`;
+            switchActiveScrambleInputMode(sInMode); loadCurScrambleQuestion();
+        }
+        function loadCurScrambleQuestion() {
+            isQuestionLocked=false; hintGiven=false; clearInterval(sTimerIv);
+            tWord=sQs[sIdx].toLowerCase(); tSlots=new Array(tWord.length).fill(null); curSlotIdx=0;
+            availTiles=tWord.split('').map((l,i)=>({id:`st_${i}`, letter:l, isUsed:false}));
+            for(let i=availTiles.length-1; i>0; i--){const j=Math.floor(Math.random()*(i+1)); [availTiles[i],availTiles[j]]=[availTiles[j],availTiles[i]];}
+            document.getElementById('scramble-q-progress').innerText=`題目 ${sIdx+1} / ${sQs.length}`;
+            document.getElementById('scramble-progress-fill').style.width=`${((sIdx+1)/sQs.length)*100}%`;
+            document.getElementById('scramble-feedback').innerText=''; document.getElementById('btn-submit-scramble').classList.remove('hidden');
+            
+            const e=customWordDatabase[tWord]||dWAuto(tWord);
+            document.getElementById('scramble-pos-badge').innerText=e.pos||'word';
+            let hint=e.definition||'聆聽發音並拼寫出正確的單字。'; if(hint.length>60)hint=hint.substring(0,57)+'...';
+            document.getElementById('scramble-hint-def').innerText=hint;
+            document.getElementById('scramble-repeat-indicator').innerText=`播音 ${sVRep} 次`;
+            
+            renderScrambleSlots(); renderScrambleTiles();
+            if(sInMode==='handwriting') { clearHandwritingCanvas(); updateHWStatus(); }
+            
+            const tp=document.getElementById('scramble-timer-pill'), ts=document.getElementById('scramble-timer-seconds');
+            if(sTimerS>0){ tp.classList.remove('hidden'); let lS=sTimerS; ts.innerText=lS; sTimerIv=setInterval(()=>{lS--; ts.innerText=lS; if(lS<=0){clearInterval(sTimerIv); checkScrambleAnswer(true);}}, 1000); } else tp.classList.add('hidden');
+            setTimeout(()=>triggerScramblePlaySequence(1.0), 300);
+        }
+        function triggerScramblePlaySequence(sp) { playWholeWordAudioUK(tWord, sVRep, activeSessionId, sp); }
+        function renderScrambleSlots() {
+            const c=document.getElementById('scramble-slots-container'); if(!c)return;
+            c.innerHTML=tSlots.map((s,i)=>{
+                const ac=i===curSlotIdx ? 'border-blue-500 shadow-[0_0_0_2px_rgba(59,130,246,0.3)] scale-105' : 'border-slate-300';
+                if(s) return `<button onclick="rmSlot(${i})" class="w-[clamp(34px,7.5vw,44px)] h-[clamp(44px,9.5vw,54px)] bg-white border-2 border-slate-400 border-b-4 rounded-xl font-black text-xl text-slate-800 flex items-center justify-center active:translate-y-[2px] active:border-b-2 shadow-2xs">${s.letter}</button>`;
+                return `<button onclick="curSlotIdx=${i}; renderScrambleSlots();" class="w-[clamp(34px,7.5vw,44px)] h-[clamp(44px,9.5vw,54px)] bg-slate-200/50 border-2 border-dashed rounded-xl transition-all ${ac}"></button>`;
+            }).join('');
+        }
+        function renderScrambleTiles() {
+            const c=document.getElementById('scramble-tiles-pool'); if(!c)return;
+            c.innerHTML=availTiles.map(t=>{
+                if(t.isUsed) return `<div class="w-[clamp(34px,7.5vw,44px)] h-[clamp(44px,9.5vw,52px)] bg-slate-100 border-2 border-slate-200 rounded-xl text-transparent"></div>`;
+                return `<button onclick="pickTile('${t.id}')" class="w-[clamp(34px,7.5vw,44px)] h-[clamp(44px,9.5vw,52px)] bg-white border-2 border-slate-400 border-b-4 rounded-xl font-black text-xl text-slate-800 flex items-center justify-center active:translate-y-[2px] active:border-b-2 shadow-2xs active:scale-95 transition-transform hover:bg-slate-50">${t.letter}</button>`;
+            }).join('');
+        }
+        function pickTile(id) {
+            if(isQuestionLocked)return; let t=availTiles.find(x=>x.id===id); if(!t||t.isUsed)return;
+            let idx=curSlotIdx; if(tSlots[idx]!==null){ const ne=tSlots.findIndex(s=>s===null); if(ne!==-1)idx=ne; else return; }
+            t.isUsed=true; tSlots[idx]={tileId:id, letter:t.letter}; curSlotIdx=Math.min(tSlots.length-1, idx+1);
+            renderScrambleSlots(); renderScrambleTiles();
+            clearTimeout(autoCheckTimeout); if(!tSlots.includes(null)) autoCheckTimeout=setTimeout(()=>checkScrambleAnswer(), 200);
+        }
+        function rmSlot(idx) {
+            if(isQuestionLocked)return; const s=tSlots[idx]; if(!s)return;
+            if(s.tileId.startsWith('st_')){ let t=availTiles.find(x=>x.id===s.tileId); if(t)t.isUsed=false; }
+            tSlots[idx]=null; curSlotIdx=idx; renderScrambleSlots(); renderScrambleTiles(); updateHWStatus();
+        }
+        function resetCurrentScrambleSlots() { if(isQuestionLocked)return; tSlots.fill(null); availTiles.forEach(t=>t.isUsed=false); curSlotIdx=0; renderScrambleSlots(); renderScrambleTiles(); if(sInMode==='handwriting'){clearHandwritingCanvas(); updateHWStatus();} }
+        
         let csQs = [], csIdx = 0, csTargetWord = "";
         let csSlots = [], csPool = [];
         let selCSSubsets = new Set(['__ALL__']);
@@ -1519,59 +1591,49 @@
 
         // 💡 核心引擎綁定：呼叫 pT 函數將音節精準拆分為 [頭音] + [韻部] 或 全組件
         function getEngineDerivedChunks(analysis) {
-            let result = [];
-            if(!analysis || !analysis.chunks) return result;
+        let result = [];
+        if(!analysis || !analysis.chunks) return result;
+        
+        analysis.chunks.forEach((c, idx) => {
+            const tokens = pT(c, idx, analysis.chunks.length, analysis.word);
             
-            analysis.chunks.forEach((c, idx) => {
-                // 直接使用主頁負責上色的 pT 函數取得所有 Token 的精確分類
-                const tokens = pT(c, idx, analysis.chunks.length, analysis.word);
+            if (csDifficulty === 'easy') {
+                let onsetPart = "";
+                let rhymePart = ""; 
+                tokens.forEach(tk => {
+                    if (tk.t === 'onset' && rhymePart === "") onsetPart += tk.c;
+                    else rhymePart += tk.c;
+                });
+                if (onsetPart) result.push({ text: onsetPart, chunkIdx: idx, type: 'onset' });
+                if (rhymePart) result.push({ text: rhymePart, chunkIdx: idx, type: 'rhyme' });
+            } else {
+                if (tokens.length === 0) return;
+                let currentType = tokens[0].t;
+                let currentStr = tokens[0].c;
                 
-                if (csDifficulty === 'easy') {
-                    // Level 1: 簡單模式 (頭音 + 韻部)
-                    let onsetPart = "";
-                    let rhymePart = ""; 
-
-                    tokens.forEach(tk => {
-                        if (tk.t === 'onset' && rhymePart === "") {
-                            onsetPart += tk.c;
-                        } else {
-                            rhymePart += tk.c;
-                        }
-                    });
-
-                    if (onsetPart) result.push(onsetPart);
-                    if (rhymePart) result.push(rhymePart);
-                } else {
-                    // Level 2: 困難模式 (全組件拆解)
-                    // 將相鄰且屬性相同的 Token 合併 (例如尾音 n 同 g 合併成 ng)
-                    if (tokens.length === 0) return;
-                    let currentType = tokens[0].t;
-                    let currentStr = tokens[0].c;
-                    
-                    for (let i = 1; i < tokens.length; i++) {
-                        if (tokens[i].t === currentType) {
-                            currentStr += tokens[i].c; // 屬性相同，痴埋一齊
-                        } else {
-                            result.push(currentStr); // 屬性改變，推入結果陣列
-                            currentType = tokens[i].t;
-                            currentStr = tokens[i].c;
-                        }
+                for (let i = 1; i < tokens.length; i++) {
+                    if (tokens[i].t === currentType) {
+                        currentStr += tokens[i].c; 
+                    } else {
+                        result.push({ text: currentStr, chunkIdx: idx, type: currentType });
+                        currentType = tokens[i].t;
+                        currentStr = tokens[i].c;
                     }
-                    if (currentStr) result.push(currentStr);
                 }
-            });
-            return result;
-        }
+                if (currentStr) result.push({ text: currentStr, chunkIdx: idx, type: currentType });
+            }
+        });
+        return result;
+    }
 
-        function startChunkScramble() {
+    function startChunkScramble() {
             const st = new Set(); if(selCSSubsets.has('__ALL__')) Object.keys(customWordDatabase).forEach(w=>st.add(w.toLowerCase()));
             selCSSubsets.forEach(id=>id!=='__ALL__'&&userSubsets[id]?.words.forEach(w=>st.add(w.toLowerCase())));
             
             let cnd = Array.from(st).filter(w => { 
-                const analysis = customWordDatabase[w] || dWAuto(w); 
-                // 只要主引擎能拆出兩塊(含)以上的 [頭音/韻部] 磚塊，就符合遊戲資格
-                return getEngineDerivedChunks(analysis).length > 1; 
-            }); 
+            const analysis = customWordDatabase[w] || dWAuto(w); 
+            return getEngineDerivedChunks(analysis).length > 1; 
+        }); 
             
             if(!cnd.length) { 
                 return showToast("清單中無可拆解的字詞供練習！", "warning"); 
@@ -1587,21 +1649,19 @@
         }
 
         function loadCurCSQuestion() {
-            csTargetWord = csQs[csIdx].toLowerCase();
-            const analysis = customWordDatabase[csTargetWord] || dWAuto(csTargetWord);
-            
-            // 使用新版綁定引擎的字塊擷取器
-            const rawChunks = getEngineDerivedChunks(analysis);
-            
-            csPool = rawChunks.map((text, i) => ({ id: `cs_t_${i}`, text: text, isUsed: false }));
-            
-            // 打亂 Pool
-            for(let i=csPool.length-1; i>0; i--){const j=Math.floor(Math.random()*(i+1)); [csPool[i],csPool[j]]=[csPool[j],csPool[i]];}
-            
-            csSlots = new Array(rawChunks.length).fill(null);
-            
-            document.getElementById('cs-progress').innerText = `題目 ${csIdx + 1} / ${csQs.length}`;
-            document.getElementById('cs-progress-fill').style.width = `${((csIdx+1)/csQs.length)*100}%`;
+        csTargetWord = csQs[csIdx].toLowerCase();
+        const analysis = customWordDatabase[csTargetWord] || dWAuto(csTargetWord);
+        
+        const rawChunks = getEngineDerivedChunks(analysis);
+        
+        csPool = rawChunks.map((chunkData, i) => ({ id: `cs_t_${i}`, text: chunkData.text, chunkIdx: chunkData.chunkIdx, type: chunkData.type, isUsed: false }));
+        
+        for(let i=csPool.length-1; i>0; i--){const j=Math.floor(Math.random()*(i+1)); [csPool[i],csPool[j]]=[csPool[j],csPool[i]];}
+        
+        csSlots = new Array(rawChunks.length).fill(null);
+        
+        document.getElementById('cs-progress').innerText = `題目 ${csIdx + 1} / ${csQs.length}`;
+        document.getElementById('cs-progress-fill').style.width = `${((csIdx+1)/csQs.length)*100}%`;
             
             let hint = analysis.definition || '聆聽發音並重組字塊。';
             if (hint.length > 50) hint = hint.substring(0, 47) + '...';
@@ -1647,66 +1707,78 @@
                     filter: '.empty-slot', // 禁止拖曳空槽
                     ghostClass: 'opacity-40', // 拖曳時的半透明效果
                     onEnd: function (evt) {
-                        // 拖曳結束後，讀取畫面上最新嘅順序，同步返去 csSlots 陣列
-                        const newCsSlots = [];
-                        Array.from(container.children).forEach(el => {
-                            const tileId = el.getAttribute('data-id');
-                            if (tileId) {
-                                const tile = csPool.find(t => t.id === tileId);
-                                newCsSlots.push(tile ? { id: tile.id, text: tile.text } : null);
-                            } else {
-                                newCsSlots.push(null);
-                            }
-                        });
-                        csSlots = newCsSlots;
-                        document.getElementById('cs-feedback').innerText = '';
-                    }
-                });
-            }
+                    const newCsSlots = [];
+                    Array.from(container.children).forEach(el => {
+                        const tileId = el.getAttribute('data-id');
+                        if (tileId) {
+                            const tile = csPool.find(t => t.id === tileId);
+                            newCsSlots.push(tile ? { id: tile.id, text: tile.text } : null);
+                        } else {
+                            newCsSlots.push(null);
+                        }
+                    });
+                    csSlots = newCsSlots;
+                    document.getElementById('cs-feedback').innerText = '';
+                }
+            });
         }
+    }
 
-        function playCSChunkAudio(text) {
-            if (!window.speechSynthesis) return;
-            window.speechSynthesis.cancel();
-            const ut = new SpeechSynthesisUtterance(text.toLowerCase());
-            ut.lang = 'en-GB';
-            ut.rate = 0.85;
-            window.speechSynthesis.speak(ut);
+    function playCSChunkAudio(id) {
+        if (!document.getElementById('cs-audio-toggle').checked) return;
+        const tile = csPool.find(t => t.id === id);
+        if (!tile) return;
+        
+        const analysis = customWordDatabase[csTargetWord] || dWAuto(csTargetWord);
+        const chunk = analysis.chunks[tile.chunkIdx];
+        if (!chunk) return;
+        
+        activeSessionId++; const s = activeSessionId;
+        let tempChk = { onset: null, vowel: null, coda: null };
+        
+        if (csDifficulty === 'easy') {
+            if (tile.type === 'onset') { tempChk.onset = chunk.onset; }
+            else if (tile.type === 'rhyme') { tempChk.vowel = chunk.vowel; tempChk.coda = chunk.coda; }
+        } else {
+            if (tile.type === 'onset') tempChk.onset = chunk.onset;
+            else if (tile.type === 'vowel') tempChk.vowel = chunk.vowel;
+            else if (tile.type === 'coda') tempChk.coda = chunk.coda;
         }
+        
+        pStepA(tempChk, 3, s, false);
+    }
 
-        function handleCSPoolClick(id) {
-            const tile = csPool.find(t => t.id === id);
-            if (!tile || tile.isUsed) return;
-            
-            const emptyIdx = csSlots.indexOf(null);
-            if (emptyIdx === -1) return; 
-            
-            if (document.getElementById('cs-audio-toggle').checked) playCSChunkAudio(tile.text);
+    function handleCSPoolClick(id) {
+        const tile = csPool.find(t => t.id === id);
+        if (!tile || tile.isUsed) return;
+        
+        const emptyIdx = csSlots.indexOf(null);
+        if (emptyIdx === -1) return; 
+        
+        playCSChunkAudio(id);
 
-            tile.isUsed = true;
-            csSlots[emptyIdx] = { id: tile.id, text: tile.text };
-            renderCSArena();
-            document.getElementById('cs-feedback').innerText = '';
-        }
+        tile.isUsed = true;
+        csSlots[emptyIdx] = { id: tile.id, text: tile.text };
+        renderCSArena();
+        document.getElementById('cs-feedback').innerText = '';
+    }
 
-        function handleCSSlotClick(id) {
-            // 透過 ID 尋找該字塊目前在哪個格子 (就算拖曳改過位，依然搵得返)
-            const idx = csSlots.findIndex(s => s && s.id === id);
-            if (idx === -1) return;
-            const slot = csSlots[idx];
-            
-            if (document.getElementById('cs-audio-toggle').checked) playCSChunkAudio(slot.text);
+    function handleCSSlotClick(id) {
+        const idx = csSlots.findIndex(s => s && s.id === id);
+        if (idx === -1) return;
+        const slot = csSlots[idx];
+        
+        playCSChunkAudio(id);
 
-            // 將字塊放回下方字庫
-            const tile = csPool.find(t => t.id === slot.id);
-            if (tile) tile.isUsed = false;
-            
-            csSlots[idx] = null;
-            renderCSArena();
-            document.getElementById('cs-feedback').innerText = '';
-        }
+        const tile = csPool.find(t => t.id === slot.id);
+        if (tile) tile.isUsed = false;
+        
+        csSlots[idx] = null;
+        renderCSArena();
+        document.getElementById('cs-feedback').innerText = '';
+    }
 
-        function checkCSAnswer() {
+    function checkCSAnswer() {
             if (csSlots.includes(null)) {
                 const fb = document.getElementById('cs-feedback');
                 fb.innerText = "請將所有字塊放入格子內！";
@@ -1795,6 +1867,202 @@
         function applyHWToSlots(lt, st) {
             let wIdx=st; lt.forEach(c=>{ while(wIdx<tSlots.length && tSlots[wIdx]) wIdx++; if(wIdx<tSlots.length){ let m=availTiles.find(t=>t.letter.toLowerCase()===c.toLowerCase() && !t.isUsed); if(m)m.isUsed=true; tSlots[wIdx]={tileId:m?m.id:`hw_${Date.now()}_${wIdx}`, letter:c}; wIdx++; } }); curSlotIdx=Math.min(tSlots.length-1, wIdx); renderScrambleSlots(); renderScrambleTiles(); updateHWStatus();
             clearTimeout(autoCheckTimeout); if(!tSlots.includes(null)) autoCheckTimeout=setTimeout(()=>checkScrambleAnswer(), 250);
+        }
+
+        // ====== 拼字挑戰核心邏輯修復區 (End-Game & Summary) ======
+        function updateHWStatus() {
+            const fc=tSlots.filter(s=>s!==null).length; const st=document.getElementById('hw-filled-count-text'); if(st)st.innerText=`${fc}/${tSlots.length}`;
+            const nt=document.getElementById('hw-next-slot-tip'); if(nt)nt.innerText=fc===tSlots.length?'所有空格已填滿':`下一次將填入第 ${curSlotIdx+1} 格`;
+        }
+
+        function checkScrambleAnswer(isTimeUp = false) {
+            if(isQuestionLocked) return;
+            isQuestionLocked = true;
+            clearInterval(sTimerIv);
+            document.getElementById('btn-submit-scramble').classList.add('hidden');
+            
+            const ans = tSlots.map(s => s ? s.letter : '_').join('').toLowerCase();
+            const fb = document.getElementById('scramble-feedback');
+            
+            if (ans === tWord) {
+                fb.innerText = "🎉 答對了！";
+                fb.className = "text-center font-black text-sm h-5 text-emerald-600 animate-cheer";
+                document.getElementById('scramble-slots-container').classList.add('border-emerald-400', 'bg-emerald-50');
+                sScore += 10;
+                sStreak++;
+                if(sStreak > mStreak) mStreak = sStreak;
+            } else {
+                let msg = isTimeUp ? "⏱️ 時間到！" : "❌ 答案不正確！";
+                fb.innerHTML = `<span class="text-red-500">${msg} 正確拼寫是: <span class="font-mono text-slate-800 bg-slate-200 px-1 rounded">${tWord.toUpperCase()}</span></span>`;
+                fb.className = "text-center font-black text-[11px] sm:text-xs h-5 animate-shake";
+                document.getElementById('scramble-slots-container').classList.add('border-red-400', 'bg-red-50');
+                sStreak = 0;
+                if (!hintGiven) {
+                    hintGiven = true;
+                    // 如果是輕微拼錯，可以給予提示並允許再試 (簡化版：直接判錯)
+                }
+            }
+            
+            document.getElementById('scramble-streak-badge').innerText = `連對: ${sStreak}`;
+            
+            // 延遲後進入下一題或結算
+            setTimeout(() => {
+                sIdx++;
+                document.getElementById('scramble-slots-container').classList.remove('border-emerald-400', 'bg-emerald-50', 'border-red-400', 'bg-red-50');
+                if (sIdx < sQs.length) {
+                    loadCurScrambleQuestion();
+                } else {
+                    showScrambleSummaryModal(); // 🚀 觸發結算 Modal
+                }
+            }, 2500);
+        }
+
+        function showScrambleSummaryModal() {
+            document.getElementById('scramble-game-arena').classList.add('hidden');
+            const modal = document.getElementById('scramble-summary-modal');
+            modal.classList.remove('hidden');
+            
+            const totalMax = sQs.length * 10;
+            const pct = Math.round((sScore / totalMax) * 100);
+            
+            document.getElementById('summary-score-value').innerText = `${sScore} / ${totalMax}`;
+            document.getElementById('summary-accuracy-value').innerText = `${pct}%`;
+            document.getElementById('summary-streak-value').innerText = mStreak;
+            
+            const hl = document.getElementById('summary-headline-text');
+            const pr = document.getElementById('summary-praise-text');
+            const st = document.getElementById('summary-stars');
+            
+            let emo = 'happy';
+            if (pct === 100) {
+                hl.innerText = "完美通關！";
+                pr.innerText = "表現卓越！自然拼讀基礎非常扎實！";
+                st.innerText = "⭐⭐⭐";
+                emo = 'excited';
+            } else if (pct >= 80) {
+                hl.innerText = "做得好，繼續努力！";
+                pr.innerText = "差一點就完美了！";
+                st.innerText = "⭐⭐";
+            } else if (pct >= 60) {
+                hl.innerText = "過關！";
+                pr.innerText = "多聽幾次頭尾音會更厲害！";
+                st.innerText = "⭐";
+            } else {
+                hl.innerText = "需要再加油喔！";
+                pr.innerText = "建議先到「拆解引擎」練習單字發音。";
+                st.innerText = "💨";
+                emo = 'sad';
+            }
+            
+            renderSummaryAvatar(emo);
+            
+            // 計算並發放食物獎勵
+            const rw = calculateFoodReward(pct);
+            const rContainer = document.getElementById('reward-food-container');
+            if (rw.earned > 0) {
+                const isEn = (currentLang === 'en');
+                const nList = isEn ? rw.namesEn : rw.namesZh;
+                document.getElementById('reward-food-sentence').innerText = isEn 
+                    ? `You earned ${nList.join(' & ')}!`
+                    : `你這次獲得 ${nList.join(' 和 ')}！`;
+                
+                document.getElementById('reward-food-icons').innerHTML = rw.foods.map(f => {
+                    if(f.isHalf) return `<span class="half-food" data-icon="${f.emoji}">${f.emoji}</span>`;
+                    return `<span>${f.emoji}</span>`;
+                }).join('');
+                rContainer.classList.remove('hidden');
+            } else {
+                rContainer.classList.add('hidden');
+            }
+        }
+        
+        function renderSummaryAvatar(emotion) {
+            const sv = localStorage.getItem(USER_AVATAR_STORAGE_KEY);
+            const img = document.getElementById('summary-avatar-img');
+            const def = document.getElementById('summary-avatar-default');
+            const aura = document.getElementById('summary-avatar-aura');
+            const topProp = document.getElementById('summary-prop-top');
+            const sideProp = document.getElementById('summary-prop-side');
+            
+            if(sv){ img.src=sv; img.classList.remove('hidden'); def.classList.add('hidden'); }
+            else{ img.src=""; img.classList.add('hidden'); def.classList.remove('hidden'); }
+            
+            aura.className = 'absolute inset-0 rounded-full transition-all duration-500';
+            document.getElementById('summary-avatar-frame').className = 'relative w-24 h-24 rounded-full border-[3.5px] overflow-hidden bg-white shadow-lg flex items-center justify-center';
+            topProp.className = 'absolute -top-3.5 z-20 text-4xl';
+            
+            if(emotion === 'excited') {
+                aura.classList.add('bg-amber-400', 'animate-ping', 'opacity-20');
+                document.getElementById('summary-avatar-frame').classList.add('border-amber-400', 'animate-cheer');
+                topProp.innerText = '👑'; topProp.classList.add('prop-crown-excited');
+                sideProp.innerText = '✨'; sideProp.classList.add('animate-twinkle');
+            } else if(emotion === 'happy') {
+                aura.classList.add('bg-blue-400', 'opacity-10');
+                document.getElementById('summary-avatar-frame').classList.add('border-blue-400', 'animate-happy-sway');
+                topProp.innerText = '💪';
+                sideProp.innerText = '🎵';
+            } else {
+                aura.classList.add('bg-slate-400', 'opacity-10');
+                document.getElementById('summary-avatar-frame').classList.add('border-slate-300', 'animate-sad');
+                topProp.innerText = '🌧️';
+                sideProp.innerText = '💤';
+            }
+        }
+
+        function restartScrambleQuiz() {
+            closeScrambleSummaryModal();
+            startScrambleGame(); // 重新使用同一批題目
+        }
+
+        function closeScrambleSummaryModal(returnToSetup = false) {
+            document.getElementById('scramble-summary-modal').classList.add('hidden');
+            if(returnToSetup) {
+                document.getElementById('scramble-setup-box').classList.remove('hidden');
+            }
+        }
+
+        function quitScrambleGame() {
+            clearInterval(sTimerIv);
+            stopAllPlayback();
+            document.getElementById('scramble-game-arena').classList.add('hidden');
+            document.getElementById('scramble-setup-box').classList.remove('hidden');
+        }
+
+        function quitScrambleToMainEngine() {
+            closeScrambleSummaryModal();
+            selectNavTab('main');
+        }
+
+        // ========================================================
+
+        function previewAvatarEmotion(emotion) {
+            const aura = document.getElementById('profile-avatar-aura');
+            const frame = document.getElementById('profile-avatar-frame');
+            const topProp = document.getElementById('profile-prop-top');
+            const sideProp = document.getElementById('profile-prop-side');
+
+            // Reset animations
+            aura.className = 'absolute inset-0 rounded-full transition-all duration-300';
+            frame.className = 'relative w-20 h-20 rounded-full border-[3.5px] overflow-hidden bg-white shadow-md flex items-center justify-center';
+            topProp.className = 'absolute -top-3.5 z-20 text-3xl select-none';
+
+            // Apply new states based on 100% summary design
+            if(emotion === 'excited') {
+                aura.classList.add('bg-amber-400', 'animate-ping', 'opacity-20');
+                frame.classList.add('border-amber-400', 'animate-cheer');
+                topProp.innerText = '👑'; topProp.classList.add('prop-crown-excited');
+                sideProp.innerText = '✨'; sideProp.classList.add('animate-twinkle');
+            } else if(emotion === 'happy') {
+                aura.classList.add('bg-blue-400', 'opacity-10');
+                frame.classList.add('border-blue-400', 'animate-happy-sway');
+                topProp.innerText = '💪';
+                sideProp.innerText = '🎵';
+            } else {
+                aura.classList.add('bg-slate-400', 'opacity-10');
+                frame.classList.add('border-slate-300', 'animate-sad');
+                topProp.innerText = '🌧️';
+                sideProp.innerText = '💤';
+            }
         }
 
         let userSubsets={}, curDictId='__ALL__', exItems=[]; const S_KEY='phonics_user_subsets_v1';
