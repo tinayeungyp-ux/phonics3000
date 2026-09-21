@@ -134,7 +134,6 @@
     <aside id="nav-drawer" class="fixed top-0 right-0 h-full w-72 max-w-[80vw] bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out p-4 flex flex-col justify-between overflow-y-auto">
         <div class="space-y-3.5">
             
-            <!-- 🐾 側邊選單最頂部：寵物狀態卡片 -->
             <div id="menu-pet-status-card" class="bg-white border-2 border-slate-100 rounded-2xl p-3 text-center space-y-2.5 shadow-sm transition-colors relative overflow-hidden">
                 <div class="absolute inset-0 bg-slate-50/50 pointer-events-none"></div>
                 <div class="relative w-20 h-20 mx-auto flex items-center justify-center mt-1">
@@ -146,8 +145,6 @@
                 </div>
                 <div class="space-y-1 relative z-10">
                     <div id="menu-pet-name" class="font-black text-[15px] text-slate-900 truncate">我的寵物</div>
-                    
-                    <!-- 雙行排版的狀態顯示區域 (動態變色) -->
                     <div class="flex flex-col items-center justify-center gap-0.5 leading-tight">
                         <div id="menu-pet-mood" class="text-[11px] font-black transition-colors duration-300">心情: 讀取中...</div>
                         <div class="flex items-center gap-1">
@@ -196,6 +193,7 @@
                     <span class="text-base shrink-0">👤</span> <span data-i18n="nav_profile">會員專區與設定</span>
                 </button>
             </div>
+            
             <div class="pt-2 border-t border-slate-100 space-y-2.5">
                 <div class="text-[11px] font-black text-slate-400 px-2.5 uppercase tracking-wider flex items-center gap-1.5">
                     <span>⚙️</span> <span data-i18n="cat_prefs">偏好設定</span>
@@ -224,7 +222,7 @@
             </div>
         </div>
         <div class="pt-3 border-t border-slate-100 text-center space-y-0.5">
-            <div class="text-[11px] font-black text-indigo-600">v5.3.0 · Tile Scramble & Drag ✓</div>
+            <div class="text-[11px] font-black text-indigo-600">v5.3.1 · Cross-Module Error Loop ✓</div>
             <div class="text-[10px] font-bold text-slate-400">Phonics 3000 · Science of Reading</div>
         </div>
     </aside>
@@ -232,9 +230,7 @@
     <main class="flex-1 overflow-auto p-3.5 sm:p-6 md:p-8">
         <div class="max-w-4xl mx-auto space-y-4 sm:space-y-6">
 
-            <!-- 🏠 Main Engine Tab -->
             <div id="view-main" class="tab-content active space-y-4 sm:space-y-6">
-                <!-- Return to Flashcard Bar -->
                 <div id="main-return-to-fc-bar" class="hidden bg-gradient-to-r from-indigo-50 to-blue-50 border-2 border-indigo-200 rounded-2xl p-3 flex items-center justify-between shadow-xs">
                     <div class="flex items-center gap-2 text-xs font-black text-indigo-900">
                         <span class="text-lg">🎴</span><span>深入拆解閃卡單字：<span id="return-fc-word-label" class="underline font-mono text-indigo-700"></span></span>
@@ -394,7 +390,6 @@
                 </div>
             </div>
 
-            <!-- 🧩 音節字塊重組 (Chunk Scramble) 模組 -->
             <div id="view-chunk-scramble" class="tab-content bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-xs border-2 border-slate-100 space-y-4">
                 <div class="flex justify-between items-center border-b border-slate-100 pb-2">
                     <div>
@@ -412,8 +407,8 @@
                     <div class="space-y-2">
                         <label class="block text-xs font-black text-slate-700 uppercase tracking-wider">難度選擇：</label>
                         <div class="flex gap-2">
-                            <button onclick="setCSDifficulty('easy', event)" class="cs-diff-btn flex-1 py-2 bg-emerald-600 text-white border-2 border-emerald-600 rounded-xl font-black text-xs transition-colors">🟢 簡單 (頭音 + 韻部)</button>
-                            <button onclick="setCSDifficulty('hard', event)" class="cs-diff-btn flex-1 py-2 bg-white border-2 border-slate-200 text-slate-700 rounded-xl font-black text-xs transition-colors">🔴 困難 (全組件拆解)</button>
+                            <button onclick="setCSDifficulty('easy', event)" class="cs-diff-btn flex-1 py-2 bg-white border-2 border-slate-200 text-slate-700 rounded-xl font-black text-xs transition-colors">🟢 簡單 (頭音 + 韻部)</button>
+                            <button onclick="setCSDifficulty('hard', event)" class="cs-diff-btn flex-1 py-2 bg-red-500 text-white border-2 border-red-500 rounded-xl font-black text-xs transition-colors">🔴 困難 (全組件 / 獨立音素)</button>
                         </div>
                     </div>
 
@@ -433,10 +428,16 @@
                     </div>
                 </div>
 
-                <div id="cs-game-arena" class="hidden max-w-xl mx-auto space-y-5">
+                <div id="cs-game-arena" class="hidden max-w-xl mx-auto space-y-4">
                     <div class="flex justify-between items-center">
                         <span id="cs-progress" class="text-sm font-black text-slate-700"></span>
-                        <button onclick="quitChunkScramble()" class="text-xs font-bold text-slate-400 hover:text-red-500 px-2 py-1">結束練習</button>
+                        <div class="flex items-center gap-2">
+                            <div class="bg-slate-100 p-0.5 rounded-lg flex text-[10px] font-bold border border-slate-200">
+                                <button id="cs-arena-diff-easy" onclick="changeArenaDifficulty('easy')" class="px-2 py-1 rounded-md bg-white shadow-sm text-emerald-700 transition-all">🟢 簡單</button>
+                                <button id="cs-arena-diff-hard" onclick="changeArenaDifficulty('hard')" class="px-2 py-1 rounded-md text-slate-500 hover:text-slate-700 transition-all">🔴 困難</button>
+                            </div>
+                            <button onclick="quitChunkScramble()" class="text-xs font-bold text-slate-400 hover:text-red-500 px-2 py-1">結束</button>
+                        </div>
                     </div>
                     
                     <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
@@ -444,36 +445,40 @@
                     </div>
 
                     <div class="bg-indigo-50/50 p-4 rounded-2xl border border-indigo-100 text-center space-y-2.5 relative">
-                        <div class="flex justify-center">
-                            <button onclick="playWholeWordAudioUK(csQs[csIdx], 1, activeSessionId, 1.0)" class="w-12 h-12 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl flex items-center justify-center text-xl shadow-md active:scale-95 transition-all">🔊</button>
+                        <div class="flex justify-center items-center gap-2 sm:gap-3">
+                            <button onclick="playCSAudio(1.0)" class="w-11 h-11 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl flex items-center justify-center text-lg shadow-md active:scale-95 transition-all">🔊</button>
+                            <button onclick="playCSAudio(0.5)" class="w-11 h-11 rounded-2xl bg-amber-100 hover:bg-amber-200 text-amber-900 font-black text-lg shadow-md flex items-center justify-center active:scale-95 border-2 border-amber-300 transition-all font-bold" title="超慢速發音 (0.5x)">🐢</button>
                         </div>
                         <p id="cs-hint-def" class="text-xs font-semibold text-slate-600">聆聽發音並重組字塊</p>
-                        <div class="absolute top-2 right-2">
-                            <label class="flex items-center gap-1.5 cursor-pointer text-[11px] font-bold text-slate-500 bg-white border border-slate-200 px-2.5 py-1 rounded-lg hover:bg-slate-50 transition-colors">
-                                <input type="checkbox" id="cs-audio-toggle" class="w-3 h-3 accent-indigo-600">
-                                🎵 點擊字塊發音
-                            </label>
-                        </div>
                     </div>
 
                     <div class="space-y-4">
-                        <!-- 拼裝區 (Slots) - 支援 SortableJS 拖曳 -->
                         <div class="space-y-1.5">
-                            <div class="text-[11px] font-black text-slate-400 uppercase px-1">目標單字 (可長按拖曳排列)</div>
+                            <div class="flex justify-between items-center px-1 flex-wrap gap-1">
+                                <div class="text-[11px] font-black text-slate-400 uppercase">目標單字 (可長按拖曳排列)</div>
+                                <label class="flex items-center gap-1.5 cursor-pointer text-[10px] sm:text-[11px] font-bold text-slate-500 bg-white border border-slate-200 px-2 py-0.5 rounded-lg hover:bg-slate-50 transition-colors shadow-2xs">
+                                    <input type="checkbox" id="cs-audio-toggle" class="w-3 h-3 accent-emerald-600" checked>
+                                    🎵 點擊字塊發音
+                                </label>
+                            </div>
                             <div id="cs-slots-container" class="min-h-[70px] p-2.5 bg-slate-100/70 rounded-2xl border-2 border-dashed border-slate-300 flex flex-wrap justify-center items-center gap-2"></div>
                         </div>
 
-                        <!-- 選擇區 (Pool) -->
                         <div class="space-y-1.5">
                             <div class="text-[11px] font-black text-slate-400 uppercase px-1">點選下方字塊填入</div>
                             <div id="cs-pool-container" class="min-h-[80px] p-2.5 flex flex-wrap justify-center items-center gap-2"></div>
                         </div>
                     </div>
 
-                    <div class="flex flex-col gap-2 pt-2 border-t border-slate-100">
-                        <button id="cs-check-btn" onclick="checkCSAnswer()" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl text-sm shadow-xs transition-colors">檢查答案</button>
-                        <button id="cs-next-btn" onclick="advanceCSQuestion()" class="hidden w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-xl text-sm shadow-xs transition-colors">下一題 ➡️</button>
-                        <div id="cs-feedback" class="text-center font-black text-sm h-6 flex items-center justify-center"></div>
+                    <div class="flex flex-col gap-2 pt-1">
+                        <div id="cs-feedback" class="text-center font-black text-sm h-6 flex items-center justify-center my-1"></div>
+                        <button id="cs-check-btn" onclick="checkCSAnswer()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-xl text-sm shadow-xs transition-colors">檢查答案</button>
+                    </div>
+                    
+                    <div class="flex items-center justify-between gap-3 pt-2 border-t border-slate-100">
+                        <button onclick="navigateCSQuestion(-1)" class="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-black rounded-xl flex items-center justify-center gap-1.5 text-xs sm:text-sm"><span>⬅️</span> <span>上一題</span></button>
+                        <button onclick="shuffleCSQuestions()" class="px-4 py-3 bg-amber-50 hover:bg-amber-100 text-amber-800 font-black rounded-xl border border-amber-200 flex items-center justify-center gap-1 text-xs sm:text-sm" title="隨機洗牌"><span>🔀</span> <span>洗牌</span></button>
+                        <button onclick="navigateCSQuestion(1)" class="flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-xl shadow-xs flex items-center justify-center gap-1.5 text-xs sm:text-sm"><span>跳過 / 下一題</span> <span>➡️</span></button>
                     </div>
                 </div>
             </div>
@@ -768,7 +773,6 @@
                     <p class="text-xs text-slate-500" data-i18n="profile_subheading">自訂專屬頭像、小寵物暱稱與激勵表情反應</p>
                 </div>
 
-                <!-- 學生專屬頭像與激勵表情設定面板 -->
                 <div class="p-4 bg-gradient-to-b from-indigo-50/70 to-blue-50/50 rounded-2xl border-2 border-indigo-200 space-y-3">
                     <div class="flex items-center justify-between">
                         <span class="text-xs font-black text-indigo-900 uppercase tracking-wider flex items-center gap-1">
@@ -882,6 +886,9 @@
             </div>
 
             <div class="space-y-2 pt-1">
+                <button id="btn-practice-mistakes" onclick="startMistakeChunkScramble()" class="hidden w-full py-3 bg-amber-500 hover:bg-amber-600 text-white font-black rounded-xl shadow-xs text-xs sm:text-sm flex items-center justify-center gap-1.5 active:scale-95 transition-colors">
+                    <span>🔧</span> <span>練習錯題 (音節重組複習)</span>
+                </button>
                 <button onclick="restartScrambleQuiz()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl shadow-xs text-xs sm:text-sm flex items-center justify-center gap-1.5 active:scale-95 transition-colors">
                     <span>🔄</span> <span>再次挑戰同組題庫</span>
                 </button>
@@ -893,6 +900,19 @@
                         🏠 回主頁
                     </button>
                 </div>
+            </div>
+        </div>
+    </div> <!-- 💡 補回這個遺漏的 div 關閉標籤 -->
+
+    <div id="cs-summary-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4 border border-emerald-100 text-center relative overflow-hidden">
+            <div id="cs-summary-icon" class="text-6xl my-3 animate-cheer">🧩</div>
+            <div class="space-y-1">
+                <h3 id="cs-summary-title" class="font-black text-xl text-slate-900">音節重組完成！</h3>
+                <p id="cs-summary-desc" class="text-xs font-bold text-slate-500">所有單字都已經成功拼湊！</p>
+            </div>
+            <div id="cs-summary-actions" class="space-y-2 pt-3 border-t border-slate-100">
+                <!-- Actions injected dynamically -->
             </div>
         </div>
     </div>
@@ -1039,47 +1059,19 @@
             }
 
             if (score >= 6) {
-                return {
-                    borderColor: borderColorClass, textValueColor: textValueClass, badge: '☀️',
-                    moodZh: '元氣滿滿！', hungerZh: '極度飽足',
-                    moodEn: 'Joyful', hungerEn: 'Satiated'
-                };
+                return { borderColor: borderColorClass, textValueColor: textValueClass, badge: '☀️', moodZh: '元氣滿滿！', hungerZh: '極度飽足', moodEn: 'Joyful', hungerEn: 'Satiated' };
             } else if (score >= 5) {
-                return {
-                    borderColor: borderColorClass, textValueColor: textValueClass, badge: '✨',
-                    moodZh: '開心愉快', hungerZh: '很飽',
-                    moodEn: 'Happy', hungerEn: 'Full'
-                };
+                return { borderColor: borderColorClass, textValueColor: textValueClass, badge: '✨', moodZh: '開心愉快', hungerZh: '很飽', moodEn: 'Happy', hungerEn: 'Full' };
             } else if (score >= 4) {
-                return {
-                    borderColor: borderColorClass, textValueColor: textValueClass, badge: '🍀',
-                    moodZh: '精神奕奕', hungerZh: '剛剛好',
-                    moodEn: 'Energetic', hungerEn: 'Good'
-                };
+                return { borderColor: borderColorClass, textValueColor: textValueClass, badge: '🍀', moodZh: '精神奕奕', hungerZh: '剛剛好', moodEn: 'Energetic', hungerEn: 'Good' };
             } else if (score >= 3) {
-                return {
-                    borderColor: borderColorClass, textValueColor: textValueClass, badge: '🍎',
-                    moodZh: '有些肚子餓了', hungerZh: '普通',
-                    moodEn: 'A bit hungry', hungerEn: 'Fair'
-                };
+                return { borderColor: borderColorClass, textValueColor: textValueClass, badge: '🍎', moodZh: '有些肚子餓了', hungerZh: '普通', moodEn: 'A bit hungry', hungerEn: 'Fair' };
             } else if (score >= 2) {
-                return {
-                    borderColor: borderColorClass, textValueColor: textValueClass, badge: '🍖',
-                    moodZh: '肚子咕咕叫', hungerZh: '肚餓',
-                    moodEn: 'Hungry', hungerEn: 'Low'
-                };
+                return { borderColor: borderColorClass, textValueColor: textValueClass, badge: '🍖', moodZh: '肚子咕咕叫', hungerZh: '肚餓', moodEn: 'Hungry', hungerEn: 'Low' };
             } else if (score >= 1) {
-                return {
-                    borderColor: borderColorClass, textValueColor: textValueClass, badge: '💧',
-                    moodZh: '好虛弱...', hungerZh: '非常肚餓',
-                    moodEn: 'Weak', hungerEn: 'Very Low'
-                };
+                return { borderColor: borderColorClass, textValueColor: textValueClass, badge: '💧', moodZh: '好虛弱...', hungerZh: '非常肚餓', moodEn: 'Weak', hungerEn: 'Very Low' };
             } else {
-                return {
-                    borderColor: borderColorClass, textValueColor: textValueClass, badge: '⚡',
-                    moodZh: '快要餓昏了！', hungerZh: '極度飢餓',
-                    moodEn: 'Starving!', hungerEn: 'Empty'
-                };
+                return { borderColor: borderColorClass, textValueColor: textValueClass, badge: '⚡', moodZh: '快要餓昏了！', hungerZh: '極度飢餓', moodEn: 'Starving!', hungerEn: 'Empty' };
             }
         }
 
@@ -1112,32 +1104,20 @@
                 hungerLabelEl.innerText = isEn ? `Hunger: ${cfg.hungerEn}` : `飽足度: ${cfg.hungerZh}`;
                 hungerLabelEl.className = `text-[11px] font-black transition-colors duration-300 ${cfg.textValueColor.split(' ')[0]}`;
             }
-            
             if (hungerValueEl) {
                 hungerValueEl.innerText = `(${score}/6)`;
                 hungerValueEl.className = `font-black px-1.5 py-0.5 rounded-md text-[10px] transition-colors duration-300 ${cfg.textValueColor}`;
             }
-
             if (frameEl) {
                 frameEl.className = `relative w-16 h-16 rounded-full border-[3.5px] overflow-hidden bg-white shadow-sm flex items-center justify-center transition-colors duration-300 ${cfg.borderColor}`;
             }
 
             const sv = localStorage.getItem(USER_AVATAR_STORAGE_KEY);
             if (imgEl && defEl) {
-                if (sv) {
-                    imgEl.src = sv; imgEl.classList.remove('hidden'); defEl.classList.add('hidden');
-                } else {
-                    imgEl.src = ''; imgEl.classList.add('hidden'); defEl.classList.remove('hidden');
-                }
+                if (sv) { imgEl.src = sv; imgEl.classList.remove('hidden'); defEl.classList.add('hidden'); }
+                else { imgEl.src = ''; imgEl.classList.add('hidden'); defEl.classList.remove('hidden'); }
             }
-
-            if (tipEl) {
-                if (score < 6) {
-                    tipEl.classList.remove('hidden');
-                } else {
-                    tipEl.classList.add('hidden');
-                }
-            }
+            if (tipEl) { if (score < 6) tipEl.classList.remove('hidden'); else tipEl.classList.add('hidden'); }
         }
 
         let activeSessionId = 0, activeAudioElements = [], currentAnalysis = null, currentStepLevel = 0;
@@ -1210,7 +1190,11 @@
 
         function getDynRange(s, role, f) {
             if(role==='vowel') return f ? {s:0, e:100, oMs:220, eO:true} : {s:0, e:100, oMs:30};
-            if(role==='onset') { if(f) return pProf.plosives.has(s) ? {s:0, e:20, oMs:55} : {s:0, e:30, oMs:50}; return pProf.plosives.has(s) ? {s:0, e:40, oMs:28} : {s:0, e:56, oMs:28}; }
+            if(role==='onset') { 
+                if(s==='g') return f ? {s:0, e:60, oMs:90} : {s:0, e:70, oMs:70}; // 進一步優化 /g/ 音避免過短聽不見
+                if(f) return pProf.plosives.has(s) ? {s:0, e:25, oMs:65} : {s:0, e:30, oMs:50}; 
+                return pProf.plosives.has(s) ? {s:0, e:60, oMs:60} : {s:0, e:56, oMs:28}; 
+            }
             if(role==='coda') return f ? {s:25, e:100, oMs:0} : {s:45, e:100, oMs:0}; return {s:0, e:100, oMs:0};
         }
         function preLoad(u) { return new Promise(r => { if(!u)return r(null); const a=new Audio(u); a.preload="auto"; if(a.readyState>=2) r(a); else{ a.onloadeddata=()=>r(a); a.onerror=()=>r(null); setTimeout(()=>r(a),500); } }); }
@@ -1494,6 +1478,8 @@
         let sInMode='tiles', curSlotIdx=0, tWord="", tSlots=[], availTiles=[], selSSubsets=new Set(['__ALL__']);
         let hwCanvas=null, hwCtx=null, isDwg=false, hwStks=0;
         let isQuestionLocked = false, autoCheckTimeout = null, hintGiven = false;
+        let recentMistakes = []; // 用於記錄錯題的陣列
+        let isReviewMode = false; // 標記目前是否處於無獎勵的複習模式
 
         function renderScrambleSubsetSelectors() {
             const c=document.getElementById('scramble-subsets-checkboxes'); if(!c)return;
@@ -1506,10 +1492,16 @@
         function setScrambleQuestionCount(c, e) { sLimit=c; document.querySelectorAll('.scramble-count-btn').forEach(b=>b.className="scramble-count-btn px-4 py-2 bg-white border-2 border-slate-200 rounded-xl font-black text-xs text-slate-700"); e.currentTarget.className="scramble-count-btn px-4 py-2 bg-blue-600 text-white border-2 border-blue-600 rounded-xl font-black text-xs"; }
         function setScrambleInputMode(m, e) { sInMode=m; document.querySelectorAll('.scramble-mode-pref-btn').forEach(b=>b.className="scramble-mode-pref-btn px-3 py-2 bg-white text-slate-700 border-2 border-slate-200 rounded-xl font-black text-xs flex flex-col items-center gap-1 hover:border-blue-500"); e.currentTarget.className="scramble-mode-pref-btn px-3 py-2 bg-blue-600 text-white border-2 border-blue-600 rounded-xl font-black text-xs flex flex-col items-center gap-1 shadow-xs"; }
         
-        function startScrambleGame() {
-            const st=new Set(); if(selSSubsets.has('__ALL__')) Object.keys(customWordDatabase).forEach(w=>st.add(w.toLowerCase())); selSSubsets.forEach(id=>id!=='__ALL__'&&userSubsets[id]?.words.forEach(w=>st.add(w.toLowerCase())));
-            let cnd=Array.from(st); if(!cnd.length) return showToast("清單中無字詞供練習！", "warning");
-            for(let i=cnd.length-1; i>0; i--){const j=Math.floor(Math.random()*(i+1)); [cnd[i],cnd[j]]=[cnd[j],cnd[i]];} sQs=cnd.slice(0, Math.min(cnd.length, sLimit));
+        function startScrambleGame(customQs = null, review = false) {
+            isReviewMode = review;
+            if (customQs) {
+                sQs = customQs;
+            } else {
+                recentMistakes = []; // 開始新遊戲時清空錯題紀錄
+                const st=new Set(); if(selSSubsets.has('__ALL__')) Object.keys(customWordDatabase).forEach(w=>st.add(w.toLowerCase())); selSSubsets.forEach(id=>id!=='__ALL__'&&userSubsets[id]?.words.forEach(w=>st.add(w.toLowerCase())));
+                let cnd=Array.from(st); if(!cnd.length) return showToast("清單中無字詞供練習！", "warning");
+                for(let i=cnd.length-1; i>0; i--){const j=Math.floor(Math.random()*(i+1)); [cnd[i],cnd[j]]=[cnd[j],cnd[i]];} sQs=cnd.slice(0, Math.min(cnd.length, sLimit));
+            }
             sIdx=0; sScore=0; sStreak=0; mStreak=0;
             document.getElementById('scramble-setup-box').classList.add('hidden'); document.getElementById('scramble-game-arena').classList.remove('hidden');
             document.getElementById('scramble-streak-badge').innerText=`連對: 0`;
@@ -1534,10 +1526,11 @@
             if(sInMode==='handwriting') { clearHandwritingCanvas(); updateHWStatus(); }
             
             const tp=document.getElementById('scramble-timer-pill'), ts=document.getElementById('scramble-timer-seconds');
-            if(sTimerS>0){ tp.classList.remove('hidden'); let lS=sTimerS; ts.innerText=lS; sTimerIv=setInterval(()=>{lS--; ts.innerText=lS; if(lS<=0){clearInterval(sTimerIv); checkScrambleAnswer(true);}}, 1000); } else tp.classList.add('hidden');
+            if(sTimerS>0 && !isReviewMode){ tp.classList.remove('hidden'); let lS=sTimerS; ts.innerText=lS; sTimerIv=setInterval(()=>{lS--; ts.innerText=lS; if(lS<=0){clearInterval(sTimerIv); checkScrambleAnswer(true);}}, 1000); } else tp.classList.add('hidden');
             setTimeout(()=>triggerScramblePlaySequence(1.0), 300);
         }
         function triggerScramblePlaySequence(sp) { playWholeWordAudioUK(tWord, sVRep, activeSessionId, sp); }
+
         function renderScrambleSlots() {
             const c=document.getElementById('scramble-slots-container'); if(!c)return;
             c.innerHTML=tSlots.map((s,i)=>{
@@ -1566,13 +1559,14 @@
             tSlots[idx]=null; curSlotIdx=idx; renderScrambleSlots(); renderScrambleTiles(); updateHWStatus();
         }
         function resetCurrentScrambleSlots() { if(isQuestionLocked)return; tSlots.fill(null); availTiles.forEach(t=>t.isUsed=false); curSlotIdx=0; renderScrambleSlots(); renderScrambleTiles(); if(sInMode==='handwriting'){clearHandwritingCanvas(); updateHWStatus();} }
-        
+
         let csQs = [], csIdx = 0, csTargetWord = "";
         let csSlots = [], csPool = [];
         let selCSSubsets = new Set(['__ALL__']);
         let csLimit = 10;
-        let csDifficulty = 'easy'; // 新增難度狀態變數
-        let csSortableInstance = null; // SortableJS 實例儲存變數
+        let csDifficulty = 'hard';
+        let csSortableInstance = null;
+        let isCSReturnToScramble = false; // 標記是否為由錯題挑戰跳轉而來的模式
 
         function renderCSSubsetSelectors() {
             const c = document.getElementById('cs-subsets-checkboxes'); if(!c)return;
@@ -1586,117 +1580,151 @@
             csDifficulty = lvl;
             document.querySelectorAll('.cs-diff-btn').forEach(b => b.className = "cs-diff-btn flex-1 py-2 bg-white border-2 border-slate-200 text-slate-700 rounded-xl font-black text-xs transition-colors");
             const activeColor = lvl === 'easy' ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-red-500 text-white border-red-500';
-            e.currentTarget.className = `cs-diff-btn flex-1 py-2 ${activeColor} rounded-xl font-black text-xs transition-colors`;
+            if (e) {
+                e.currentTarget.className = `cs-diff-btn flex-1 py-2 ${activeColor} rounded-xl font-black text-xs transition-colors`;
+            } else {
+                const targetBtn = document.querySelectorAll('.cs-diff-btn')[lvl === 'easy' ? 0 : 1];
+                if(targetBtn) targetBtn.className = `cs-diff-btn flex-1 py-2 ${activeColor} rounded-xl font-black text-xs transition-colors`;
+            }
+            updateArenaDiffUI();
         }
 
-        // 💡 核心引擎綁定：呼叫 pT 函數將音節精準拆分為 [頭音] + [韻部] 或 全組件
-        function getEngineDerivedChunks(analysis) {
-        let result = [];
-        if(!analysis || !analysis.chunks) return result;
-        
-        analysis.chunks.forEach((c, idx) => {
-            const tokens = pT(c, idx, analysis.chunks.length, analysis.word);
-            
-            if (csDifficulty === 'easy') {
-                let onsetPart = "";
-                let rhymePart = ""; 
-                tokens.forEach(tk => {
-                    if (tk.t === 'onset' && rhymePart === "") onsetPart += tk.c;
-                    else rhymePart += tk.c;
-                });
-                if (onsetPart) result.push({ text: onsetPart, chunkIdx: idx, type: 'onset' });
-                if (rhymePart) result.push({ text: rhymePart, chunkIdx: idx, type: 'rhyme' });
-            } else {
-                if (tokens.length === 0) return;
-                let currentType = tokens[0].t;
-                let currentStr = tokens[0].c;
-                
-                for (let i = 1; i < tokens.length; i++) {
-                    if (tokens[i].t === currentType) {
-                        currentStr += tokens[i].c; 
-                    } else {
-                        result.push({ text: currentStr, chunkIdx: idx, type: currentType });
-                        currentType = tokens[i].t;
-                        currentStr = tokens[i].c;
-                    }
-                }
-                if (currentStr) result.push({ text: currentStr, chunkIdx: idx, type: currentType });
-            }
-        });
-        return result;
-    }
+        function changeArenaDifficulty(lvl) {
+            if(csDifficulty === lvl) return;
+            setCSDifficulty(lvl); 
+            loadCurCSQuestion();
+        }
 
-    function startChunkScramble() {
-            const st = new Set(); if(selCSSubsets.has('__ALL__')) Object.keys(customWordDatabase).forEach(w=>st.add(w.toLowerCase()));
-            selCSSubsets.forEach(id=>id!=='__ALL__'&&userSubsets[id]?.words.forEach(w=>st.add(w.toLowerCase())));
+        function updateArenaDiffUI() {
+            const btnEasy = document.getElementById('cs-arena-diff-easy');
+            const btnHard = document.getElementById('cs-arena-diff-hard');
+            if(btnEasy && btnHard) {
+                if(csDifficulty === 'easy') {
+                    btnEasy.className = "px-2 py-1 rounded-md bg-white shadow-sm text-emerald-700 transition-all";
+                    btnHard.className = "px-2 py-1 rounded-md text-slate-500 hover:text-slate-700 transition-all";
+                } else {
+                    btnHard.className = "px-2 py-1 rounded-md bg-white shadow-sm text-red-600 transition-all";
+                    btnEasy.className = "px-2 py-1 rounded-md text-slate-500 hover:text-slate-700 transition-all";
+                }
+            }
+        }
+
+        function getEngineDerivedChunks(analysis) {
+            let result = [];
+            if(!analysis || !analysis.chunks) return result;
             
-            let cnd = Array.from(st).filter(w => { 
-            const analysis = customWordDatabase[w] || dWAuto(w); 
-            return getEngineDerivedChunks(analysis).length > 1; 
-        }); 
+            analysis.chunks.forEach((c, idx) => {
+                const tokens = pT(c, idx, analysis.chunks.length, analysis.word);
+                
+                if (csDifficulty === 'easy') {
+                    let onsetPart = "";
+                    let rhymePart = ""; 
+                    tokens.forEach(tk => {
+                        if (tk.t === 'onset' && rhymePart === "") onsetPart += tk.c;
+                        else rhymePart += tk.c;
+                    });
+                    if (onsetPart) result.push({ text: onsetPart, chunkIdx: idx, type: 'onset' });
+                    if (rhymePart) result.push({ text: rhymePart, chunkIdx: idx, type: 'rhyme' });
+                } else {
+                    if (tokens.length === 0) return;
+                    let currentType = tokens[0].t;
+                    let currentStr = tokens[0].c;
+                    
+                    for (let i = 1; i < tokens.length; i++) {
+                        if (tokens[i].t === currentType) {
+                            currentStr += tokens[i].c; 
+                        } else {
+                            result.push({ text: currentStr, chunkIdx: idx, type: currentType });
+                            currentType = tokens[i].t;
+                            currentStr = tokens[i].c;
+                        }
+                    }
+                    if (currentStr) result.push({ text: currentStr, chunkIdx: idx, type: currentType });
+                }
+            });
+            return result;
+        }
+
+        function startChunkScramble(customWords = null, returnToScramble = false) {
+            isCSReturnToScramble = returnToScramble;
+            let cnd = [];
+            if (customWords && customWords.length > 0) {
+                cnd = customWords;
+            } else {
+                const st = new Set(); if(selCSSubsets.has('__ALL__')) Object.keys(customWordDatabase).forEach(w=>st.add(w.toLowerCase()));
+                selCSSubsets.forEach(id=>id!=='__ALL__'&&userSubsets[id]?.words.forEach(w=>st.add(w.toLowerCase())));
+                cnd = Array.from(st);
+            }
             
-            if(!cnd.length) { 
+            const validCnd = cnd.filter(w => { 
+                const analysis = customWordDatabase[w] || dWAuto(w); 
+                return getEngineDerivedChunks(analysis).length > 1; 
+            }); 
+            
+            if(!validCnd.length) { 
                 return showToast("清單中無可拆解的字詞供練習！", "warning"); 
             }
             
-            for(let i=cnd.length-1; i>0; i--){const j=Math.floor(Math.random()*(i+1)); [cnd[i],cnd[j]]=[cnd[j],cnd[i]];}
-            csQs = cnd.slice(0, Math.min(cnd.length, csLimit)); 
+            for(let i=validCnd.length-1; i>0; i--){const j=Math.floor(Math.random()*(i+1)); [validCnd[i],validCnd[j]]=[validCnd[j],validCnd[i]];}
+            csQs = customWords ? validCnd : validCnd.slice(0, Math.min(validCnd.length, csLimit)); 
             
             csIdx = 0;
             document.getElementById('cs-setup-box').classList.add('hidden'); 
             document.getElementById('cs-game-arena').classList.remove('hidden');
+            selectNavTab('chunk-scramble', true);
+            updateArenaDiffUI();
             loadCurCSQuestion();
         }
 
         function loadCurCSQuestion() {
-        csTargetWord = csQs[csIdx].toLowerCase();
-        const analysis = customWordDatabase[csTargetWord] || dWAuto(csTargetWord);
-        
-        const rawChunks = getEngineDerivedChunks(analysis);
-        
-        csPool = rawChunks.map((chunkData, i) => ({ id: `cs_t_${i}`, text: chunkData.text, chunkIdx: chunkData.chunkIdx, type: chunkData.type, isUsed: false }));
-        
-        for(let i=csPool.length-1; i>0; i--){const j=Math.floor(Math.random()*(i+1)); [csPool[i],csPool[j]]=[csPool[j],csPool[i]];}
-        
-        csSlots = new Array(rawChunks.length).fill(null);
-        
-        document.getElementById('cs-progress').innerText = `題目 ${csIdx + 1} / ${csQs.length}`;
-        document.getElementById('cs-progress-fill').style.width = `${((csIdx+1)/csQs.length)*100}%`;
+            csTargetWord = csQs[csIdx].toLowerCase();
+            const analysis = customWordDatabase[csTargetWord] || dWAuto(csTargetWord);
             
+            const rawChunks = getEngineDerivedChunks(analysis);
+            
+            csPool = rawChunks.map((chunkData, i) => ({ id: `cs_t_${i}`, text: chunkData.text, chunkIdx: chunkData.chunkIdx, type: chunkData.type, isUsed: false }));
+            
+            for(let i=csPool.length-1; i>0; i--){const j=Math.floor(Math.random()*(i+1)); [csPool[i],csPool[j]]=[csPool[j],csPool[i]];}
+            
+            csSlots = new Array(rawChunks.length).fill(null);
+            
+            document.getElementById('cs-progress').innerText = `題目 ${csIdx + 1} / ${csQs.length}`;
+            document.getElementById('cs-progress-fill').style.width = `${((csIdx+1)/csQs.length)*100}%`;
+                
             let hint = analysis.definition || '聆聽發音並重組字塊。';
             if (hint.length > 50) hint = hint.substring(0, 47) + '...';
             document.getElementById('cs-hint-def').innerText = hint;
             
             document.getElementById('cs-feedback').innerText = '';
-            document.getElementById('cs-next-btn').classList.add('hidden');
             document.getElementById('cs-check-btn').classList.remove('hidden');
             
             renderCSArena();
-            setTimeout(() => playWholeWordAudioUK(csTargetWord, 1, activeSessionId, 1.0), 300);
+            setTimeout(() => playCSAudio(1.0), 300);
+        }
+
+        function playCSAudio(speed) {
+            playWholeWordAudioUK(csTargetWord, 1, activeSessionId, speed);
         }
 
         function renderCSArena() {
-            // Render Slots
             const slotsHtml = csSlots.map((slot, i) => {
                 if (slot) {
-                    return `<button data-id="${slot.id}" onclick="handleCSSlotClick('${slot.id}')" class="cs-active-tile px-4 py-2.5 bg-white border-2 border-slate-400 border-b-4 text-black font-black text-[22px] rounded-xl hover:bg-slate-50 active:border-b-2 active:translate-y-[2px] transition-all cursor-grab active:cursor-grabbing select-none">${slot.text}</button>`;
+                    return `<div data-id="${slot.id}" onclick="handleCSSlotClick('${slot.id}')" class="cs-active-tile px-3.5 py-2 bg-white border-2 border-slate-400 border-b-4 text-black font-black text-xl rounded-xl hover:bg-slate-50 active:border-b-2 active:translate-y-[2px] transition-all cursor-grab active:cursor-grabbing select-none shadow-2xs">${slot.text}</div>`;
                 } else {
-                    return `<div class="empty-slot min-w-[64px] h-[52px] bg-slate-200/80 rounded-xl border-b-4 border-slate-300/60 shadow-inner"></div>`;
+                    return `<div class="empty-slot w-12 h-12 bg-slate-200/80 rounded-xl border-b-4 border-slate-300/60 shadow-inner"></div>`;
                 }
             }).join('');
             document.getElementById('cs-slots-container').innerHTML = slotsHtml;
 
-            // Render Pool
             const poolHtml = csPool.map(tile => {
                 if (tile.isUsed) {
-                    return `<div class="px-4 py-2.5 bg-slate-200 border-2 border-slate-200/50 rounded-xl text-transparent font-black text-[22px] select-none shadow-none">${tile.text}</div>`;
+                    return `<div class="px-3.5 py-2 bg-slate-200 border-2 border-slate-200/50 rounded-xl text-transparent font-black text-xl select-none shadow-none">${tile.text}</div>`;
                 } else {
-                    return `<button onclick="handleCSPoolClick('${tile.id}')" class="px-4 py-2.5 bg-white border-2 border-slate-400 border-b-4 text-black font-black text-[22px] rounded-xl hover:bg-slate-50 active:border-b-2 active:translate-y-[2px] transition-all cursor-pointer select-none">${tile.text}</button>`;
+                    return `<button onclick="handleCSPoolClick('${tile.id}')" class="px-3.5 py-2 bg-white border-2 border-slate-400 border-b-4 text-black font-black text-xl rounded-xl hover:bg-slate-50 active:border-b-2 active:translate-y-[2px] transition-all cursor-pointer select-none shadow-2xs">${tile.text}</button>`;
                 }
             }).join('');
             document.getElementById('cs-pool-container').innerHTML = poolHtml;
 
-            // 初始化或更新 SortableJS 拖曳功能
             const container = document.getElementById('cs-slots-container');
             if (csSortableInstance) {
                 csSortableInstance.destroy();
@@ -1704,81 +1732,81 @@
             if (window.Sortable) {
                 csSortableInstance = new Sortable(container, {
                     animation: 200,
-                    filter: '.empty-slot', // 禁止拖曳空槽
-                    ghostClass: 'opacity-40', // 拖曳時的半透明效果
-                    onEnd: function (evt) {
-                    const newCsSlots = [];
-                    Array.from(container.children).forEach(el => {
-                        const tileId = el.getAttribute('data-id');
-                        if (tileId) {
-                            const tile = csPool.find(t => t.id === tileId);
-                            newCsSlots.push(tile ? { id: tile.id, text: tile.text } : null);
-                        } else {
-                            newCsSlots.push(null);
-                        }
-                    });
-                    csSlots = newCsSlots;
-                    document.getElementById('cs-feedback').innerText = '';
-                }
-            });
+                    filter: '.empty-slot',
+                    ghostClass: 'opacity-40',
+                    onEnd: function () {
+                        const newCsSlots = [];
+                        Array.from(container.children).forEach(el => {
+                            const tileId = el.getAttribute('data-id');
+                            if (tileId) {
+                                const tile = csPool.find(t => t.id === tileId);
+                                newCsSlots.push(tile ? { id: tile.id, text: tile.text } : null);
+                            } else {
+                                newCsSlots.push(null);
+                            }
+                        });
+                        csSlots = newCsSlots;
+                        document.getElementById('cs-feedback').innerText = '';
+                    }
+                });
+            }
         }
-    }
 
-    function playCSChunkAudio(id) {
-        if (!document.getElementById('cs-audio-toggle').checked) return;
-        const tile = csPool.find(t => t.id === id);
-        if (!tile) return;
-        
-        const analysis = customWordDatabase[csTargetWord] || dWAuto(csTargetWord);
-        const chunk = analysis.chunks[tile.chunkIdx];
-        if (!chunk) return;
-        
-        activeSessionId++; const s = activeSessionId;
-        let tempChk = { onset: null, vowel: null, coda: null };
-        
-        if (csDifficulty === 'easy') {
-            if (tile.type === 'onset') { tempChk.onset = chunk.onset; }
-            else if (tile.type === 'rhyme') { tempChk.vowel = chunk.vowel; tempChk.coda = chunk.coda; }
-        } else {
-            if (tile.type === 'onset') tempChk.onset = chunk.onset;
-            else if (tile.type === 'vowel') tempChk.vowel = chunk.vowel;
-            else if (tile.type === 'coda') tempChk.coda = chunk.coda;
+        function playCSChunkAudio(id) {
+            if (!document.getElementById('cs-audio-toggle').checked) return;
+            const tile = csPool.find(t => t.id === id);
+            if (!tile) return;
+            
+            const analysis = customWordDatabase[csTargetWord] || dWAuto(csTargetWord);
+            const chunk = analysis.chunks[tile.chunkIdx];
+            if (!chunk) return;
+            
+            activeSessionId++; const s = activeSessionId;
+            let tempChk = { onset: null, vowel: null, coda: null };
+            
+            if (csDifficulty === 'easy') {
+                if (tile.type === 'onset') { tempChk.onset = chunk.onset; }
+                else if (tile.type === 'rhyme') { tempChk.vowel = chunk.vowel; tempChk.coda = chunk.coda; }
+            } else {
+                if (tile.type === 'onset') tempChk.onset = chunk.onset;
+                else if (tile.type === 'vowel') tempChk.vowel = chunk.vowel;
+                else if (tile.type === 'coda') tempChk.coda = chunk.coda;
+            }
+            
+            pStepA(tempChk, 3, s, false);
         }
-        
-        pStepA(tempChk, 3, s, false);
-    }
 
-    function handleCSPoolClick(id) {
-        const tile = csPool.find(t => t.id === id);
-        if (!tile || tile.isUsed) return;
-        
-        const emptyIdx = csSlots.indexOf(null);
-        if (emptyIdx === -1) return; 
-        
-        playCSChunkAudio(id);
+        function handleCSPoolClick(id) {
+            const tile = csPool.find(t => t.id === id);
+            if (!tile || tile.isUsed) return;
+            
+            const emptyIdx = csSlots.indexOf(null);
+            if (emptyIdx === -1) return; 
+            
+            playCSChunkAudio(id);
 
-        tile.isUsed = true;
-        csSlots[emptyIdx] = { id: tile.id, text: tile.text };
-        renderCSArena();
-        document.getElementById('cs-feedback').innerText = '';
-    }
+            tile.isUsed = true;
+            csSlots[emptyIdx] = { id: tile.id, text: tile.text };
+            renderCSArena();
+            document.getElementById('cs-feedback').innerText = '';
+        }
 
-    function handleCSSlotClick(id) {
-        const idx = csSlots.findIndex(s => s && s.id === id);
-        if (idx === -1) return;
-        const slot = csSlots[idx];
-        
-        playCSChunkAudio(id);
+        function handleCSSlotClick(id) {
+            const idx = csSlots.findIndex(s => s && s.id === id);
+            if (idx === -1) return;
+            const slot = csSlots[idx];
+            
+            playCSChunkAudio(id);
 
-        const tile = csPool.find(t => t.id === slot.id);
-        if (tile) tile.isUsed = false;
-        
-        csSlots[idx] = null;
-        renderCSArena();
-        document.getElementById('cs-feedback').innerText = '';
-    }
+            const tile = csPool.find(t => t.id === slot.id);
+            if (tile) tile.isUsed = false;
+            
+            csSlots[idx] = null;
+            renderCSArena();
+            document.getElementById('cs-feedback').innerText = '';
+        }
 
-    function checkCSAnswer() {
+        function checkCSAnswer() {
             if (csSlots.includes(null)) {
                 const fb = document.getElementById('cs-feedback');
                 fb.innerText = "請將所有字塊放入格子內！";
@@ -1793,7 +1821,7 @@
                 fb.innerText = "🎉 拼讀完全正確！";
                 fb.className = "text-center font-black text-sm h-6 text-emerald-600 animate-cheer";
                 document.getElementById('cs-check-btn').classList.add('hidden');
-                document.getElementById('cs-next-btn').classList.remove('hidden');
+                setTimeout(() => advanceCSQuestion(), 1500);
             } else {
                 fb.innerText = "❌ 順序似乎不對，再試一下！";
                 fb.className = "text-center font-black text-sm h-6 text-red-500 animate-shake";
@@ -1810,8 +1838,75 @@
                 const fb = document.getElementById('cs-feedback');
                 fb.innerText = "🌟 練習圓滿完成！";
                 fb.className = "text-center font-black text-sm h-6 text-indigo-600";
-                document.getElementById('cs-next-btn').classList.add('hidden');
-                setTimeout(() => quitChunkScramble(), 2000);
+                setTimeout(() => {
+                    showCSSummaryModal();
+                }, 1000);
+            }
+        }
+
+        function showCSSummaryModal() {
+            document.getElementById('cs-game-arena').classList.add('hidden');
+            const modal = document.getElementById('cs-summary-modal');
+            modal.classList.remove('hidden');
+            
+            const title = document.getElementById('cs-summary-title');
+            const desc = document.getElementById('cs-summary-desc');
+            const actions = document.getElementById('cs-summary-actions');
+            const icon = document.getElementById('cs-summary-icon');
+            
+            if (isCSReturnToScramble) {
+                icon.innerText = "🔧";
+                title.innerText = "錯題複習完成！";
+                title.className = "font-black text-xl text-amber-600";
+                desc.innerText = "做得好！現在你已經掌握這些音節了，要不要馬上回去挑戰剛才的聽音拼寫？";
+                
+                actions.innerHTML = `
+                    <button onclick="returnToScrambleFromCS()" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl shadow-xs text-sm flex items-center justify-center gap-2 transition-colors">
+                        <span>🚀</span> <span>再次挑戰聽音拼寫</span>
+                    </button>
+                    <button onclick="quitCSToMain()" class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition-colors">
+                        🏠 返回主頁
+                    </button>
+                `;
+            } else {
+                icon.innerText = "🧩";
+                title.innerText = "音節重組完成！";
+                title.className = "font-black text-xl text-emerald-600";
+                desc.innerText = "所有單字都已經成功拼湊！基礎越來越扎實了。";
+                
+                actions.innerHTML = `
+                    <button onclick="restartCS()" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-xl shadow-xs text-sm flex items-center justify-center gap-2 transition-colors">
+                        <span>🔄</span> <span>再玩一次</span>
+                    </button>
+                    <button onclick="closeCSSummaryModal(true)" class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition-colors">
+                        ⚙️ 更換題庫
+                    </button>
+                `;
+            }
+        }
+
+        function returnToScrambleFromCS() {
+            document.getElementById('cs-summary-modal').classList.add('hidden');
+            isCSReturnToScramble = false;
+            selectNavTab('scramble');
+            startScrambleGame(recentMistakes, true); // 💡 將 sQs 改為 recentMistakes，精準重考錯字
+        }
+
+        function quitCSToMain() {
+            document.getElementById('cs-summary-modal').classList.add('hidden');
+            isCSReturnToScramble = false;
+            selectNavTab('main');
+        }
+
+        function restartCS() {
+            document.getElementById('cs-summary-modal').classList.add('hidden');
+            startChunkScramble(csQs, isCSReturnToScramble);
+        }
+        
+        function closeCSSummaryModal(returnToSetup = false) {
+            document.getElementById('cs-summary-modal').classList.add('hidden');
+            if(returnToSetup) {
+                document.getElementById('cs-setup-box').classList.remove('hidden');
             }
         }
 
@@ -1819,6 +1914,22 @@
             document.getElementById('cs-game-arena').classList.add('hidden');
             document.getElementById('cs-setup-box').classList.remove('hidden');
             stopAllPlayback();
+        }
+
+        function navigateCSQuestion(dir) {
+            if (!csQs.length) return;
+            csIdx = (csIdx + dir + csQs.length) % csQs.length;
+            loadCurCSQuestion();
+        }
+
+        function shuffleCSQuestions() {
+            if (!csQs.length) return;
+            for(let i=csQs.length-1; i>0; i--){
+                const j = Math.floor(Math.random()*(i+1));
+                [csQs[i],csQs[j]]=[csQs[j],csQs[i]];
+            }
+            csIdx = 0;
+            loadCurCSQuestion();
         }
 
         function switchActiveScrambleInputMode(m) {
@@ -1869,7 +1980,6 @@
             clearTimeout(autoCheckTimeout); if(!tSlots.includes(null)) autoCheckTimeout=setTimeout(()=>checkScrambleAnswer(), 250);
         }
 
-        // ====== 拼字挑戰核心邏輯修復區 (End-Game & Summary) ======
         function updateHWStatus() {
             const fc=tSlots.filter(s=>s!==null).length; const st=document.getElementById('hw-filled-count-text'); if(st)st.innerText=`${fc}/${tSlots.length}`;
             const nt=document.getElementById('hw-next-slot-tip'); if(nt)nt.innerText=fc===tSlots.length?'所有空格已填滿':`下一次將填入第 ${curSlotIdx+1} 格`;
@@ -1888,31 +1998,40 @@
                 fb.innerText = "🎉 答對了！";
                 fb.className = "text-center font-black text-sm h-5 text-emerald-600 animate-cheer";
                 document.getElementById('scramble-slots-container').classList.add('border-emerald-400', 'bg-emerald-50');
-                sScore += 10;
-                sStreak++;
-                if(sStreak > mStreak) mStreak = sStreak;
+                if (!isReviewMode) {
+                    sScore += 10;
+                    sStreak++;
+                    if(sStreak > mStreak) mStreak = sStreak;
+                }
             } else {
                 let msg = isTimeUp ? "⏱️ 時間到！" : "❌ 答案不正確！";
                 fb.innerHTML = `<span class="text-red-500">${msg} 正確拼寫是: <span class="font-mono text-slate-800 bg-slate-200 px-1 rounded">${tWord.toUpperCase()}</span></span>`;
                 fb.className = "text-center font-black text-[11px] sm:text-xs h-5 animate-shake";
                 document.getElementById('scramble-slots-container').classList.add('border-red-400', 'bg-red-50');
-                sStreak = 0;
-                if (!hintGiven) {
-                    hintGiven = true;
-                    // 如果是輕微拼錯，可以給予提示並允許再試 (簡化版：直接判錯)
+                if (!isReviewMode) {
+                    sStreak = 0;
+                    if (!recentMistakes.includes(tWord)) {
+                        recentMistakes.push(tWord);
+                    }
                 }
             }
             
-            document.getElementById('scramble-streak-badge').innerText = `連對: ${sStreak}`;
+            if (!isReviewMode) {
+                document.getElementById('scramble-streak-badge').innerText = `連對: ${sStreak}`;
+            }
             
-            // 延遲後進入下一題或結算
             setTimeout(() => {
                 sIdx++;
                 document.getElementById('scramble-slots-container').classList.remove('border-emerald-400', 'bg-emerald-50', 'border-red-400', 'bg-red-50');
                 if (sIdx < sQs.length) {
                     loadCurScrambleQuestion();
                 } else {
-                    showScrambleSummaryModal(); // 🚀 觸發結算 Modal
+                    if (isReviewMode) {
+                        showToast("複習挑戰完成！", "success");
+                        quitScrambleGame();
+                    } else {
+                        showScrambleSummaryModal();
+                    }
                 }
             }, 2500);
         }
@@ -1949,14 +2068,21 @@
                 st.innerText = "⭐";
             } else {
                 hl.innerText = "需要再加油喔！";
-                pr.innerText = "建議先到「拆解引擎」練習單字發音。";
+                pr.innerText = "建議先到聯動音節重組練習錯題！";
                 st.innerText = "💨";
                 emo = 'sad';
             }
             
             renderSummaryAvatar(emo);
             
-            // 計算並發放食物獎勵
+            const btnMistake = document.getElementById('btn-practice-mistakes');
+            if (recentMistakes.length > 0) {
+                btnMistake.classList.remove('hidden');
+                btnMistake.innerHTML = `<span>🔧</span> <span>練習錯題 (${recentMistakes.length} 字・音節重組)</span>`;
+            } else {
+                btnMistake.classList.add('hidden');
+            }
+
             const rw = calculateFoodReward(pct);
             const rContainer = document.getElementById('reward-food-container');
             if (rw.earned > 0) {
@@ -1974,6 +2100,11 @@
             } else {
                 rContainer.classList.add('hidden');
             }
+        }
+        
+        function startMistakeChunkScramble() {
+            closeScrambleSummaryModal();
+            startChunkScramble(recentMistakes, true);
         }
         
         function renderSummaryAvatar(emotion) {
@@ -2011,7 +2142,7 @@
 
         function restartScrambleQuiz() {
             closeScrambleSummaryModal();
-            startScrambleGame(); // 重新使用同一批題目
+            startScrambleGame(); 
         }
 
         function closeScrambleSummaryModal(returnToSetup = false) {
@@ -2033,20 +2164,16 @@
             selectNavTab('main');
         }
 
-        // ========================================================
-
         function previewAvatarEmotion(emotion) {
             const aura = document.getElementById('profile-avatar-aura');
             const frame = document.getElementById('profile-avatar-frame');
             const topProp = document.getElementById('profile-prop-top');
             const sideProp = document.getElementById('profile-prop-side');
 
-            // Reset animations
             aura.className = 'absolute inset-0 rounded-full transition-all duration-300';
             frame.className = 'relative w-20 h-20 rounded-full border-[3.5px] overflow-hidden bg-white shadow-md flex items-center justify-center';
             topProp.className = 'absolute -top-3.5 z-20 text-3xl select-none';
 
-            // Apply new states based on 100% summary design
             if(emotion === 'excited') {
                 aura.classList.add('bg-amber-400', 'animate-ping', 'opacity-20');
                 frame.classList.add('border-amber-400', 'animate-cheer');
@@ -2140,8 +2267,7 @@
         function filterDictionary() { const q=document.getElementById('dict-search')?.value.toLowerCase().trim()||''; let ws=(curDictId!=='__ALL__'&&userSubsets[curDictId])?userSubsets[curDictId].words:Object.keys(customWordDatabase); const fd=ws.filter(w=>w.includes(q)); const ls=document.getElementById('dict-list'); if(ls){ls.innerHTML=fd.slice(0,300).map(w=>`<div class="bg-slate-50 hover:bg-blue-50 border border-slate-200 p-2 rounded-xl text-xs font-bold text-slate-700 flex justify-between items-center"><span class="truncate cursor-pointer flex-1" onclick="quickInputWord('${w}'); selectNavTab('main');">${w}</span><span onclick="quickInputWord('${w}'); selectNavTab('main');" class="text-[10px] bg-blue-50 text-blue-600 px-1 rounded cursor-pointer">🚀</span></div>`).join('');} }
 
         function handleExcelUpload(ev) {
-            const f = ev.target.files[0]; 
-            if(!f) return;
+            const f = ev.target.files[0]; if(!f) return;
             const r = new FileReader();
             r.onload = function(e) {
                 try {
@@ -2172,14 +2298,9 @@
                     showToast(`✓ 成功匯入 ${c} 字！`, "success");
                 } catch(er) { 
                     showToast("Excel 解析失敗: " + (er.message || "格式不符"), "error"); 
-                } finally {
-                    ev.target.value = '';
-                }
+                } finally { ev.target.value = ''; }
             }; 
-            r.onerror = function() {
-                showToast("讀取檔案出錯", "error");
-                ev.target.value = '';
-            };
+            r.onerror = function() { showToast("讀取檔案出錯", "error"); ev.target.value = ''; };
             r.readAsArrayBuffer(f);
         }
         function downloadWordsJson() { const a=document.createElement('a'); a.href="data:text/json;charset=utf-8,"+encodeURIComponent(JSON.stringify(customWordDatabase,null,2)); a.download="words.json"; document.body.appendChild(a); a.click(); a.remove(); }
