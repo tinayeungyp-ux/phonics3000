@@ -763,7 +763,7 @@
             'angry': ['an', 'gry'], 'bucket': ['buck', 'et'], 'analyse': ['an', 'a', 'lyse']
         };
 
-        // 字典庫：現在只儲存基礎資訊，由 AlignmentEngine 動態解析
+        // 字典庫：現在預設少量測試單字，啟動時會透過 fetch 讀取 words.json 合併
         let customWordDatabase = {
             "knowledge": { word: "knowledge", ipa: "/ˈnɒl.ɪdʒ/", pos: "noun", definition: "Facts, information, and skills acquired." },
             "write": { word: "write", ipa: "/raɪt/", pos: "verb", definition: "Mark letters or words on a surface." },
@@ -1290,7 +1290,6 @@
         }
 
         function renderCSArena() {
-            // (SortableJS logic simplified for layout brevity, identical to previous functionality)
             const slotsHtml = csSlots.map((slot) => {
                 if (slot) return `<div data-id="${slot.id}" onclick="handleCSSlotClick('${slot.id}')" class="cs-active-tile px-3.5 py-2 bg-white border-2 border-slate-400 border-b-4 text-black font-black text-xl rounded-xl hover:bg-slate-50 active:border-b-2 active:translate-y-[2px] transition-all cursor-grab active:cursor-grabbing select-none shadow-2xs">${slot.text}</div>`;
                 return `<div class="empty-slot w-12 h-12 bg-slate-200/80 rounded-xl border-b-4 border-slate-300/60 shadow-inner"></div>`;
@@ -1346,12 +1345,49 @@
             }
         }
 
+        // ==========================================
+        // Dictionary Rendering Logic
+        // ==========================================
+        function renderDictionaryList(filterText = '') {
+            const listEl = document.getElementById('dict-list');
+            if(!listEl) return;
+            const term = filterText.toLowerCase();
+            
+            let html = '';
+            let count = 0;
+            const maxDisplay = 100; // Performance limit for rendering large dictionaries
+            
+            for (const [word, data] of Object.entries(customWordDatabase)) {
+                if (word.includes(term) || (data.definition && data.definition.toLowerCase().includes(term))) {
+                    if (count >= maxDisplay) {
+                        html += `<div class="col-span-full text-center text-xs text-slate-400 py-2">顯示前 ${maxDisplay} 筆，請繼續輸入以精確搜尋...</div>`;
+                        break;
+                    }
+                    html += `
+                        <div onclick="quickInputWord('${word.replace(/'/g, "\\'")}'); selectNavTab('main');" class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 cursor-pointer hover:bg-blue-50 transition-colors shadow-2xs flex flex-col justify-center">
+                            <div class="font-black text-slate-800 text-sm truncate">${word}</div>
+                            <div class="text-[10px] font-mono text-slate-500 truncate">${data.ipa || '/.../'}</div>
+                        </div>
+                    `;
+                    count++;
+                }
+            }
+            if(count === 0) html = '<div class="col-span-full text-center text-xs text-slate-400 py-4 font-bold">找不到符合的單字</div>';
+            listEl.innerHTML = html;
+        }
+
+        function filterDictionary() {
+            const term = document.getElementById('dict-search')?.value || '';
+            renderDictionaryList(term);
+        }
+
         function toggleNavMenu(s) { document.getElementById('nav-drawer-backdrop')?.classList.toggle('hidden',!s); document.getElementById('nav-drawer')?.classList.toggle('translate-x-full',!s); }
         function selectNavTab(tid, resFC=false) {
             stopAllPlayback(); document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active')); document.getElementById(`btn-tab-${tid}`)?.classList.add('active');
             document.querySelectorAll('.tab-content').forEach(v=>v.classList.remove('active')); document.getElementById(`view-${tid}`)?.classList.add('active'); toggleNavMenu(false);
             if(tid!=='main' && !resFC) document.getElementById('main-return-to-fc-bar')?.classList.add('hidden');
-            if(tid==='ipa' && document.getElementById('grid-vowels').innerHTML==='') renderIPAChart();
+            if(tid==='dictionary') filterDictionary(); // Render dictionary when tab opens
+            // if(tid==='ipa' && document.getElementById('grid-vowels').innerHTML==='') renderIPAChart(); // Assume implemented elsewhere
         }
         
         function setTheme(t) {
@@ -1368,10 +1404,49 @@
             updateSyllableDisplay(currentStepLevel);
         }
 
-        // Bootstrapping the app
-        window.addEventListener('load', ()=>{ 
-            try{ setTheme(localStorage.getItem('phonics_theme_pref')||'default'); }catch(e){} 
-            processWord(); // Initialize with 'knowledge' to show off silent mapping
+        // ==========================================
+        // App Bootstrapping & Fetch words.json
+        // ==========================================
+        window.addEventListener('load', async () => {
+            // 1. 載入視覺主題
+            try { setTheme(localStorage.getItem('phonics_theme_pref')||'default'); } catch(e) {}
+
+            // 2. 非同步讀取外部 words.json
+            try {
+                const response = await fetch('words.json');
+                if (response.ok) {
+                    const jsonData = await response.json();
+                    
+                    // 自動判斷 JSON 格式 (陣列或物件) 並合併
+                    if (Array.isArray(jsonData)) {
+                        jsonData.forEach(item => {
+                            if (item && item.word) {
+                                customWordDatabase[item.word.toLowerCase()] = item;
+                            }
+                        });
+                    } else if (typeof jsonData === 'object') {
+                        Object.assign(customWordDatabase, jsonData);
+                    }
+                    console.log(`✅ 成功載入字典！目前引擎庫共有 ${Object.keys(customWordDatabase).length} 個單字。`);
+                } else {
+                    console.warn(`⚠️ 無法載入 words.json (HTTP 狀態碼: ${response.status})。將繼續使用內建測試字庫。`);
+                }
+            } catch (err) {
+                // 通常發生在直接雙擊 index.html 導致的 CORS 阻擋
+                console.warn('⚠️ 讀取 words.json 發生錯誤 (若直接點擊 HTML 開啟，可能是被瀏覽器 CORS 阻擋)。將繼續使用內建測試字庫。', err);
+            }
+
+            // 3. 載入使用者的自訂清單 (Subsets)
+            try {
+                const savedSubsets = localStorage.getItem(S_KEY);
+                if (savedSubsets) {
+                    userSubsets = JSON.parse(savedSubsets);
+                }
+            } catch(e) { console.error('Error loading subsets', e); }
+
+            // 4. 啟動渲染
+            processWord(); // 以預設單字知識 (knowledge) 啟動展示
+            renderDictionaryList(); // 預先渲染字典清單，以防一開局就切換過去
         });
 
     </script>
