@@ -14,6 +14,7 @@
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <!-- 引入 SortableJS 實現極致流暢的拖曳體驗 -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script src="./phonics_engine.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Nunito', sans-serif; background-color: #f8fafc; -webkit-tap-highlight-color: transparent; }
@@ -240,6 +241,14 @@
                     </div>
                     <button onclick="returnToFlashcardSession()" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs rounded-xl shadow-xs flex items-center gap-1.5 transition-all">
                         <span>⬅️ 返回閃卡</span><span id="return-fc-progress-pill" class="bg-indigo-700/70 text-[10px] px-1.5 py-0.5 rounded font-mono"></span>
+                    </button>
+                </div>
+                <div id="main-return-to-scramble-bar" class="hidden bg-gradient-to-r from-blue-50 to-sky-50 border-2 border-blue-200 rounded-2xl p-3 flex items-center justify-between shadow-xs">
+                    <div class="flex items-center gap-2 text-xs font-black text-blue-900">
+                        <span class="text-lg">✍️</span><span>深入拆解拼字單字：<span id="return-scramble-word-label" class="underline font-mono text-blue-700"></span></span>
+                    </div>
+                    <button onclick="returnToScrambleSession()" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-black text-xs rounded-xl shadow-xs flex items-center gap-1.5 transition-all">
+                        <span>⬅️ 返回聽音拼字</span><span id="return-scramble-progress-pill" class="bg-blue-700/70 text-[10px] px-1.5 py-0.5 rounded font-mono"></span>
                     </button>
                 </div>
 
@@ -643,6 +652,9 @@
                         </button>
                         <button onclick="quitScrambleGame()" class="px-2.5 py-2.5 bg-red-50 hover:bg-red-100 text-red-600 font-extrabold rounded-xl text-xs">🚪 退出練習</button>
                     </div>
+                    <button onclick="openCurrentScrambleInEngine()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl shadow-xs text-xs sm:text-sm flex items-center justify-center gap-1.5 active:scale-95">
+                        <span>🚀</span> <span>深入拆解呢個字</span>
+                    </button>
                     <div id="scramble-feedback" class="text-center font-black text-xs sm:text-sm h-5 transition-all"></div>
                 </div>
             </div>
@@ -703,7 +715,25 @@
                         </div>
                     </div>
 
-                    <!-- 4. 順序與音節拆解提示開關 -->
+                    <!-- 4. 默書題數（全部 vs 自訂抽選） -->
+                    <div class="space-y-1.5">
+                        <div class="flex justify-between items-center">
+                            <label class="block text-xs font-black text-slate-700 uppercase">4. 默書題數：</label>
+                            <span id="dict-wordcount-label" class="text-[11px] text-indigo-600 font-black">詞表：0 字 · 測晒全部</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="setDictWordCountMode('all', this)" class="opt-btn-dict-count py-2 rounded-xl border-2 border-indigo-600 bg-indigo-600 text-xs font-black text-white shadow-xs">測晒所有字詞</button>
+                            <button onclick="setDictWordCountMode('custom', this)" class="opt-btn-dict-count py-2 rounded-xl border-2 border-slate-200 bg-white text-xs font-black text-slate-700">自訂抽選數量</button>
+                        </div>
+                        <div id="dict-custom-count-wrap" class="hidden flex items-center gap-2 flex-wrap pt-1">
+                            <span class="text-xs font-bold text-slate-600">由詞表抽選</span>
+                            <input type="number" id="input-dict-custom-count" min="1" value="10" oninput="updateDictWordCountLabel()" class="w-20 px-3 py-1.5 border-2 border-indigo-300 rounded-xl text-xs font-black text-center focus:outline-none focus:border-indigo-600">
+                            <span class="text-xs font-bold text-slate-500">個字（最多 <span id="dict-pool-size-text">0</span>）</span>
+                            <button onclick="applyDictCustomCount()" class="px-3 py-1.5 bg-indigo-600 text-white rounded-xl text-xs font-black">確定</button>
+                        </div>
+                    </div>
+
+                    <!-- 5. 順序與音節拆解提示開關 -->
                     <div class="space-y-2 pt-1 border-t border-slate-100">
                         <div class="flex items-center justify-between">
                             <span class="text-xs font-black text-slate-700">🔀 朗讀順序：</span>
@@ -925,7 +955,7 @@
                     <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
                         <div class="space-y-0.5 text-center sm:text-left">
                             <div class="font-black text-slate-900 text-xs sm:text-sm">⚡ Excel ➔ words.json 轉換與匯入</div>
-                            <p class="text-[11px] text-slate-500">支援上傳 A 欄 (Word) 與 B 欄 (IPA) 表格，同步取代並解構。</p>
+                            <p class="text-[11px] text-slate-500">詞庫只存三欄：A Word、B IPA、C 釋義。音節切法由獨立引擎現場計算。</p>
                         </div>
                         <div class="flex items-center gap-2 flex-wrap justify-center">
                             <label class="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl cursor-pointer shadow-xs text-xs flex items-center gap-1.5 active:scale-95">
@@ -1419,8 +1449,25 @@
         };
 
         let customWordDatabase = {
-            "something": { word: "something", ipa: "/ˈsʌm.θɪŋ/", pos: "pronoun", definition: "An unspecified thing.", chunks: [ { letters: "some", onsetLet: "s", vowelLet: "o", codaLet: "m", onset: "s", vowel: "ʌ", coda: "m", silentTokens: [{ char: "e", note: "Magic e" }] }, { letters: "thing", onsetLet: "th", vowelLet: "i", codaLet: "ng", onset: "θ", vowel: "ɪ", coda: "ŋ" } ] }
+            "something": { word: "something", ipa: "/ˈsʌm.θɪŋ/", definition: "An unspecified thing." }
         };
+
+        function analyzeWord(raw) {
+            const w = String(raw || '').toLowerCase().trim() || 'complete';
+            const entry = customWordDatabase[w];
+            const result = (typeof PhonicsEngine !== 'undefined')
+                ? PhonicsEngine.analyze(w, entry && entry.ipa, customWordDatabase)
+                : { word: w, ipa: '/' + w + '/', chunks: [{ letters: w, onsetLet: '', vowelLet: w, codaLet: '', onset: null, vowel: null, coda: null }] };
+            result.definition = (entry && entry.definition) || '';
+            result.word = (entry && entry.word) || result.word || w;
+            return result;
+        }
+        function upsertLexiconWord(word, ipa, definition) {
+            const w = String(word || '').toLowerCase().trim();
+            if (!w) return;
+            const prev = customWordDatabase[w] || {};
+            customWordDatabase[w] = PhonicsEngine.slimEntry(w, ipa || prev.ipa || '', definition != null && definition !== '' ? definition : (prev.definition || ''));
+        }
 
         function getDynRange(s, role, f) {
             if(role==='vowel') return f ? {s:0, e:100, oMs:220, eO:true} : {s:0, e:100, oMs:30};
@@ -1478,6 +1525,9 @@
         }
 
         function pT(c, idx, t, w) {
+            if (c.tokens && c.tokens.length) {
+                return c.tokens.map(tk => ({ c: tk.char || tk.c, t: tk.type || tk.t, note: tk.note || '' }));
+            }
             const rl = c.letters||"", tk=[]; const sMap = new Map((c.silentTokens||[]).map(x=>[x.char.toLowerCase(), x.note]));
             let r=rl, pO=c.onsetLet||"", pV=c.vowelLet||"";
             
@@ -1602,34 +1652,9 @@
         }
 
         function aChunks(rw, tIpa) {
-            const w=rw.toLowerCase().trim(), vR=/(?:iː|uː|ɔː|ɑː|ɜː|eɪ|aɪ|ɔɪ|əʊ|aʊ|ɪə|eə|ʊə|ɪ|i|e|ɛ|æ|ʌ|ɒ|ʊ|u|ə)/g;
-            let ip = tIpa.replace(/^\/|\/$/g,'').trim(); const vM=[]; let m;
-            while((m=vR.exec(ip))!==null) vM.push({v:m[0], s:m.index, e:m.index+m[0].length});
-            if(vM.length<=1) return {word:rw, ipa:tIpa, chunks:[{letters:w, onsetLet:"", vowelLet:w, codaLet:"", onset:vM[0]?ip.substring(0,vM[0].s).replace(/[\.ˈˌ']/g,'')||null:null, vowel:vM[0]?vM[0].v:"æ", coda:vM[0]?ip.substring(vM[0].e).replace(/[\.ˈˌ']/g,'')||null:null}]};
-            const sl=[]; let p=0;
-            for(let i=0; i<vM.length-1; i++) {
-                const cV=vM[i], nV=vM[i+1], inter=ip.substring(cV.e, nV.s); let ct=cV.e+1;
-                const mk=inter.match(/[\.ˈˌ']/); if(mk) ct=cV.e+mk.index; else if(inter.replace(/[\s]/g,'').length<=1) ct=cV.e;
-                sl.push(ip.substring(p,ct)); p=ct;
-            }
-            sl.push(ip.substring(p));
-            const pC = sl.map(s=>{
-                const cl = s.replace(/[\.ˈˌ'\s]/g,''); vR.lastIndex=0; const mx = vR.exec(cl);
-                if(!mx) return {onset:cl||null, vowel:"ə", coda:null};
-                return {onset:cl.substring(0,mx.index)||null, vowel:mx[0], coda:cl.substring(mx.index+mx[0].length)||null};
-            });
-            const lSp = alignL2I(w, pC);
-            return { word:rw, ipa:tIpa, chunks:pC.map((c,i)=>({letters:lSp[i]||"", onsetLet:"", vowelLet:lSp[i]||"", codaLet:"", onset:c.onset, vowel:c.vowel, coda:c.coda})) };
+            return PhonicsEngine.analyze(String(rw||'').toLowerCase().trim(), tIpa, customWordDatabase);
         }
-        function dWAuto(rw) {
-            const w=rw.toLowerCase().trim(); if(customWordDatabase[w]) return customWordDatabase[w];
-            const vR = /(?:ought|aught|eigh|tion|sion|ture|igh|ai|ay|ee|ea|oa|oe|oo|ou|ow|oi|oy|au|aw|ar|er|ir|or|ur|a|e|i|o|u|y)/gi;
-            const n=[]; let vM; while((vM=vR.exec(w))!==null) n.push({t:vM[0], s:vM.index, e:vM.index+vM[0].length});
-            if(n.length<=1) return {word:w, ipa:`/${w}/`, chunks:[{letters:w, onsetLet:"", vowelLet:w, codaLet:"", onset:null, vowel:"æ", coda:null}]};
-            const sp=[0]; for(let i=0; i<n.length-1; i++) sp.push(n[i].e+1); sp.push(w.length);
-            const ch=[]; for(let i=0; i<sp.length-1; i++) { const sy=w.slice(sp[i],sp[i+1]); ch.push({letters:sy, onsetLet:"", vowelLet:sy, codaLet:"", onset:null, vowel:"æ", coda:null}); }
-            return {word:w, ipa:"/"+ch.map(c=>c.letters).join(".")+"/", chunks:ch};
-        }
+        function dWAuto(rw) { return analyzeWord(rw); }
 
         async function fWDef(w) {
             const e=customWordDatabase[w], dT=document.getElementById('def-english-text'), dS=document.getElementById('def-source-indicator');
@@ -1641,8 +1666,12 @@
                 clearTimeout(tm);
                 if(res.ok) {
                     const data=await res.json(); if(data?.[0]?.meanings?.[0]) {
-                        document.getElementById('def-pos-badge').innerText=data[0].meanings[0].partOfSpeech||'WORD';
-                        dT.innerText=data[0].meanings[0].definitions?.[0]?.definition||'No concise definition.'; dS.innerText='Official API'; return;
+                        const pos=data[0].meanings[0].partOfSpeech||'WORD';
+                        const def=data[0].meanings[0].definitions?.[0]?.definition||'No concise definition.';
+                        document.getElementById('def-pos-badge').innerText=pos;
+                        dT.innerText=def; dS.innerText='Official API';
+                        if(def && customWordDatabase[w]) upsertLexiconWord(w, customWordDatabase[w].ipa, def);
+                        return;
                     }
                 }
             } catch(err) { clearTimeout(tm); }
@@ -1651,12 +1680,12 @@
 
         function processWord() {
             const raw=document.getElementById('word-input').value.trim(), w=raw.toLowerCase()||"complete"; stopAllPlayback();
-            currentAnalysis = customWordDatabase[w] ? JSON.parse(JSON.stringify(customWordDatabase[w])) : dWAuto(w);
+            currentAnalysis = analyzeWord(w);
             document.getElementById('display-word').innerText = currentAnalysis.word;
             document.getElementById('display-ipa').innerText = currentAnalysis.ipa;
             document.getElementById('display-syllable-count').innerText = `${currentAnalysis.chunks.length} 音節`;
             const b = document.getElementById('ipa-source-badge');
-            if(customWordDatabase[w]) b.innerHTML="<span>🟢</span> <span>內建標準庫</span>"; else b.innerHTML="<span>⚠️</span> <span>規則估算</span>";
+            if(customWordDatabase[w]?.ipa) b.innerHTML="<span>🟢</span> <span>內建標準庫</span>"; else b.innerHTML="<span>⚠️</span> <span>規則估算</span>";
             updateSyllableDisplay(0); fWDef(w); updateStatus('Ready');
         }
         function quickInputWord(w) { document.getElementById('word-input').value=w; processWord(); }
@@ -1669,7 +1698,10 @@
             stopAllPlayback(); document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active')); document.getElementById(`btn-tab-${tid}`)?.classList.add('active');
             document.querySelectorAll('.tab-content').forEach(v=>v.classList.remove('active')); document.getElementById(`view-${tid}`)?.classList.add('active'); toggleNavMenu(false);
             const ic={main:'🏠',dictionary:'📖',extractor:'📝',ipa:'📊',flashcard:'🎴',scramble:'✍️', 'chunk-scramble':'🧩', 'mock-dictation':'📝', profile:'👤'}; const lbl=document.getElementById('nav-active-label'); if(lbl&&ic[tid]) lbl.innerText=ic[tid];
-            if(tid!=='main' && !resFC) document.getElementById('main-return-to-fc-bar')?.classList.add('hidden');
+            if(tid!=='main' && !resFC) {
+                document.getElementById('main-return-to-fc-bar')?.classList.add('hidden');
+                document.getElementById('main-return-to-scramble-bar')?.classList.add('hidden');
+            }
             if(tid==='ipa' && document.getElementById('grid-vowels').innerHTML==='') renderIPAChart();
             if(tid==='dictionary') renderDictionary();
             if(tid==='flashcard') { renderFlashcardSubsetSelectors(); if(!resFC) reloadFlashcards(); else renderCurrentFlashcard(); }
@@ -1691,7 +1723,7 @@
         function reloadFlashcards() { const st=new Set(); if(selFSubsets.has('__ALL__')) Object.keys(customWordDatabase).forEach(w=>st.add(w.toLowerCase())); selFSubsets.forEach(id=>id!=='__ALL__'&&userSubsets[id]?.words.forEach(w=>st.add(w.toLowerCase()))); fPool=Array.from(st); fIdx=0; renderCurrentFlashcard(); }
         function renderCurrentFlashcard() {
             if(!fPool.length)return; const w=fPool[fIdx]; document.getElementById('fc-word').innerText=w; document.getElementById('fc-progress-badge').innerText=`第 ${fIdx+1} / ${fPool.length} 張`;
-            document.getElementById('fc-def-box').classList.add('hidden'); const e=customWordDatabase[w]||dWAuto(w); currentAnalysis=e; document.getElementById('fc-ipa').innerText=e.ipa;
+            document.getElementById('fc-def-box').classList.add('hidden'); const e=analyzeWord(w); currentAnalysis=e; document.getElementById('fc-ipa').innerText=e.ipa;
             const bx=document.getElementById('fc-chunks-box'); if(bx&&e.chunks) bx.innerHTML=e.chunks.map((c,i)=>`<div id="fc-chunk-${i}" onclick="playIndividualChunk(${i})" class="px-3 py-1 bg-white rounded-xl border border-slate-200 text-center cursor-pointer hover:bg-blue-50 shadow-2xs"><div class="font-extrabold text-xs text-slate-800">${c.letters}</div><div class="text-[10px] text-blue-600 font-mono">/${(c.onset||'')+(c.vowel||'')+(c.coda||'')}/</div></div>`).join('');
             document.getElementById('fc-pos').innerText=e.pos||'word'; document.getElementById('fc-meaning').innerText=e.definition||'English vocabulary entry.';
         }
@@ -1701,6 +1733,7 @@
         function playFlashcardAudio(sp=1.0) { if(fPool.length) playWholeWordAudioUK(fPool[fIdx],1,activeSessionId,sp); }
         function openCurrentFlashcardInEngine() {
             if(fPool.length) {
+                document.getElementById('main-return-to-scramble-bar')?.classList.add('hidden');
                 document.getElementById('main-return-to-fc-bar')?.classList.remove('hidden');
                 document.getElementById('return-fc-word-label').innerText = fPool[fIdx];
                 document.getElementById('return-fc-progress-pill').innerText = `第 ${fIdx+1} / ${fPool.length} 張`;
@@ -1708,6 +1741,22 @@
             }
         }
         function returnToFlashcardSession() { document.getElementById('main-return-to-fc-bar')?.classList.add('hidden'); selectNavTab('flashcard', true); }
+
+        function openCurrentScrambleInEngine() {
+            if(!sQs.length || !tWord) return showToast("請先開始聽音拼字挑戰", "warning");
+            clearInterval(sTimerIv);
+            clearTimeout(autoCheckTimeout);
+            document.getElementById('main-return-to-fc-bar')?.classList.add('hidden');
+            document.getElementById('main-return-to-scramble-bar')?.classList.remove('hidden');
+            document.getElementById('return-scramble-word-label').innerText = tWord;
+            document.getElementById('return-scramble-progress-pill').innerText = `第 ${sIdx+1} / ${sQs.length} 題`;
+            selectNavTab('main');
+            quickInputWord(tWord);
+        }
+        function returnToScrambleSession() {
+            document.getElementById('main-return-to-scramble-bar')?.classList.add('hidden');
+            selectNavTab('scramble', true);
+        }
 
         let sQs=[], sIdx=0, sScore=0, sStreak=0, mStreak=0, sLimit=10, sVRep=2, sTimerS=0, sTimerIv=null;
         let sInMode='tiles', curSlotIdx=0, tWord="", tSlots=[], availTiles=[], selSSubsets=new Set(['__ALL__']);
@@ -1751,7 +1800,7 @@
             document.getElementById('scramble-progress-fill').style.width=`${((sIdx+1)/sQs.length)*100}%`;
             document.getElementById('scramble-feedback').innerText=''; document.getElementById('btn-submit-scramble').classList.remove('hidden');
             
-            const e=customWordDatabase[tWord]||dWAuto(tWord);
+            const e=analyzeWord(tWord);
             document.getElementById('scramble-pos-badge').innerText=e.pos||'word';
             let hint=e.definition||'聆聽發音並拼寫出正確的單字。'; if(hint.length>60)hint=hint.substring(0,57)+'...';
             document.getElementById('scramble-hint-def').innerText=hint;
@@ -1852,11 +1901,16 @@
                 const tokens = pT(c, idx, analysis.chunks.length, analysis.word);
                 
                 if (csDifficulty === 'easy') {
+                    // Excel 簡單欄：頭音(+詞首靜音 kn/wr) vs 韻部(元音+尾音+Magic e)
                     let onsetPart = "";
-                    let rhymePart = ""; 
+                    let rhymePart = "";
+                    let seenVowel = false;
                     tokens.forEach(tk => {
-                        if (tk.t === 'onset' && rhymePart === "") onsetPart += tk.c;
-                        else rhymePart += tk.c;
+                        if (!seenVowel && tk.t !== 'vowel') onsetPart += tk.c;
+                        else {
+                            seenVowel = true;
+                            rhymePart += tk.c;
+                        }
                     });
                     if (onsetPart) result.push({ text: onsetPart, chunkIdx: idx, type: 'onset' });
                     if (rhymePart) result.push({ text: rhymePart, chunkIdx: idx, type: 'rhyme' });
@@ -1892,7 +1946,7 @@
             }
             
             const validCnd = cnd.filter(w => { 
-                const analysis = customWordDatabase[w] || dWAuto(w); 
+                const analysis = analyzeWord(w); 
                 return getEngineDerivedChunks(analysis).length > 1; 
             }); 
             
@@ -1913,7 +1967,7 @@
 
         function loadCurCSQuestion() {
             csTargetWord = csQs[csIdx].toLowerCase();
-            const analysis = customWordDatabase[csTargetWord] || dWAuto(csTargetWord);
+            const analysis = analyzeWord(csTargetWord);
             
             const rawChunks = getEngineDerivedChunks(analysis);
             
@@ -1992,7 +2046,7 @@
             const tile = csPool.find(t => t.id === id);
             if (!tile) return;
             
-            const analysis = customWordDatabase[csTargetWord] || dWAuto(csTargetWord);
+            const analysis = analyzeWord(csTargetWord);
             const chunk = analysis.chunks[tile.chunkIdx];
             if (!chunk) return;
             
@@ -2488,7 +2542,11 @@
             const ws=exItems.filter(i=>i.selected).map(i=>i.root); if(!ws.length)return showToast("請勾選生字！","warning");
             const tVal=document.getElementById('extractor-subset-target')?.value||'__NEW__'; let s=null;
             if(tVal==='__NEW__'){ const nm=document.getElementById('new-subset-name-input')?.value.trim()||`清單 ${new Date().toLocaleDateString()}`; const id='sub_'+Date.now(); userSubsets[id]={id, name:nm, words:[]}; s=userSubsets[id]; } else s=userSubsets[tVal];
-            ws.forEach(w=>{if(!s.words.includes(w))s.words.push(w);}); svSubs(); showToast(`已匯入 ${ws.length} 字！`, "success"); selectNavTab('dictionary'); switchDictionarySubset(s.id);
+            ws.forEach(w=>{
+                if(!s.words.includes(w))s.words.push(w);
+                const it=exItems.find(x=>x.root===w);
+                if(it && (it.ipa || !customWordDatabase[w])) upsertLexiconWord(w, it.ipa||'', '');
+            }); svSubs(); showToast(`已匯入 ${ws.length} 字！`, "success"); selectNavTab('dictionary'); switchDictionarySubset(s.id);
         }
 
         function ldSubs() { try{const s=localStorage.getItem(S_KEY); if(s)userSubsets=JSON.parse(s);}catch(e){} pSubSel(); }
@@ -2501,42 +2559,54 @@
         function renderDictionary() { const ls=document.getElementById('dict-list'); if(!ls)return; let ws=Object.keys(customWordDatabase), isS=false; if(curDictId!=='__ALL__'&&userSubsets[curDictId]){ws=userSubsets[curDictId].words; isS=true;} document.getElementById('dict-count-badge').innerText=`收錄: ${ws.length} 字`; ls.innerHTML=ws.slice(0,300).map(w=>`<div class="bg-slate-50 hover:bg-blue-50 border border-slate-200 p-2 rounded-xl text-xs font-bold text-slate-700 flex justify-between items-center"><span class="truncate cursor-pointer flex-1" onclick="quickInputWord('${w}'); selectNavTab('main');">${w}</span><div class="flex items-center gap-1"><span onclick="quickInputWord('${w}'); selectNavTab('main');" class="text-[10px] bg-blue-50 text-blue-600 px-1 rounded cursor-pointer">🚀</span>${isS?`<span onclick="rmWd('${w}')" class="text-[10px] bg-red-50 text-red-600 px-1 rounded cursor-pointer">🗑️</span>`:''}</div></div>`).join(''); }
         function filterDictionary() { const q=document.getElementById('dict-search')?.value.toLowerCase().trim()||''; let ws=(curDictId!=='__ALL__'&&userSubsets[curDictId])?userSubsets[curDictId].words:Object.keys(customWordDatabase); const fd=ws.filter(w=>w.includes(q)); const ls=document.getElementById('dict-list'); if(ls){ls.innerHTML=fd.slice(0,300).map(w=>`<div class="bg-slate-50 hover:bg-blue-50 border border-slate-200 p-2 rounded-xl text-xs font-bold text-slate-700 flex justify-between items-center"><span class="truncate cursor-pointer flex-1" onclick="quickInputWord('${w}'); selectNavTab('main');">${w}</span><span onclick="quickInputWord('${w}'); selectNavTab('main');" class="text-[10px] bg-blue-50 text-blue-600 px-1 rounded cursor-pointer">🚀</span></div>`).join('');} }
 
+        function ingestLexiconObject(obj) {
+            let c = 0;
+            Object.entries(obj || {}).forEach(([k, v]) => {
+                const w = String((v && v.word) || k).trim().toLowerCase();
+                if (!/^[a-z\s\-']{2,25}$/i.test(w)) return;
+                upsertLexiconWord(w, (v && v.ipa) || '', (v && v.definition) || '');
+                c++;
+            });
+            return c;
+        }
         function handleExcelUpload(ev) {
             const f = ev.target.files[0]; if(!f) return;
+            const isJson = /\.json$/i.test(f.name || '');
             const r = new FileReader();
             r.onload = function(e) {
                 try {
-                    const d = new Uint8Array(e.target.result), wb = XLSX.read(d, {type: 'array'});
-                    if (!wb.SheetNames || wb.SheetNames.length === 0) throw new Error("Excel 檔案無工作表");
-                    const sht = wb.Sheets[wb.SheetNames[0]];
-                    if (!sht) throw new Error("無法讀取工作表內容");
-                    const rw = XLSX.utils.sheet_to_json(sht, {header: 1});
-                    if (!rw || rw.length === 0) throw new Error("Excel 內容為空");
-                    
                     let c = 0;
-                    rw.forEach((r, i) => { 
-                        if(i === 0 || !r || !r[0]) return; 
-                        const w = String(r[0]).trim().toLowerCase(), ip = r[1] ? String(r[1]).trim() : '';
-                        if(/^[a-z\s\-']{2,25}$/i.test(w)) { 
-                            if(ip && !ip.includes('No IPA')) {
-                                const cl = "/" + ip.replace(/\//g, '') + "/"; 
-                                customWordDatabase[w] = aChunks(w, cl); 
-                            } else {
-                                customWordDatabase[w] = dWAuto(w);
-                            } 
-                            c++; 
-                        }
-                    }); 
+                    if (isJson) {
+                        const parsed = JSON.parse(typeof e.target.result === 'string' ? e.target.result : new TextDecoder().decode(e.target.result));
+                        if (!parsed || typeof parsed !== 'object') throw new Error("JSON 格式不符");
+                        Object.keys(customWordDatabase).forEach(k => delete customWordDatabase[k]);
+                        c = ingestLexiconObject(parsed);
+                    } else {
+                        const d = new Uint8Array(e.target.result), wb = XLSX.read(d, {type: 'array'});
+                        if (!wb.SheetNames || wb.SheetNames.length === 0) throw new Error("Excel 檔案無工作表");
+                        const sht = wb.Sheets[wb.SheetNames[0]];
+                        if (!sht) throw new Error("無法讀取工作表內容");
+                        const rw = XLSX.utils.sheet_to_json(sht, {header: 1});
+                        if (!rw || rw.length === 0) throw new Error("Excel 內容為空");
+                        rw.forEach((row, i) => { 
+                            if(i === 0 || !row || !row[0]) return; 
+                            const w = String(row[0]).trim().toLowerCase(), ip = row[1] ? String(row[1]).trim() : '', def = row[2] ? String(row[2]).trim() : '';
+                            if(/^[a-z\s\-']{2,25}$/i.test(w)) { 
+                                upsertLexiconWord(w, (ip && !ip.includes('No IPA')) ? ip : '', def);
+                                c++; 
+                            }
+                        });
+                    }
                     if(c === 0) throw new Error("未偵測到有效英文單字欄位");
-                    document.getElementById('recommended-words-bar').innerHTML = '<span class="shrink-0 text-slate-400">已套用自訂 Excel 詞庫</span>'; 
+                    document.getElementById('recommended-words-bar').innerHTML = '<span class="shrink-0 text-slate-400">已套用自訂詞庫</span>'; 
                     renderDictionary(); 
                     showToast(`✓ 成功匯入 ${c} 字！`, "success");
                 } catch(er) { 
-                    showToast("Excel 解析失敗: " + (er.message || "格式不符"), "error"); 
+                    showToast("匯入失敗: " + (er.message || "格式不符"), "error"); 
                 } finally { ev.target.value = ''; }
             }; 
             r.onerror = function() { showToast("讀取檔案出錯", "error"); ev.target.value = ''; };
-            r.readAsArrayBuffer(f);
+            if (isJson) r.readAsText(f); else r.readAsArrayBuffer(f);
         }
         function downloadWordsJson() { const a=document.createElement('a'); a.href="data:text/json;charset=utf-8,"+encodeURIComponent(JSON.stringify(customWordDatabase,null,2)); a.download="words.json"; document.body.appendChild(a); a.click(); a.remove(); }
 
@@ -2580,7 +2650,7 @@
         function importSubsetsBackupFile(ev) { const f=ev.target.files[0]; if(!f)return; const r=new FileReader(); r.onload=function(e){try{Object.assign(userSubsets, JSON.parse(e.target.result)); svSubs(); renderDictionary(); showToast("✓ 備份恢復成功", "success");}catch(er){showToast("備份格式錯誤", "error");}}; r.readAsText(f); }
 
         // ====== 📝 模擬默書伴讀模組 (Mock Dictation Engine) ======
-        let dictConfig = { repeats: 2, interval: 10, shuffle: false, allowPhonicsHint: true };
+        let dictConfig = { repeats: 2, interval: 10, shuffle: false, allowPhonicsHint: true, wordCountMode: 'all', customCount: 10 };
         let selDictSubsets = new Set(['__ALL__']);
         let dictSessionWords = [], dictCurrentIdx = 0, isDictPaused = false;
         let dictCountdownTimer = null, dictRemainingSec = 0;
@@ -2607,11 +2677,63 @@
             }
         }
 
+        function getDictCandidateWords() {
+            const st = new Set();
+            if (selDictSubsets.has('__ALL__')) Object.keys(customWordDatabase).forEach(w => st.add(w.toLowerCase()));
+            selDictSubsets.forEach(id => id !== '__ALL__' && userSubsets[id]?.words.forEach(w => st.add(w.toLowerCase())));
+            return Array.from(st);
+        }
+
+        function updateDictWordCountLabel() {
+            const pool = getDictCandidateWords().length;
+            const poolEl = document.getElementById('dict-pool-size-text');
+            if (poolEl) poolEl.innerText = String(pool);
+            const inp = document.getElementById('input-dict-custom-count');
+            if (inp) {
+                inp.max = Math.max(1, pool);
+                if (pool > 0) {
+                    const cur = parseInt(inp.value, 10);
+                    if (!cur || cur < 1) inp.value = Math.min(dictConfig.customCount || 10, pool);
+                    else if (cur > pool) inp.value = pool;
+                }
+            }
+            const label = document.getElementById('dict-wordcount-label');
+            if (!label) return;
+            if (dictConfig.wordCountMode === 'custom') {
+                const n = Math.min(Math.max(1, parseInt(inp?.value, 10) || dictConfig.customCount || 1), Math.max(1, pool));
+                label.innerText = pool ? `詞表：${pool} 字 · 抽選 ${n} 題` : '詞表：0 字';
+            } else {
+                label.innerText = pool ? `詞表：${pool} 字 · 測晒全部` : '詞表：0 字';
+            }
+        }
+
+        function setDictWordCountMode(mode, el) {
+            dictConfig.wordCountMode = mode === 'custom' ? 'custom' : 'all';
+            document.querySelectorAll('.opt-btn-dict-count').forEach(b => b.className = "opt-btn-dict-count py-2 rounded-xl border-2 border-slate-200 bg-white text-xs font-black text-slate-700");
+            if (el) el.className = "opt-btn-dict-count py-2 rounded-xl border-2 border-indigo-600 bg-indigo-600 text-xs font-black text-white shadow-xs";
+            document.getElementById('dict-custom-count-wrap')?.classList.toggle('hidden', dictConfig.wordCountMode !== 'custom');
+            if (dictConfig.wordCountMode === 'custom') document.getElementById('input-dict-custom-count')?.focus();
+            updateDictWordCountLabel();
+        }
+
+        function applyDictCustomCount() {
+            const pool = getDictCandidateWords().length;
+            const val = parseInt(document.getElementById('input-dict-custom-count')?.value, 10);
+            if (!pool) return showToast("清單中無單字可供默書！", "warning");
+            if (isNaN(val) || val < 1) return showToast("請輸入至少 1 個字", "warning");
+            dictConfig.customCount = Math.min(val, pool);
+            document.getElementById('input-dict-custom-count').value = dictConfig.customCount;
+            dictConfig.wordCountMode = 'custom';
+            updateDictWordCountLabel();
+            showToast(`✓ 將抽選 ${dictConfig.customCount} 個字`, "success");
+        }
+
         function renderDictSubsetSelectors() {
             const c = document.getElementById('dict-subsets-checkboxes');
             if (!c) return;
             const all = [{ id: '__ALL__', name: '全部核心庫', count: Object.keys(customWordDatabase).length }, ...Object.values(userSubsets).map(s => ({ id: s.id, name: s.name, count: s.words.length }))];
             c.innerHTML = all.map(s => `<label class="cursor-pointer text-xs font-bold px-3 py-1.5 rounded-xl border-2 flex items-center gap-1.5 ${selDictSubsets.has(s.id) ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-slate-700 border-slate-200'} transition-all"><input type="checkbox" ${selDictSubsets.has(s.id) ? 'checked' : ''} onchange="toggleDictSubset('${s.id}')" class="w-3.5 h-3.5 rounded accent-indigo-500"><span>📁 ${s.name} (${s.count})</span></label>`).join('');
+            updateDictWordCountLabel();
         }
 
         function toggleDictSubset(id) {
@@ -2671,10 +2793,7 @@
         }
 
         function startDictationSession() {
-            const st = new Set();
-            if (selDictSubsets.has('__ALL__')) Object.keys(customWordDatabase).forEach(w => st.add(w.toLowerCase()));
-            selDictSubsets.forEach(id => id !== '__ALL__' && userSubsets[id]?.words.forEach(w => st.add(w.toLowerCase())));
-            let cnd = Array.from(st);
+            let cnd = getDictCandidateWords();
             if (!cnd.length) return showToast("清單中無單字可供默書！", "warning");
 
             if (dictConfig.shuffle) {
@@ -2684,7 +2803,14 @@
                 }
             }
 
-            dictSessionWords = cnd.map(w => customWordDatabase[w] || dWAuto(w));
+            if (dictConfig.wordCountMode === 'custom') {
+                const fromInput = parseInt(document.getElementById('input-dict-custom-count')?.value, 10);
+                const want = Math.max(1, fromInput || dictConfig.customCount || 1);
+                dictConfig.customCount = Math.min(want, cnd.length);
+                cnd = cnd.slice(0, dictConfig.customCount);
+            }
+
+            dictSessionWords = cnd.map(w => analyzeWord(w));
             dictConfig.allowPhonicsHint = document.getElementById('chk-dict-allow-phonics-hint').checked;
             document.getElementById('btn-dict-phonics-hint').style.display = dictConfig.allowPhonicsHint ? 'flex' : 'none';
 
@@ -2992,7 +3118,7 @@
             document.getElementById('dict-setup-card').classList.remove('hidden');
         }
 
-        async function initDB() { try{ const r=await fetch('./words.json?v='+Date.now(), {cache:'no-store'}); if(r.ok){ const rm=await r.json(); if(rm && typeof rm==='object'){ Object.keys(customWordDatabase).forEach(k=>delete customWordDatabase[k]); Object.assign(customWordDatabase, rm); document.getElementById('recommended-words-bar').innerHTML='<span class="shrink-0 text-slate-400">已套用自訂詞庫</span>'; } } }catch(e){} renderDictionary(); pSubSel(); processWord(); }
+        async function initDB() { try{ const r=await fetch('./words.json?v='+Date.now(), {cache:'no-store'}); if(r.ok){ const rm=await r.json(); if(rm && typeof rm==='object'){ Object.keys(customWordDatabase).forEach(k=>delete customWordDatabase[k]); Object.entries(rm).forEach(([k,v])=>{ customWordDatabase[k]=PhonicsEngine.slimEntry((v&&v.word)||k, (v&&v.ipa)||'', (v&&v.definition)||''); }); document.getElementById('recommended-words-bar').innerHTML='<span class="shrink-0 text-slate-400">已套用自訂詞庫</span>'; } } }catch(e){} renderDictionary(); pSubSel(); processWord(); }
         window.addEventListener('load', ()=>{ ldSubs(); initDB(); renderProfileAvatar(); updateMenuPetStatusUI(); try{setLanguage(localStorage.getItem('phonics_lang_pref')||'zh_HK'); setTheme(localStorage.getItem('phonics_theme_pref')||'default');}catch(e){} });
     </script>
 </body>
