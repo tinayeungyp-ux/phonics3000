@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+<title>拼拼 calm-tummy-bazi</title>
+<g stroke-linejoin="round" stroke-linecap="round">
+<g id="base">
+<ellipse cx="256" cy="452" rx="150" ry="14" fill="#5A3A28" opacity="0.10"/><ellipse cx="192" cy="446" rx="30" ry="17" fill="#BB855A" stroke="#5A3A28" stroke-width="9"/><ellipse cx="320" cy="446" rx="30" ry="17" fill="#BB855A" stroke="#5A3A28" stroke-width="9"/><g transform="rotate(-18 170 150)"><ellipse cx="170" cy="150" rx="24" ry="21.6" fill="#C89468" stroke="#5A3A28" stroke-width="11"/><ellipse cx="170" cy="153" rx="11.52" ry="9.600000000000001" fill="#9A6A48"/></g><g transform="rotate(18 342 150)"><ellipse cx="342" cy="150" rx="24" ry="21.6" fill="#C89468" stroke="#5A3A28" stroke-width="11"/><ellipse cx="342" cy="153" rx="11.52" ry="9.600000000000001" fill="#9A6A48"/></g><path d="M256 132 C338 132 396 166 414 236 C432 306 434 372 410 412 C388 446 330 452 256 452 C182 452 124 446 102 412 C78 372 80 306 98 236 C116 166 174 132 256 132 Z" fill="#C89468" stroke="#5A3A28" stroke-width="11"/><ellipse cx="256" cy="396" rx="84" ry="48" fill="#DDB08A"/>
+</g>
+<g id="face-calm-bazi">
+<ellipse cx="164" cy="290" rx="30" ry="17" fill="#F28C8C" opacity="0.65"/><ellipse cx="348" cy="290" rx="30" ry="17" fill="#F28C8C" opacity="0.65"/><path d="M143.0 258 Q162 258 181.0 258" transform="rotate(-12 162 258)" stroke="#5A3A28" stroke-width="13" fill="none" stroke-linecap="round"/><path d="M331.0 258 Q350 258 369.0 258" transform="rotate(12 350 258)" stroke="#5A3A28" stroke-width="13" fill="none" stroke-linecap="round"/><path d="M256 239 C312.16 239 328 265.5 328 295.18 C328 326.98 299.2 345 256 345 C212.8 345 184 326.98 184 295.18 C184 265.5 199.84 239 256 239 Z" fill="#9A6A48"/><ellipse cx="236" cy="274" rx="6.5" ry="4.5" transform="rotate(20 236 274)" fill="#3F281B"/><ellipse cx="276" cy="274" rx="6.5" ry="4.5" transform="rotate(-20 276 274)" fill="#3F281B"/><path d="M234 300 Q245 315 256 303 Q267 315 278 300" stroke="#3F281B" stroke-width="6.5" fill="none"/>
+</g>
+<g id="pose-tummy">
+<path d="M98 334 C136 332 178 346 194 366 C206 384 194 402 172 402 C148 402 126 400 98 396" fill="#C89468" stroke="#5A3A28" stroke-width="10"/><path d="M414 334 C376 332 334 346 318 366 C306 384 318 402 340 402 C364 402 386 400 414 396" fill="#C89468" stroke="#5A3A28" stroke-width="10"/>
+</g>
+<g id="acc-orange">
+<g transform="translate(256 104) rotate(-6)">
+  <path d="M0 -40 C24.8 -40 40 -22.0 40 2.0 C40 24.8 22.0 36.800000000000004 0 36.800000000000004 C-22.0 36.800000000000004 -40 24.8 -40 2.0 C-40 -22.0 -24.8 -40 0 -40 Z" fill="#F6A13A" stroke="#5A3A28" stroke-width="10"/>
+  <ellipse cx="-16.8" cy="-15.2" rx="8.0" ry="5.2" transform="rotate(-35 -16.8 -15.2)" fill="#FFD48A"/>
+  <path d="M2 -39 C6 -58 26 -68 44 -60 C38 -44 20 -36 2 -39 Z" fill="#6DBA6A" stroke="#5A3A28" stroke-width="7"/>
+  <path d="M8 -43 Q22 -54 36 -57" stroke="#4E9A4E" stroke-width="3.5" fill="none"/>
+  <path d="M-1 -37 L-4 -52" stroke="#5A3A28" stroke-width="8" fill="none"/>
+</g>
+</g>
+
+</g>
+</svg>

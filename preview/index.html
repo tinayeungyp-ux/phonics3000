@@ -2,46 +2,49 @@
 <html lang="zh-HK" data-theme="default">
 <head>
     <script>
-    (function () {
-        var PREFIX = 'p3preview:';
-        var proto = Storage.prototype;
-        var nativeLength = Object.getOwnPropertyDescriptor(proto, 'length').get;
-        var nativeKey = proto.key;
-        var nativeGetItem = proto.getItem;
-        var nativeSetItem = proto.setItem;
-        var nativeRemoveItem = proto.removeItem;
-        function prefixedKey(key) { return key.indexOf(PREFIX) === 0 ? key : PREFIX + key; }
-        function isPrefixed(raw) { return raw && raw.indexOf(PREFIX) === 0; }
-        function unprefixed(raw) { return isPrefixed(raw) ? raw.slice(PREFIX.length) : raw; }
-        function listPrefixedKeys(storage) {
-            var out = [];
-            var len = nativeLength.call(storage);
-            for (var i = 0; i < len; i++) {
-                var raw = nativeKey.call(storage, i);
-                if (isPrefixed(raw)) out.push(unprefixed(raw));
-            }
-            return out;
-        }
-        proto.getItem = function (key) { return nativeGetItem.call(this, prefixedKey(key)); };
-        proto.setItem = function (key, value) { return nativeSetItem.call(this, prefixedKey(key), value); };
-        proto.removeItem = function (key) { return nativeRemoveItem.call(this, prefixedKey(key)); };
-        proto.key = function (index) {
-            var keys = listPrefixedKeys(this);
-            return index >= 0 && index < keys.length ? keys[index] : null;
-        };
-        proto.clear = function () {
-            var len = nativeLength.call(this);
-            for (var i = len - 1; i >= 0; i--) {
-                var raw = nativeKey.call(this, i);
-                if (isPrefixed(raw)) nativeRemoveItem.call(this, raw);
-            }
-        };
-        Object.defineProperty(proto, 'length', {
-            get: function () { return listPrefixedKeys(this).length; },
-            configurable: true
-        });
-    })();
-    </script>
+(function () {
+  var P = 'p3preview:';
+  var _getItem = Storage.prototype.getItem;
+  var _setItem = Storage.prototype.setItem;
+  var _removeItem = Storage.prototype.removeItem;
+  var _key = Storage.prototype.key;
+  var _clear = Storage.prototype.clear;
+  var _lengthGet = Object.getOwnPropertyDescriptor(Storage.prototype, 'length').get;
+  function prefixed(k) {
+    return typeof k === 'string' && k.indexOf(P) === 0 ? k : P + k;
+  }
+  Storage.prototype.getItem = function (k) { return _getItem.call(this, prefixed(k)); };
+  Storage.prototype.setItem = function (k, v) { return _setItem.call(this, prefixed(k), String(v)); };
+  Storage.prototype.removeItem = function (k) { return _removeItem.call(this, prefixed(k)); };
+  Storage.prototype.key = function (i) {
+    var keys = [];
+    for (var j = 0; j < _lengthGet.call(this); j++) {
+      var key = _key.call(this, j);
+      if (key && key.indexOf(P) === 0) keys.push(key);
+    }
+    return keys[i] || null;
+  };
+  Object.defineProperty(Storage.prototype, 'length', {
+    get: function () {
+      var n = 0;
+      for (var j = 0; j < _lengthGet.call(this); j++) {
+        var key = _key.call(this, j);
+        if (key && key.indexOf(P) === 0) n++;
+      }
+      return n;
+    },
+    configurable: true,
+  });
+  Storage.prototype.clear = function () {
+    var toRemove = [];
+    for (var j = 0; j < _lengthGet.call(this); j++) {
+      var key = _key.call(this, j);
+      if (key && key.indexOf(P) === 0) toRemove.push(key);
+    }
+    toRemove.forEach(function (k) { _removeItem.call(this, k); }, this);
+  };
+})();
+</script>
     <meta charset="UTF-8">
     <meta name="robots" content="noindex">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -242,7 +245,41 @@
             z-index: 5;
             pointer-events: none;
         }
-        #child-room-pet-svg,
+        #child-room-pet-hit {
+            pointer-events: auto;
+            position: absolute;
+            left: 50%;
+            top: 55%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            padding: 0;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+        #child-room-pet-hit:focus-visible {
+            outline: 2px solid var(--blue);
+            outline-offset: 4px;
+            border-radius: 12px;
+        }
+        #child-room-pet-svg {
+            display: block;
+            pointer-events: none;
+            object-fit: contain;
+            object-position: center bottom;
+        }
+        #child-room-pet-svg.p3-capy-mood-starving { transform: translateY(4%); }
+        #child-room-pet-svg.p3-capy-full-anim {
+            animation: p3-capy-v3-hop 1s ease-in-out infinite;
+            transform-origin: 50% 90%;
+        }
+        @keyframes p3-capy-v3-hop {
+            0%, 12%, 86%, 100% { transform: translateY(0) scale(1, 1); }
+            26% { transform: translateY(-8px) scale(0.98, 1.02); }
+            50% { transform: translateY(-18px) scale(1, 1); }
+            74% { transform: translateY(-8px) scale(0.99, 1.01); }
+        }
         #child-room-pet-custom,
         #child-room-bubble {
             pointer-events: none;
@@ -830,7 +867,8 @@
             }
             #view-parent-dashboard { max-width: var(--p3-content-max); }
             #view-child-home > .p3-child-room { min-height: 300px; }
-            #child-room-pet-svg { width: 188px; max-width: 46%; }
+            #child-room-pet-hit { width: 188px; max-width: 46%; }
+            #child-room-pet-svg { width: 100%; height: auto; max-height: min(58vh, 320px); }
             #view-child-home > .flex.items-center.gap-3 { padding-left: 4px; padding-right: 4px; }
             #view-child-home > .flex.items-center.gap-3 #child-home-greeting { font-size: 1.25rem; }
             .p3-practice-arena { max-width: var(--p3-practice-col-max); padding-left: 8px; padding-right: 8px; }
@@ -912,7 +950,7 @@
                 height: 100%;
             }
             .p3-child-room-scene { bottom: 56px; }
-            #child-room-pet-svg {
+            #child-room-pet-hit {
                 width: auto;
                 height: 60cqb;
                 min-height: 190px;
@@ -922,6 +960,7 @@
                 top: 52%;
                 transform: translate(-50%, -50%);
             }
+            #child-room-pet-svg { width: 100%; height: 100%; max-height: 100%; }
             #child-room-pet-custom {
                 left: 44%;
                 top: 54%;
@@ -955,7 +994,7 @@
         @media (min-width: 1280px) {
             :root { --p3-content-max: 1120px; }
             #view-child-home.active > .p3-child-room { min-height: 360px; }
-            #child-room-pet-svg {
+            #child-room-pet-hit {
                 height: 62cqb;
                 min-height: 200px;
                 max-height: 380px;
@@ -980,7 +1019,7 @@
                     <p class="text-sm font-bold mt-2 text-[#7A5A3E] tracking-wide">英文拼讀 · 默書練習</p>
                 </div>
                 <div class="relative z-10 mt-6 flex justify-center">
-                    <img src="./design/animals/svg/capybara-happy.svg" alt="" class="w-[170px] h-auto drop-shadow-sm pointer-events-none p3-entry-pet" width="190" height="171">
+                    <img src="./design/animals/svg/capybara-v3/calm-tummy-bazi.svg" alt="" class="w-[170px] h-auto drop-shadow-sm pointer-events-none p3-entry-pet" width="190" height="190">
                 </div>
             </div>
         </div>
@@ -992,7 +1031,7 @@
                 </div>
                 <button type="button" onclick="enterAppArea('child')" class="p3-choice-card w-full flex items-center gap-4 p-[18px] text-left active:translate-y-0.5 transition-transform" style="background: var(--mint);">
                     <div class="w-[74px] h-[74px] rounded-[20px] bg-white flex items-center justify-center shrink-0 overflow-hidden">
-                        <img src="./design/animals/svg/capybara-calm.svg" alt="" class="w-14 h-14 object-contain">
+                        <img src="./design/animals/svg/capybara-v3/calm-tummy-bazi.svg" alt="" class="w-14 h-14 object-contain">
                     </div>
                     <div class="flex-1 min-w-0">
                         <b class="text-2xl font-bold block leading-tight" style="color:var(--ink)">小朋友 <small class="text-[13px] font-extrabold" style="color:var(--ink2)">Kids</small></b>
@@ -1152,7 +1191,9 @@
                         <div id="child-room-pet-custom" class="hidden absolute left-1/2 top-[55%] -translate-x-1/2 -translate-y-1/2 z-10">
                             <img id="child-room-pet-custom-img" src="" alt="" class="w-32 h-32 rounded-full object-cover border-[3px] border-white shadow-hard-sm">
                         </div>
-                        <img id="child-room-pet-svg" src="./design/animals/svg/capybara-hungry.svg" alt="拼拼" class="absolute left-1/2 top-[55%] -translate-x-1/2 -translate-y-1/2 w-[150px] sm:w-[170px] h-auto z-10 pointer-events-none">
+                        <button type="button" id="child-room-pet-hit" class="w-[150px] sm:w-[170px]" aria-label="拼拼">
+                            <img id="child-room-pet-svg" src="./design/animals/svg/capybara-v3/calm-tummy-bazi.svg" alt="拼拼" class="w-full h-auto">
+                        </button>
                         <div id="child-room-bubble" class="absolute left-[54%] top-[12%] max-w-[140px] bg-white rounded-2xl px-3 py-2 text-xs font-bold leading-snug shadow-hard-sm border-2 z-20" style="border-color:var(--ink);color:var(--ink)"></div>
                     </div>
                     <div id="child-hunger-wrap" class="absolute left-3 right-3 bottom-3 bg-white/95 rounded-[14px] px-3 py-2 flex items-center gap-2 border-2 z-20" style="border-color:var(--line)">
@@ -1524,7 +1565,7 @@
                     </div>
 
                     <div class="p3-practice-hint">
-                        <img id="cs-practice-pet-head" class="p3-practice-pet-head" src="./design/animals/svg/capybara-calm.svg" alt="">
+                        <img id="cs-practice-pet-head" class="p3-practice-pet-head" src="./design/animals/svg/capybara-v3/calm-tummy-bazi.svg" alt="">
                         <div id="cs-practice-pet-hint" class="p3-practice-hint-bubble"></div>
                     </div>
                     <div id="cs-feedback" class="p3-practice-feedback"></div>
@@ -1679,7 +1720,7 @@
                     </div>
 
                     <div class="p3-practice-hint">
-                        <img id="scramble-practice-pet-head" class="p3-practice-pet-head" src="./design/animals/svg/capybara-calm.svg" alt="">
+                        <img id="scramble-practice-pet-head" class="p3-practice-pet-head" src="./design/animals/svg/capybara-v3/calm-tummy-bazi.svg" alt="">
                         <div id="scramble-practice-pet-hint" class="p3-practice-hint-bubble"></div>
                     </div>
                     <div id="scramble-feedback" class="p3-practice-feedback"></div>
@@ -2118,7 +2159,7 @@
     </main>
 
     <nav id="child-bottom-nav" aria-label="小朋友導覽">
-        <button type="button" class="child-nav-btn on" data-child-nav="room" onclick="selectChildNav('room')"><span class="ib">🏠</span><span>房間</span></button>
+        <button type="button" class="child-nav-btn on" data-child-nav="room" onclick="selectChildNav('room', true)"><span class="ib">🏠</span><span>房間</span></button>
         <button type="button" class="child-nav-btn" data-child-nav="practice" onclick="selectChildNav('practice')"><span class="ib">✏️</span><span>練習</span></button>
         <button type="button" class="child-nav-btn" data-child-nav="words" onclick="selectChildNav('words')"><span class="ib">📖</span><span>字庫</span></button>
         <button type="button" class="child-nav-btn" data-child-nav="me" onclick="selectChildNav('me')"><span class="ib">👤</span><span>我的</span></button>
@@ -2389,8 +2430,88 @@
             return { score, mood, segmentsFilled: bucket, segmentsMax: HUNGER_SCORE_MAX, lowFullness: score < 2 };
         }
 
-        function getPetSvgRelPath(mood, useAnimatedFull) {
+        const CAPYBARA_V3_DIR = './design/animals/svg/capybara-v3';
+        const CAPYBARA_V3_STORAGE_KEY = 'phonics_capybara_v3_variant_v1';
+        const CAPYBARA_V3_CALM_VARIANTS = ['calm-tummy-bazi', 'calm-cheeks-bazi', 'calm-tummy-flat', 'calm-cheeks-flat'];
+        const CAPYBARA_V3_HAPPY_VARIANTS = ['happy-tummy', 'happy-cheeks'];
+
+        function capybaraV3LoadState() {
+            try {
+                const raw = localStorage.getItem(CAPYBARA_V3_STORAGE_KEY);
+                return raw ? JSON.parse(raw) : { ever: false, byMood: {} };
+            } catch (e) { return { ever: false, byMood: {} }; }
+        }
+        function capybaraV3SaveState(st) {
+            try { localStorage.setItem(CAPYBARA_V3_STORAGE_KEY, JSON.stringify(st)); } catch (e) {}
+        }
+        function getCapybaraV3DefaultPath() { return `${CAPYBARA_V3_DIR}/calm-tummy-bazi.svg`; }
+        function getCapybaraV3Variants(mood) {
+            if (mood === 'calm') return CAPYBARA_V3_CALM_VARIANTS;
+            if (mood === 'happy') return CAPYBARA_V3_HAPPY_VARIANTS;
+            if (mood === 'starving' || mood === 'hungry' || mood === 'full') return [mood];
+            return ['calm-tummy-bazi'];
+        }
+        function resolveCapybaraVariantForMood(mood, opts = {}) {
+            const { roomEnter = false } = opts;
+            const variants = getCapybaraV3Variants(mood);
+            if (variants.length === 1) return variants[0];
+            let st = capybaraV3LoadState();
+            if (!st.ever) {
+                st.ever = true;
+                st.byMood = st.byMood || {};
+                const pick = mood === 'calm' ? 'calm-tummy-bazi' : variants[Math.floor(Math.random() * variants.length)];
+                st.byMood[mood] = pick;
+                capybaraV3SaveState(st);
+                return pick;
+            }
+            if (roomEnter) {
+                const pick = variants[Math.floor(Math.random() * variants.length)];
+                st.byMood = st.byMood || {};
+                st.byMood[mood] = pick;
+                capybaraV3SaveState(st);
+                return pick;
+            }
+            const saved = st.byMood && st.byMood[mood];
+            if (saved && variants.includes(saved)) return saved;
+            const fallback = variants[0];
+            st.byMood = st.byMood || {};
+            st.byMood[mood] = fallback;
+            capybaraV3SaveState(st);
+            return fallback;
+        }
+        function cycleCapybaraVariant(mood) {
+            const variants = getCapybaraV3Variants(mood);
+            if (variants.length <= 1) return variants[0];
+            const cur = resolveCapybaraVariantForMood(mood);
+            const next = variants[(variants.indexOf(cur) + 1) % variants.length];
+            const st = capybaraV3LoadState();
+            st.byMood = st.byMood || {};
+            st.byMood[mood] = next;
+            capybaraV3SaveState(st);
+            return next;
+        }
+        function prepareCapybaraVariantOnRoomEnter() {
+            if (getPetSpecies() !== 'capybara') return;
+            const mood = mapHungerScoreToPetState(getHungerScore()).mood;
+            resolveCapybaraVariantForMood(mood, { roomEnter: true });
+        }
+        function applyCapybaraRoomPetClasses(svgEl, mood, useAnimatedFull) {
+            if (!svgEl) return;
+            svgEl.classList.remove('p3-capy-mood-starving', 'p3-capy-full-anim');
+            if (getPetSpecies() !== 'capybara') return;
+            if (mood === 'starving') svgEl.classList.add('p3-capy-mood-starving');
+            if (mood === 'full' && useAnimatedFull) svgEl.classList.add('p3-capy-full-anim');
+        }
+
+        function getPetSvgRelPath(mood, useAnimatedFull, forRoom) {
             const species = getPetSpecies();
+            if (species === 'capybara') {
+                if (forRoom) {
+                    const variant = resolveCapybaraVariantForMood(mood);
+                    return `${CAPYBARA_V3_DIR}/${variant}.svg`;
+                }
+                return getCapybaraV3DefaultPath();
+            }
             if (mood === 'full' && useAnimatedFull) return `./design/animals/svg/${species}-full-animated.svg`;
             return `./design/animals/svg/${species}-${mood}.svg`;
         }
@@ -2437,7 +2558,7 @@
             setPracticeSessionActive(false);
             if (!document.getElementById('cs-game-arena')?.classList.contains('hidden')) quitChunkScramble();
             else if (!document.getElementById('scramble-game-arena')?.classList.contains('hidden')) quitScrambleGame();
-            if (getAppArea() === 'child') selectChildNav('room');
+            if (getAppArea() === 'child') selectChildNav('room', true);
         }
 
         function getPracticeSubsetLabel(subsetSet) {
@@ -2471,7 +2592,7 @@
             const sv = localStorage.getItem(USER_AVATAR_STORAGE_KEY);
             if (sv) { img.src = sv; return; }
             const species = getPetSpecies();
-            img.src = `./design/animals/svg/${species}-calm.svg`;
+            img.src = species === 'capybara' ? getCapybaraV3DefaultPath() : `./design/animals/svg/${species}-calm.svg`;
         }
 
         function updatePracticeMeta(word, ipaElId, meanElId, petHintElId) {
@@ -2578,7 +2699,7 @@
         }
 
         function handleAppTitleClick() {
-            if (getAppArea() === 'child') selectChildNav('room');
+            if (getAppArea() === 'child') selectChildNav('room', true);
             else if (getAppArea() === 'parent') selectParentNav('home');
             else selectNavTab('main');
         }
@@ -2598,7 +2719,7 @@
             return 'room';
         }
 
-        function selectChildNav(which) {
+        function selectChildNav(which, randomizeCapybaraVariant) {
             if (getAppArea() !== 'child') return;
             syncChildBottomNav(which);
             if (which === 'room') {
@@ -2609,6 +2730,7 @@
                 const lbl = document.getElementById('nav-active-label');
                 if (lbl) lbl.innerText = '🏠';
                 toggleNavMenu(false);
+                if (randomizeCapybaraVariant) prepareCapybaraVariantOnRoomEnter();
                 updateChildHomeUI();
                 return;
             }
@@ -2665,16 +2787,29 @@
             const sv = localStorage.getItem(USER_AVATAR_STORAGE_KEY);
             const customWrap = document.getElementById('child-room-pet-custom');
             const customImg = document.getElementById('child-room-pet-custom-img');
+            const hitEl = document.getElementById('child-room-pet-hit');
             const svgEl = document.getElementById('child-room-pet-svg');
             if (sv && customWrap && customImg && svgEl) {
                 customImg.src = sv;
                 customWrap.classList.remove('hidden');
+                hitEl?.classList.add('hidden');
                 svgEl.classList.add('hidden');
             } else if (customWrap && svgEl) {
                 customWrap.classList.add('hidden');
+                hitEl?.classList.remove('hidden');
                 svgEl.classList.remove('hidden');
-                svgEl.src = getPetSvgRelPath(mood, !!useAnimatedFull);
+                svgEl.src = getPetSvgRelPath(mood, !!useAnimatedFull, true);
+                applyCapybaraRoomPetClasses(svgEl, mood, !!useAnimatedFull);
             }
+        }
+
+        function handleChildRoomPetTap() {
+            if (getAppArea() !== 'child') return;
+            if (localStorage.getItem(USER_AVATAR_STORAGE_KEY)) return;
+            if (getPetSpecies() !== 'capybara') return;
+            const mood = mapHungerScoreToPetState(getHungerScore()).mood;
+            cycleCapybaraVariant(mood);
+            updateChildHomeUI();
         }
 
         function flashPetFullAnimation() {
@@ -4934,7 +5069,7 @@
         }
 
         async function initDB() { try{ const r=await fetch('./words.json?v='+Date.now(), {cache:'no-store'}); if(r.ok){ const rm=await r.json(); if(rm && typeof rm==='object'){ Object.keys(customWordDatabase).forEach(k=>delete customWordDatabase[k]); Object.entries(rm).forEach(([k,v])=>{ customWordDatabase[k]=PhonicsEngine.slimEntry((v&&v.word)||k, (v&&v.ipa)||'', (v&&v.definition)||''); }); document.getElementById('recommended-words-bar').innerHTML='<span class="shrink-0 text-slate-400">已套用自訂詞庫</span>'; } } }catch(e){} renderDictionary(); pSubSel(); processWord(); }
-        window.addEventListener('load', ()=>{ ldSubs(); initDB(); renderProfileAvatar(); updateMenuPetStatusUI(); try{setLanguage(localStorage.getItem('phonics_lang_pref')||'zh_HK'); setTheme(localStorage.getItem('phonics_theme_pref')||'default');}catch(e){} initAppArea(); });
+        window.addEventListener('load', ()=>{ ldSubs(); initDB(); renderProfileAvatar(); updateMenuPetStatusUI(); try{setLanguage(localStorage.getItem('phonics_lang_pref')||'zh_HK'); setTheme(localStorage.getItem('phonics_theme_pref')||'default');}catch(e){} initAppArea(); document.getElementById('child-room-pet-hit')?.addEventListener('click', handleChildRoomPetTap); });
     </script>
 </body>
 </html>
