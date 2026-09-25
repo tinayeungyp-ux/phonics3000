@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+<title>拼拼 happy-cheeks</title>
+<g stroke-linejoin="round" stroke-linecap="round">
+<g id="base">
+<ellipse cx="256" cy="452" rx="150" ry="14" fill="#5A3A28" opacity="0.10"/><ellipse cx="192" cy="446" rx="30" ry="17" fill="#BB855A" stroke="#5A3A28" stroke-width="9"/><ellipse cx="320" cy="446" rx="30" ry="17" fill="#BB855A" stroke="#5A3A28" stroke-width="9"/><g transform="rotate(-18 170 150)"><ellipse cx="170" cy="150" rx="24" ry="21.6" fill="#C89468" stroke="#5A3A28" stroke-width="11"/><ellipse cx="170" cy="153" rx="11.52" ry="9.600000000000001" fill="#9A6A48"/></g><g transform="rotate(18 342 150)"><ellipse cx="342" cy="150" rx="24" ry="21.6" fill="#C89468" stroke="#5A3A28" stroke-width="11"/><ellipse cx="342" cy="153" rx="11.52" ry="9.600000000000001" fill="#9A6A48"/></g><path d="M256 132 C338 132 396 166 414 236 C432 306 434 372 410 412 C388 446 330 452 256 452 C182 452 124 446 102 412 C78 372 80 306 98 236 C116 166 174 132 256 132 Z" fill="#C89468" stroke="#5A3A28" stroke-width="11"/><ellipse cx="256" cy="396" rx="84" ry="48" fill="#DDB08A"/>
+</g>
+<g id="face-happy">
+<ellipse cx="164" cy="292" rx="34" ry="19" fill="#F28C8C" opacity="0.75"/><ellipse cx="348" cy="292" rx="34" ry="19" fill="#F28C8C" opacity="0.75"/><path d="M145 262 Q164 244.4 183 262" stroke="#5A3A28" stroke-width="13" fill="none"/><path d="M329 262 Q348 244.4 367 262" stroke="#5A3A28" stroke-width="13" fill="none"/><path d="M256 239 C312.16 239 328 265.5 328 295.18 C328 326.98 299.2 345 256 345 C212.8 345 184 326.98 184 295.18 C184 265.5 199.84 239 256 239 Z" fill="#9A6A48"/><ellipse cx="236" cy="274" rx="6.5" ry="4.5" transform="rotate(20 236 274)" fill="#3F281B"/><ellipse cx="276" cy="274" rx="6.5" ry="4.5" transform="rotate(-20 276 274)" fill="#3F281B"/><path d="M238 301 Q256 304 274 301 Q270 324 256 324 Q242 324 238 301 Z" fill="#7A2E2E" stroke="#3F281B" stroke-width="5.5"/><path d="M247 318 Q256 311 265 318 Q256 324 247 318 Z" fill="#E86A6A"/><path d="M438 153 Q441.0 165.0 453 168 Q441.0 171.0 438 183 Q435.0 171.0 423 168 Q435.0 165.0 438 153 Z" fill="#F6C244"/><path d="M72 189 Q74.2 197.8 83 200 Q74.2 202.2 72 211 Q69.8 202.2 61 200 Q69.8 197.8 72 189 Z" fill="#F6C244"/><path d="M462 238 Q463.6 244.4 470 246 Q463.6 247.6 462 254 Q460.4 247.6 454 246 Q460.4 244.4 462 238 Z" fill="#F6C244"/>
+</g>
+<g id="pose-cheeks">
+<path d="M84 368 C90 350 94 336 98 320 C102 290 150 282 160 306 C168 326 160 346 152 360 C140 382 126 406 110 428" fill="#C89468" stroke="#5A3A28" stroke-width="10"/><path d="M 428 368 C 422 350 418 336 414 320 C 410 290 362 282 352 306 C 344 326 352 346 360 360 C 372 382 386 406 402 428" fill="#C89468" stroke="#5A3A28" stroke-width="10"/><path d="M134 294 L138 304 M147 299 L150 309" stroke="#5A3A28" stroke-width="4.5" fill="none"/><path d="M378 294 L374 304 M365 299 L362 309" stroke="#5A3A28" stroke-width="4.5" fill="none"/>
+</g>
+<g id="acc-orange">
+<g transform="translate(256 104) rotate(-6)">
+  <path d="M0 -40 C24.8 -40 40 -22.0 40 2.0 C40 24.8 22.0 36.800000000000004 0 36.800000000000004 C-22.0 36.800000000000004 -40 24.8 -40 2.0 C-40 -22.0 -24.8 -40 0 -40 Z" fill="#F6A13A" stroke="#5A3A28" stroke-width="10"/>
+  <ellipse cx="-16.8" cy="-15.2" rx="8.0" ry="5.2" transform="rotate(-35 -16.8 -15.2)" fill="#FFD48A"/>
+  <path d="M2 -39 C6 -58 26 -68 44 -60 C38 -44 20 -36 2 -39 Z" fill="#6DBA6A" stroke="#5A3A28" stroke-width="7"/>
+  <path d="M8 -43 Q22 -54 36 -57" stroke="#4E9A4E" stroke-width="3.5" fill="none"/>
+  <path d="M-1 -37 L-4 -52" stroke="#5A3A28" stroke-width="8" fill="none"/>
+</g>
+</g>
+
+</g>
+</svg>
