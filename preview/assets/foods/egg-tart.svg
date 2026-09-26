@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+<title>蛋撻 egg tart</title>
+<g stroke-linejoin="round" stroke-linecap="round">
+<ellipse cx="128" cy="226" rx="78" ry="8" fill="#1E3350" opacity="0.10"/>
+
+<path d="M40 124 L58 178 C66 204 190 204 198 178 L216 124 Z" fill="#E9A55B" stroke="#1E3350" stroke-width="8"/>
+<clipPath id="tartwall"><path d="M40 124 L58 178 C66 204 190 204 198 178 L216 124 Z"/></clipPath>
+<path d="M68.0 153.8 L76.4 197.2 M88.0 161.2 L93.6 201.3 M108.0 164.9 L110.8 203.4 M128.0 166.0 L128.0 204.0 M148.0 164.9 L145.2 203.4 M168.0 161.2 L162.4 201.3 M188.0 153.8 L179.6 197.2 " stroke="#C98540" stroke-width="5" fill="none" clip-path="url(#tartwall)"/>
+<path d="M40 124 L58 178 C66 204 190 204 198 178 L216 124" stroke="#1E3350" stroke-width="8" fill="none"/>
+<path d="M216 120 Q226.4 109.6 209.3 104.7 Q211.4 90.4 190.2 91.7 Q183.7 75.7 161.7 83.0 Q147.6 67.8 128.0 80.0 Q108.4 67.8 94.3 83.0 Q72.3 75.7 65.8 91.7 Q44.6 90.4 46.7 104.7 Q29.6 109.6 40.0 120.0 Q29.6 130.4 46.7 135.3 Q44.6 149.6 65.8 148.3 Q72.3 164.3 94.3 157.0 Q108.4 172.2 128.0 160.0 Q147.6 172.2 161.7 157.0 Q183.7 164.3 190.2 148.3 Q211.4 149.6 209.3 135.3 Q226.4 130.4 216.0 120.0 Z" fill="#F0B56A" stroke="#1E3350" stroke-width="8"/>
+<ellipse cx="128" cy="120" rx="68" ry="27" fill="#FFD447" stroke="#1E3350" stroke-width="6"/>
+<ellipse cx="104" cy="112" rx="16" ry="6" fill="#FFE994"/>
+<ellipse cx="150" cy="126" rx="6" ry="3" fill="#E9A23B"/><ellipse cx="164" cy="116" rx="4" ry="2.2" fill="#E9A23B"/><ellipse cx="120" cy="132" rx="4" ry="2" fill="#E9A23B"/>
+
+</g>
+</svg>
