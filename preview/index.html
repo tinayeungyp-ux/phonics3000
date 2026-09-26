@@ -45,14 +45,18 @@
   };
 })();
 </script>
-    <meta charset="UTF-8">
     <meta name="robots" content="noindex">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="referrer" content="no-referrer">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Phonics 3000</title>
+    <title>Phonics Bento</title>
+    <meta name="description" content="Phonics Bento — 英文拼讀 · 默書練習">
+    <meta property="og:title" content="Phonics Bento">
+    <meta name="apple-mobile-web-app-title" content="Phonics Bento">
+    <meta name="application-name" content="Phonics Bento">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -354,6 +358,212 @@
         }
         #btn-switch-area,
         #nav-active-label { display: none !important; }
+
+        /* Option B — illustrated page band (non-home tabs + parent pages) */
+        body.p3-band-chrome #main-header { display: none !important; }
+        body.p3-band-chrome:not(.p3-kid-home-room) main {
+            padding-top: 0;
+            padding-left: 0;
+            padding-right: 0;
+        }
+        body.p3-band-chrome:not(.p3-kid-home-room) main > .max-w-4xl {
+            max-width: none;
+            margin-left: 0;
+            margin-right: 0;
+            padding-left: 14px;
+            padding-right: 14px;
+        }
+        body.p3-band-chrome .tab-content.active { gap: 14px; }
+        body.p3-band-chrome .tab-content.active > .p3-band-overlap {
+            margin-top: -18px;
+            position: relative;
+            z-index: 12;
+        }
+        .p3-page-band {
+            position: relative;
+            border-radius: 0 0 24px 24px;
+            overflow: hidden;
+            min-height: 132px;
+            padding: calc(8px + env(safe-area-inset-top, 0px)) 14px 26px;
+            margin-bottom: 0;
+        }
+        .p3-page-band.hidden { display: none !important; }
+        .p3-page-band-bg {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            opacity: 0.42;
+        }
+        .p3-page-band--cream { background: #FCEBD8; }
+        .p3-page-band--cream .p3-page-band-bg {
+            background: repeating-linear-gradient(90deg, transparent 0, transparent 20px, #F8DDBF 20px, #F8DDBF 34px);
+        }
+        .p3-page-band--sky { background: #D3EDFB; }
+        .p3-page-band--sky .p3-page-band-bg {
+            background: repeating-linear-gradient(90deg, transparent 0, transparent 20px, #BFE3F7 20px, #BFE3F7 34px);
+        }
+        .p3-page-band--mint { background: #CDEFDC; }
+        .p3-page-band--mint .p3-page-band-bg {
+            background: repeating-linear-gradient(90deg, transparent 0, transparent 20px, #B8E6CF 20px, #B8E6CF 34px);
+        }
+        .p3-page-band--lav { background: #E6DBFF; }
+        .p3-page-band--lav .p3-page-band-bg {
+            background: repeating-linear-gradient(90deg, transparent 0, transparent 20px, #D8CCF8 20px, #D8CCF8 34px);
+        }
+        .p3-page-band--peach { background: #FFE7C8; }
+        .p3-page-band--peach .p3-page-band-bg {
+            background: repeating-linear-gradient(90deg, transparent 0, transparent 20px, #FFD6B0 20px, #FFD6B0 34px);
+        }
+        .p3-page-band--paper { background: #F4F6FA; }
+        .p3-page-band--paper .p3-page-band-bg {
+            background: repeating-linear-gradient(90deg, transparent 0, transparent 20px, #E8ECF2 20px, #E8ECF2 34px);
+        }
+        .p3-page-band-actions {
+            position: absolute;
+            top: calc(6px + env(safe-area-inset-top, 0px));
+            right: 12px;
+            z-index: 25;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .p3-page-band-inner {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 10px;
+            min-height: 96px;
+            padding-right: 72px;
+        }
+        .p3-page-band-copy { flex: 1; min-width: 0; }
+        .p3-band-eyebrow {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--ink2);
+            margin: 0 0 2px;
+        }
+        .p3-band-title {
+            font-size: 1.45rem;
+            font-weight: 900;
+            color: var(--ink);
+            line-height: 1.12;
+            margin: 0;
+            white-space: nowrap;
+        }
+        .p3-band-sub {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--ink2);
+            margin: 4px 0 0;
+        }
+        .p3-band-kids { margin-top: 10px; padding-top: 0; margin-bottom: 0; }
+        .p3-band-master {
+            display: inline-block;
+            margin-top: 8px;
+            max-width: 100%;
+            text-align: left;
+        }
+        #p3-page-band .p3-album-master {
+            border: 1.5px solid rgba(30, 51, 80, 0.2);
+            border-style: solid;
+            background: rgba(255, 255, 255, 0.94);
+            color: var(--ink2);
+            white-space: nowrap;
+            max-width: none;
+            width: max-content;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 5px 12px;
+            border-radius: 999px;
+            line-height: 1.2;
+            box-shadow: 1px 1px 0 rgba(30, 51, 80, 0.1);
+        }
+        #p3-page-band .p3-album-master.on {
+            border-color: var(--ink);
+            background: var(--butter);
+            color: var(--ink);
+            box-shadow: 2px 2px 0 var(--ink);
+        }
+        .p3-page-band--cream .p3-page-band-art {
+            width: min(44vw, 180px);
+            height: 118px;
+            flex-shrink: 1;
+            min-width: 96px;
+            align-self: flex-end;
+        }
+        .p3-page-band--cream .p3-page-band-inner {
+            min-height: 112px;
+            align-items: flex-end;
+        }
+        .p3-page-band--cream .p3-page-band-copy {
+            flex-shrink: 0;
+            min-width: 0;
+            max-width: none;
+            padding-bottom: 2px;
+        }
+        .p3-page-band--cream #album-collected-line {
+            white-space: nowrap;
+        }
+        .p3-band-badge {
+            display: inline-block;
+            margin-top: 8px;
+            font-size: 11px;
+            font-weight: 900;
+            padding: 5px 10px;
+            border-radius: 12px;
+            border: 2px solid var(--ink);
+            background: var(--paper);
+            color: var(--ink);
+            font-family: Nunito, sans-serif;
+        }
+        .p3-page-band-art {
+            flex-shrink: 0;
+            width: min(38vw, 132px);
+            height: 88px;
+            position: relative;
+        }
+        .p3-page-band-art svg,
+        .p3-page-band-art img { width: 100%; height: 100%; object-fit: contain; display: block; }
+        .p3-drawer-footer {
+            margin-top: 12px;
+            padding-top: 14px;
+            border-top: 2px dashed var(--line);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        .p3-drawer-brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+        }
+        .p3-drawer-brand .p3-app-wordmark-mark { width: 28px; height: 28px; }
+        .p3-drawer-brand .p3-app-wordmark-text { font-size: 1rem; }
+        .p3-drawer-tagline {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--ink2);
+            line-height: 1.35;
+            max-width: 240px;
+        }
+        body.p3-band-chrome [data-theme="default"] .tab-content.bg-white,
+        body.p3-band-chrome [data-theme="default"] #view-chunk-scramble.p3-practice-view,
+        body.p3-band-chrome [data-theme="default"] #view-scramble.p3-practice-view {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            width: 100% !important;
+            max-width: none !important;
+        }
 
         /* Kid home — option C: full-bleed pet room + floating header */
         body.p3-kid-home-room #main-header { display: none; }
@@ -1684,6 +1894,20 @@
             #view-parent-dashboard.active #parent-dash-weak-section { grid-column: 2; grid-row: 2; }
             #main-header > .max-w-5xl { max-width: var(--p3-content-max); }
             #nav-drawer { width: 320px; max-width: min(80vw, 360px); }
+            body.p3-band-chrome #p3-page-band {
+                max-width: var(--p3-content-max);
+                width: calc(100% - 48px);
+                margin-left: auto;
+                margin-right: auto;
+                border-radius: 0 0 28px 28px;
+            }
+            body.p3-band-chrome:not(.p3-kid-home-room) main > .max-w-4xl {
+                max-width: var(--p3-content-max);
+                margin-left: auto;
+                margin-right: auto;
+                padding-left: 24px;
+                padding-right: 24px;
+            }
         }
 
         @media (min-width: 1280px) {
@@ -1710,7 +1934,7 @@
             <div class="max-w-lg mx-auto px-6 pt-10 pb-14 sm:pb-16 text-center relative overflow-hidden">
                 <div class="absolute left-1/2 -translate-x-1/2 top-[150px] w-[200px] h-[200px] rounded-full bg-[#FFC999] opacity-90"></div>
                 <div class="relative z-10">
-                    <h1 class="font-black text-[34px] tracking-tight leading-none"><span class="text-p3-ink" style="color:var(--ink)">Phonics</span> <span class="text-p3-blue" style="color:var(--blue)">3000</span></h1>
+                    <h1 class="font-black text-[34px] tracking-tight leading-none"><span class="text-p3-ink" style="color:var(--ink)">Phonics</span> <span class="text-p3-blue" style="color:var(--blue)">Bento</span></h1>
                     <p class="text-sm font-bold mt-2 text-[#7A5A3E] tracking-wide">英文拼讀 · 默書練習</p>
                 </div>
                 <div class="relative z-10 mt-6 flex justify-center">
@@ -1753,7 +1977,7 @@
             <div id="app-title" class="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2 cursor-pointer transition-all duration-300 min-w-0 truncate" onclick="handleAppTitleClick()">
                 <span class="p3-app-wordmark">
                     <img src="./design/animals/svg/capybara-v3/calm-tummy-bazi.svg" alt="" class="p3-app-wordmark-mark" width="36" height="36">
-                    <span class="p3-app-wordmark-text"><span class="en">Phonics</span> <span class="p3-app-wordmark-num en">3000</span></span>
+                    <span class="p3-app-wordmark-text"><span class="en">Phonics</span> <span class="p3-app-wordmark-num en">Bento</span></span>
                 </span>
             </div>
             <div class="p3-header-actions-compact flex items-center gap-2 shrink-0">
@@ -1769,8 +1993,8 @@
     </header>
 
     <div id="nav-drawer-backdrop" onclick="toggleNavMenu(false)" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-40 hidden transition-opacity"></div>
-    <aside id="nav-drawer" class="fixed top-0 right-0 h-full w-72 max-w-[80vw] bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out p-4 flex flex-col justify-between overflow-y-auto">
-        <div class="space-y-3.5">
+    <aside id="nav-drawer" class="fixed top-0 right-0 h-full w-72 max-w-[80vw] bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out p-4 flex flex-col overflow-hidden">
+        <div class="flex-1 overflow-y-auto space-y-3.5 min-h-0 pr-0.5">
             
             <div id="menu-pet-status-card" class="bg-white border-2 border-slate-100 rounded-2xl p-3 text-center space-y-2.5 shadow-sm transition-colors relative overflow-hidden">
                 <div class="absolute inset-0 bg-slate-50/50 pointer-events-none"></div>
@@ -1868,13 +2092,39 @@
                 </div>
             </div>
         </div>
-        <div class="pt-3 border-t border-slate-100 text-center space-y-0.5">
-            <div class="text-[11px] font-black text-indigo-600">v5.3.1 · Cross-Module Error Loop ✓</div>
-            <div class="text-[10px] font-bold text-slate-400">Phonics 3000 · Science of Reading</div>
+        <div class="p3-drawer-footer shrink-0">
+            <div class="p3-drawer-brand">
+                <img src="./design/animals/svg/capybara-v3/calm-tummy-bazi.svg" alt="" class="p3-app-wordmark-mark" width="28" height="28">
+                <span class="p3-app-wordmark-text"><span class="en">Phonics</span> <span class="p3-app-wordmark-num en">Bento</span></span>
+            </div>
+            <p class="p3-drawer-tagline">英國自然拼讀 × 香港小學默書</p>
+            <div class="text-[10px] font-bold text-slate-400 whitespace-nowrap px-1 text-center">Phonics Bento · Science of Reading</div>
         </div>
     </aside>
 
     <main class="flex-1 overflow-auto p-3.5 sm:p-6 md:p-8">
+        <div id="p3-page-band" class="p3-page-band p3-page-band--cream hidden" aria-hidden="true">
+            <div class="p3-page-band-bg" aria-hidden="true"></div>
+            <div class="p3-page-band-actions">
+                <button type="button" id="p3-band-settings-btn" class="p3-child-home-menu-btn hidden" onclick="selectParentNav('account')" aria-label="設定">⚙️</button>
+                <button type="button" class="p3-child-home-menu-btn" onclick="toggleNavMenu(true)" aria-label="功能選單">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                </button>
+            </div>
+            <div class="p3-page-band-inner">
+                <div class="p3-page-band-copy">
+                    <p id="parent-dash-greeting" class="p3-band-eyebrow hidden"></p>
+                    <h1 id="p3-band-title" class="p3-band-title"></h1>
+                    <p id="album-collected-line" class="p3-band-sub en hidden">已收集 0 / 56</p>
+                    <p id="p3-band-sub" class="p3-band-sub hidden"></p>
+                    <div id="parent-dash-kids" class="p3-parent-kids p3-band-kids hidden"></div>
+                    <div id="album-master-title" class="p3-album-master p3-band-master hidden">🔒 稱號：？？？</div>
+                    <div id="fc-progress-badge" class="p3-band-badge hidden"></div>
+                    <div id="dict-count-badge" class="p3-band-badge hidden"></div>
+                </div>
+                <div id="p3-band-art" class="p3-page-band-art" aria-hidden="true"></div>
+            </div>
+        </div>
         <div class="max-w-4xl mx-auto space-y-4 sm:space-y-6">
 
             <div id="view-child-home" class="tab-content space-y-4 sm:space-y-5">
@@ -2000,27 +2250,11 @@
             </div>
 
             <div id="view-child-album" class="tab-content p3-album-wrap px-0.5">
-                <div class="p3-album-hdr">
-                    <div>
-                        <h2>食物圖鑑</h2>
-                        <p id="album-collected-line" class="sub en">已收集 0 / 56</p>
-                    </div>
-                    <div id="album-master-title" class="p3-album-master">🔒 稱號：？？？</div>
-                </div>
-                <div id="album-sections-root"></div>
+                <div id="album-sections-root" class="p3-band-overlap"></div>
             </div>
 
             <div id="view-parent-dashboard" class="tab-content p3-parent-dash max-w-lg mx-auto w-full">
-                <div class="p3-parent-dash-hdr">
-                    <div class="t">
-                        <small id="parent-dash-greeting">早晨</small>
-                        <b>家長主頁</b>
-                    </div>
-                    <button type="button" class="p3-parent-icon-btn" onclick="selectParentNav('account')" title="設定" aria-label="設定">⚙️</button>
-                </div>
-                <div class="p3-parent-kids" id="parent-dash-kids"></div>
-
-                <div class="p3-parent-dash-stack">
+                <div class="p3-parent-dash-stack p3-band-overlap">
                     <div id="parent-dash-dict-card" class="p3-parent-dcard"></div>
 
                     <button type="button" class="p3-parent-photo" onclick="selectNavTab('extractor'); syncParentBottomNav('home');">
@@ -2070,7 +2304,7 @@
                     </button>
                 </div>
 
-                <div class="bg-white p-3.5 sm:p-4 rounded-2xl sm:rounded-3xl shadow-xs border-2 border-slate-100 space-y-2.5">
+                <div class="bg-white p-3.5 sm:p-4 rounded-2xl sm:rounded-3xl shadow-xs border-2 border-slate-100 space-y-2.5 p3-band-overlap">
                     <div class="flex gap-2">
                         <div class="relative flex-1">
                             <input type="text" id="word-input" class="w-full pl-3.5 pr-10 py-2.5 sm:py-3 border-2 border-slate-200 rounded-xl focus:border-blue-500 font-black text-base sm:text-lg bg-slate-50 focus:bg-white" placeholder="輸入單字直接拆解..." value="complete" onkeypress="if(event.key === 'Enter') processWord()">
@@ -2163,14 +2397,7 @@
             </div>
 
             <div id="view-flashcard" class="tab-content bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-xs border-2 border-slate-100 space-y-4">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-slate-100">
-                    <div>
-                        <h2 class="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2"><span>🎴</span> <span data-i18n="fc_heading">智能閃卡模式</span></h2>
-                        <p class="text-slate-500 font-semibold text-xs sm:text-sm" data-i18n="fc_subheading">自由挑選自訂課文清單，專注字素與音節對齊發音。</p>
-                    </div>
-                    <div id="fc-progress-badge" class="bg-indigo-50 text-indigo-700 font-black px-3.5 py-1 rounded-xl text-xs sm:text-sm border border-indigo-200"></div>
-                </div>
-                <div class="bg-slate-50 border-2 border-slate-200/80 rounded-2xl p-3.5 space-y-2.5">
+                <div class="bg-slate-50 border-2 border-slate-200/80 rounded-2xl p-3.5 space-y-2.5 p3-band-overlap">
                     <div class="flex flex-wrap items-center justify-between gap-2">
                         <span class="text-xs font-black text-slate-700 uppercase tracking-wider" data-i18n="subset_scope">📁 選擇抽考清單範圍：</span>
                         <div class="flex gap-2 text-xs">
@@ -2221,14 +2448,9 @@
             </div>
 
             <div id="view-chunk-scramble" class="tab-content p3-practice-view bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-xs border-2 border-slate-100 space-y-4">
-                <div id="cs-setup-header" class="p3-practice-setup-title flex justify-between items-center border-b border-slate-100 pb-2">
-                    <div>
-                        <h2 class="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2"><span>🧩</span> <span>音節字塊重組</span></h2>
-                        <p class="text-xs text-slate-500 font-semibold mt-0.5">依照發音結構 (頭音與韻部)，將打亂的字塊拼湊成完整的單字。</p>
-                    </div>
-                </div>
+                <div id="cs-setup-header" class="p3-practice-setup-title hidden" aria-hidden="true"></div>
                 
-                <div id="cs-setup-box" class="max-w-xl mx-auto bg-slate-50 border-2 border-slate-200 rounded-3xl p-5 sm:p-7 space-y-4">
+                <div id="cs-setup-box" class="max-w-xl mx-auto bg-slate-50 border-2 border-slate-200 rounded-3xl p-5 sm:p-7 space-y-4 p3-band-overlap">
                     <div class="space-y-2">
                         <label class="block text-xs font-black text-slate-700 uppercase tracking-wider">選擇題庫清單範圍：</label>
                         <div id="cs-subsets-checkboxes" class="flex flex-wrap gap-2 max-h-32 overflow-y-auto p-1"></div>
@@ -2328,8 +2550,8 @@
             </div>
 
             <div id="view-scramble" class="tab-content p3-practice-view bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-xs border-2 border-slate-100 space-y-4">
-                <div id="scramble-setup-box" class="max-w-xl mx-auto bg-slate-50 border-2 border-slate-200 rounded-3xl p-5 sm:p-7 space-y-4">
-                    <div class="text-center space-y-1 pb-2 border-b border-slate-200">
+                <div id="scramble-setup-box" class="max-w-xl mx-auto bg-slate-50 border-2 border-slate-200 rounded-3xl p-5 sm:p-7 space-y-4 p3-band-overlap">
+                    <div class="hidden text-center space-y-1 pb-2 border-b border-slate-200">
                         <h2 class="font-black text-lg sm:text-xl text-slate-900" data-i18n="scramble_heading">✍️ 聽音拼字挑戰</h2>
                         <p class="text-xs text-slate-500" data-i18n="scramble_subheading">聆聽標準發音，透過字母瓷磚、四線格手寫或鍵盤拼出單字</p>
                     </div>
@@ -2489,8 +2711,8 @@
             <div id="view-mock-dictation" class="tab-content bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-7 shadow-xs border-2 border-slate-100 space-y-4">
                 
                 <!-- 階段一：設定面板 -->
-                <section id="dict-setup-card" class="space-y-4 max-w-xl mx-auto">
-                    <div class="space-y-1 pb-2 border-b border-slate-100 text-center sm:text-left">
+                <section id="dict-setup-card" class="space-y-4 max-w-xl mx-auto p3-band-overlap">
+                    <div class="hidden space-y-1 pb-2 border-b border-slate-100 text-center sm:text-left">
                         <h2 class="font-black text-lg sm:text-xl text-slate-900 flex items-center justify-center sm:justify-start gap-2">
                             <span>📝</span> <span>模擬默書伴讀</span>
                         </h2>
@@ -2706,18 +2928,7 @@
             </div>
 
             <div id="view-extractor" class="tab-content bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-xs border-2 border-slate-100 space-y-4">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-2 border-b border-slate-100">
-                    <div>
-                        <h2 class="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2"><span>📝</span> <span data-i18n="ext_heading">課文生字提取</span></h2>
-                        <p class="text-slate-500 font-semibold text-xs sm:text-sm" data-i18n="ext_subheading">貼入課文或拍照辨識，自動比對詞庫並補齊音標。</p>
-                    </div>
-                    <label class="flex items-center gap-2 cursor-pointer bg-emerald-50 px-3 py-1 rounded-xl border border-emerald-200 text-xs font-black text-emerald-800">
-                        <input type="checkbox" id="chk-lemmatize" checked class="w-4 h-4 rounded text-emerald-600 accent-emerald-600">
-                        <span data-i18n="lemmatize_toggle">🌱 自動還原字根</span>
-                    </label>
-                </div>
-
-                <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-50 p-2.5 rounded-2xl border border-slate-200 text-xs font-bold">
+                <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-50 p-2.5 rounded-2xl border border-slate-200 text-xs font-bold p3-band-overlap">
                     <div class="flex items-center gap-1.5 flex-wrap">
                         <span class="text-slate-500">📷 課本圖片辨識：</span>
                         <label class="cursor-pointer px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-2xs flex items-center gap-1 active:scale-95 transition-all">
@@ -2732,6 +2943,10 @@
                     <div id="ocr-textbook-status" class="hidden text-indigo-700 font-black flex items-center gap-1.5">
                         <span class="animate-spin">⏳</span> <span id="ocr-textbook-msg">正在辨識圖片...</span>
                     </div>
+                    <label class="flex items-center gap-2 cursor-pointer bg-emerald-50 px-3 py-1 rounded-xl border border-emerald-200 text-xs font-black text-emerald-800 ml-auto">
+                        <input type="checkbox" id="chk-lemmatize" checked class="w-4 h-4 rounded text-emerald-600 accent-emerald-600">
+                        <span data-i18n="lemmatize_toggle">🌱 自動還原字根</span>
+                    </label>
                 </div>
 
                 <textarea id="extract-input" rows="4" class="w-full p-3.5 border-2 border-slate-200 rounded-2xl font-semibold text-slate-700 text-xs sm:text-sm bg-slate-50 focus:bg-white focus:outline-none" placeholder="在此貼上課文內容，或透過上方拍照辨識..."></textarea>
@@ -2767,14 +2982,7 @@
             </div>
 
             <div id="view-dictionary" class="tab-content bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-xs border-2 border-slate-100 space-y-4">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-2 border-b border-slate-100">
-                    <div>
-                        <h2 class="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2"><span>📖</span> <span data-i18n="dict_heading">核心字庫與分組</span></h2>
-                        <p class="text-slate-500 font-semibold text-xs sm:text-sm" data-i18n="dict_subheading">瀏覽核心詞庫，或切換至自訂課文分組。</p>
-                    </div>
-                    <div id="dict-count-badge" class="bg-blue-50 text-blue-700 font-black px-3 py-1 rounded-xl text-xs sm:text-sm border border-blue-200"></div>
-                </div>
-                <div class="bg-indigo-50/70 border-2 border-indigo-100 rounded-2xl p-3.5 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                <div class="bg-indigo-50/70 border-2 border-indigo-100 rounded-2xl p-3.5 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p3-band-overlap">
                     <div class="flex items-center gap-2.5 flex-1">
                         <span class="text-xs font-black text-indigo-900 whitespace-nowrap" data-i18n="subset_view_label">📁 分組檢視:</span>
                         <select id="dict-subset-selector" onchange="switchDictionarySubset(this.value)" class="flex-1 max-w-xs px-3 py-1.5 bg-white border-2 border-indigo-200 rounded-xl font-bold text-xs text-slate-700">
@@ -2808,11 +3016,7 @@
             </div>
 
             <div id="view-ipa" class="tab-content bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-xs border-2 border-slate-100 space-y-5">
-                <div class="pb-3 border-b-2 border-slate-100">
-                    <h2 class="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2"><span>📊</span> <span data-i18n="ipa_heading">國際音標表 (44 IPA Sounds)</span></h2>
-                    <p class="text-slate-500 font-bold mt-1 text-xs sm:text-sm" data-i18n="ipa_subheading">結合 Vocabulary.com 原聲女音與 Google UK 音源。</p>
-                </div>
-                <div class="space-y-5">
+                <div class="space-y-5 p3-band-overlap">
                     <div>
                         <h3 class="text-base font-black text-red-600 mb-2.5 flex items-center gap-2"><span class="bg-red-100 px-2 py-0.5 rounded-lg text-xs">A</span> Vowels (單元音 12)</h3>
                         <div id="grid-vowels" class="ipa-grid"></div>
@@ -2829,12 +3033,7 @@
             </div>
 
             <div id="view-profile" class="tab-content bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-xs border-2 border-slate-100 space-y-5 max-w-xl mx-auto">
-                <div class="text-center space-y-1 pb-3 border-b border-slate-100">
-                    <h2 class="font-black text-lg text-slate-900" data-i18n="profile_heading">👤 會員專區與設定</h2>
-                    <p class="text-xs text-slate-500" data-i18n="profile_subheading">自訂專屬頭像、小寵物暱稱與激勵表情反應</p>
-                </div>
-
-                <div class="p-4 bg-gradient-to-b from-indigo-50/70 to-blue-50/50 rounded-2xl border-2 border-indigo-200 space-y-3">
+                <div class="p-4 bg-gradient-to-b from-indigo-50/70 to-blue-50/50 rounded-2xl border-2 border-indigo-200 space-y-3 p3-band-overlap">
                     <div class="flex items-center justify-between">
                         <span class="text-xs font-black text-indigo-900 uppercase tracking-wider flex items-center gap-1">
                             <span>🎨</span> <span>專屬頭像與寵物暱稱設定</span>
@@ -4176,6 +4375,7 @@
             };
             hideSetup('view-chunk-scramble', 'cs-setup-box', 'cs-game-arena');
             hideSetup('view-scramble', 'scramble-setup-box', 'scramble-game-arena');
+            syncPageBand();
         }
 
         function closePracticeToChildHome() {
@@ -4306,11 +4506,97 @@
             svg.setAttribute('preserveAspectRatio', tabletKidHome ? 'xMidYMid meet' : 'xMidYMin slice');
         }
 
-        function syncKidHomeHeaderState() {
+        function getPageBandArtHtml(kind) {
+            const arts = {
+                album: `<svg viewBox="0 0 130 88" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="68" width="122" height="6" rx="3" fill="#D9A77A"/><image href="./design/animals/svg/capybara-v3/calm-tummy-bazi.svg" x="0" y="22" width="52" height="44"/><rect x="54" y="32" width="18" height="18" rx="4" fill="#FFD3D8" stroke="#1E3350" stroke-width="1.4"/><circle cx="61" cy="39" r="3.5" fill="#E5484D"/><rect x="74" y="30" width="20" height="20" rx="4" fill="#FFE7A3" stroke="#1E3350" stroke-width="1.4"/><path d="M78 34 h11 v3.5 h-4.5 v8 h-3 v-8 h-3.5z" fill="#D99A00"/><rect x="96" y="32" width="18" height="18" rx="4" fill="#F4D4A8" stroke="#1E3350" stroke-width="1.4"/><rect x="100" y="37" width="9" height="5" rx="2" fill="#8B5A2B"/><rect x="116" y="34" width="14" height="14" rx="4" fill="#E3E7EE" stroke="#95A1B3" stroke-width="1.3"/><text x="123" y="46" font-family="Nunito" font-weight="900" font-size="12" fill="#95A1B3" text-anchor="middle">?</text></svg>`,
+                parent: `<svg viewBox="0 0 120 88" xmlns="http://www.w3.org/2000/svg"><rect x="6" y="76" width="108" height="3" rx="1.5" fill="#9CCAE8" opacity="0.55"/><path d="M8 76 L8 50 Q8 44 20 44 Q32 44 32 50 L32 76 Z" fill="#7C9CF0" stroke="#1E3350" stroke-width="1.5" stroke-linejoin="round"/><ellipse cx="20" cy="50" rx="11" ry="3" fill="#A8C4FA" stroke="#1E3350" stroke-width="1.2"/><rect x="12" y="24" width="5" height="24" rx="2" fill="#FFE08A" stroke="#1E3350" stroke-width="0.8" transform="rotate(-7 14.5 36)"/><rect x="18" y="20" width="5" height="28" rx="2" fill="#8FD3AE" stroke="#1E3350" stroke-width="0.8" transform="rotate(1 20.5 34)"/><rect x="24" y="26" width="5" height="22" rx="2" fill="#F29A86" stroke="#1E3350" stroke-width="0.8" transform="rotate(9 26.5 37)"/><rect x="56" y="20" width="50" height="56" rx="8" fill="#fff" stroke="#1E3350" stroke-width="1.5"/><rect x="56" y="20" width="50" height="14" rx="8" fill="#E5484D"/><text x="81" y="52" font-family="Nunito" font-weight="900" font-size="22" fill="#1E3350" text-anchor="middle">${new Date().getDate()}</text></svg>`,
+                flashcards: `<svg viewBox="0 0 120 88" xmlns="http://www.w3.org/2000/svg"><rect x="18" y="18" width="52" height="58" rx="10" fill="#fff" stroke="#1E3350" stroke-width="2" transform="rotate(-8 44 47)"/><text x="38" y="54" font-family="Nunito" font-weight="900" font-size="20" fill="#2FA56E" transform="rotate(-8 44 47)">ai</text><rect x="48" y="12" width="52" height="58" rx="10" fill="#FFE7A3" stroke="#1E3350" stroke-width="2" transform="rotate(10 74 41)"/><text x="68" y="48" font-family="Nunito" font-weight="900" font-size="20" fill="#1E3350" transform="rotate(10 74 41)">sh</text></svg>`,
+                puzzle: `<svg viewBox="0 0 120 88" xmlns="http://www.w3.org/2000/svg"><rect x="14" y="22" width="36" height="36" rx="8" fill="#D3EDFB" stroke="#1E3350" stroke-width="1.8"/><rect x="54" y="22" width="36" height="36" rx="8" fill="#E6DBFF" stroke="#1E3350" stroke-width="1.8"/><rect x="34" y="46" width="36" height="28" rx="8" fill="#CDEFDC" stroke="#1E3350" stroke-width="1.8"/></svg>`,
+                pencil: `<svg viewBox="0 0 120 88" xmlns="http://www.w3.org/2000/svg"><rect x="20" y="24" width="70" height="12" rx="4" fill="#FFE08A" transform="rotate(-18 55 30)"/><polygon points="86,18 98,24 86,30" fill="#1E3350" transform="rotate(-18 92 24)"/><rect x="34" y="52" width="56" height="8" rx="2" fill="#E3E7EE" stroke="#95A1B3" stroke-width="1"/></svg>`,
+                notebook: `<svg viewBox="0 0 120 88" xmlns="http://www.w3.org/2000/svg"><rect x="28" y="14" width="64" height="62" rx="8" fill="#fff" stroke="#1E3350" stroke-width="1.8"/><rect x="28" y="14" width="12" height="62" rx="4" fill="#FFD3D8"/><line x1="46" y1="30" x2="82" y2="30" stroke="#E3E7EE" stroke-width="2"/><line x1="46" y1="42" x2="82" y2="42" stroke="#E3E7EE" stroke-width="2"/><line x1="46" y1="54" x2="74" y2="54" stroke="#E3E7EE" stroke-width="2"/></svg>`,
+                search: `<svg viewBox="0 0 120 88" xmlns="http://www.w3.org/2000/svg"><circle cx="52" cy="40" r="22" fill="#fff" stroke="#1E3350" stroke-width="2.5"/><line x1="68" y1="56" x2="92" y2="72" stroke="#1E3350" stroke-width="4" stroke-linecap="round"/></svg>`,
+                book: `<svg viewBox="0 0 120 88" xmlns="http://www.w3.org/2000/svg"><path d="M24 18 h36 a8 8 0 0 1 8 8 v48 a8 8 0 0 0 -8 -8 H24 Z" fill="#E4EEFE" stroke="#1E3350" stroke-width="1.8"/><path d="M96 18 H60 a8 8 0 0 0 -8 8 v48 a8 8 0 0 1 8 -8 h36 Z" fill="#fff" stroke="#1E3350" stroke-width="1.8"/></svg>`,
+                chart: `<svg viewBox="0 0 120 88" xmlns="http://www.w3.org/2000/svg"><rect x="18" y="52" width="14" height="24" rx="4" fill="#3A7DF0"/><rect x="38" y="38" width="14" height="38" rx="4" fill="#2FA56E"/><rect x="58" y="28" width="14" height="48" rx="4" fill="#7C5CE0"/><rect x="78" y="44" width="14" height="32" rx="4" fill="#FFA940"/></svg>`,
+                user: `<svg viewBox="0 0 120 88" xmlns="http://www.w3.org/2000/svg"><circle cx="60" cy="32" r="16" fill="#D3EDFB" stroke="#1E3350" stroke-width="1.8"/><path d="M32 72 c0 -16 12 -26 28 -26 s28 10 28 26" fill="#E4EEFE" stroke="#1E3350" stroke-width="1.8"/></svg>`,
+                camera: `<svg viewBox="0 0 120 88" xmlns="http://www.w3.org/2000/svg"><rect x="22" y="28" width="76" height="44" rx="10" fill="#fff" stroke="#1E3350" stroke-width="1.8"/><circle cx="60" cy="50" r="14" fill="#E4EEFE" stroke="#1E3350" stroke-width="1.8"/><rect x="44" y="20" width="20" height="10" rx="4" fill="#1E3350"/></svg>`,
+            };
+            return arts[kind] || arts.search;
+        }
+
+        const PAGE_BAND_VIEWS = {
+            'view-child-album': { tone: 'cream', title: '食物圖鑑', art: 'album', albumMeta: true },
+            'view-parent-dashboard': { tone: 'sky', title: '家長主頁', art: 'parent', parentGreet: true, parentKids: true, settings: true },
+            'view-flashcard': { tone: 'mint', title: '智能閃卡模式', sub: '專注字素與音節發音', art: 'flashcards', fcBadge: true },
+            'view-chunk-scramble': { tone: 'mint', title: '音節字塊重組', sub: '依照發音結構拼湊完整單字', art: 'puzzle' },
+            'view-scramble': { tone: 'mint', title: '聽音拼字挑戰', sub: '聆聽發音，用字塊或手寫拼字', art: 'pencil' },
+            'view-mock-dictation': { tone: 'peach', title: '模擬默書伴讀', sub: '真筆真紙 · 自動讀音與停頓', art: 'notebook' },
+            'view-main': { tone: 'sky', title: '查字拆解引擎', sub: '輸入單字 · 四步自然拼讀', art: 'search' },
+            'view-dictionary': { tone: 'lav', title: '核心字庫與分組', sub: '瀏覽詞庫與自訂課文清單', art: 'book', dictBadge: true },
+            'view-ipa': { tone: 'paper', title: '44 國際音標表', sub: '標準音與示範發音', art: 'chart' },
+            'view-profile': { tone: 'lav', title: '會員專區與設定', sub: '頭像 · 暱稱 · 帳戶', art: 'user' },
+            'view-extractor': { tone: 'peach', title: '課文生字提取', sub: '貼文或拍照 · 自動比對詞庫', art: 'camera' },
+        };
+
+        function applyPageBandForView(viewId) {
+            const band = document.getElementById('p3-page-band');
+            const cfg = PAGE_BAND_VIEWS[viewId];
+            if (!band || !cfg) return;
+            band.className = `p3-page-band p3-page-band--${cfg.tone}`;
+            const titleEl = document.getElementById('p3-band-title');
+            if (titleEl) titleEl.textContent = cfg.title || '';
+            const subEl = document.getElementById('p3-band-sub');
+            const greetEl = document.getElementById('parent-dash-greeting');
+            const collectedEl = document.getElementById('album-collected-line');
+            const masterEl = document.getElementById('album-master-title');
+            const kidsEl = document.getElementById('parent-dash-kids');
+            const fcBadge = document.getElementById('fc-progress-badge');
+            const dictBadge = document.getElementById('dict-count-badge');
+            const settingsBtn = document.getElementById('p3-band-settings-btn');
+            const artEl = document.getElementById('p3-band-art');
+            greetEl?.classList.toggle('hidden', !cfg.parentGreet);
+            kidsEl?.classList.toggle('hidden', !cfg.parentKids);
+            collectedEl?.classList.toggle('hidden', !cfg.albumMeta);
+            masterEl?.classList.toggle('hidden', !cfg.albumMeta);
+            fcBadge?.classList.toggle('hidden', !cfg.fcBadge);
+            dictBadge?.classList.toggle('hidden', !cfg.dictBadge);
+            settingsBtn?.classList.toggle('hidden', !cfg.settings);
+            if (subEl) {
+                subEl.textContent = cfg.sub || '';
+                subEl.classList.toggle('hidden', !cfg.sub);
+            }
+            if (artEl) artEl.innerHTML = getPageBandArtHtml(cfg.art);
+        }
+
+        function syncPageBand() {
             const onKidRoom = getAppArea() === 'child'
                 && document.getElementById('view-child-home')?.classList.contains('active');
             document.body.classList.toggle('p3-kid-home-room', !!onKidRoom);
             syncKidHomeRoomBackdrop();
+            const band = document.getElementById('p3-page-band');
+            const area = getAppArea();
+            const inSession = document.body.classList.contains('p3-practice-session');
+            if (!area || onKidRoom) {
+                document.body.classList.remove('p3-band-chrome');
+                band?.classList.add('hidden');
+                band?.setAttribute('aria-hidden', 'true');
+                return;
+            }
+            document.body.classList.add('p3-band-chrome');
+            const active = document.querySelector('.tab-content.active');
+            const viewId = active?.id || '';
+            const cfg = PAGE_BAND_VIEWS[viewId];
+            if (inSession || !cfg) {
+                band?.classList.add('hidden');
+                band?.setAttribute('aria-hidden', 'true');
+                return;
+            }
+            band?.classList.remove('hidden');
+            band?.setAttribute('aria-hidden', 'false');
+            applyPageBandForView(viewId);
+        }
+
+        function syncKidHomeHeaderState() {
+            syncPageBand();
         }
 
         if (!window.__phonicsKidHomeBackdropResize) {
@@ -5133,6 +5419,7 @@
                 if (lbl) lbl.innerText = '🏠';
                 toggleNavMenu(false);
                 updateParentDashboardUI();
+                syncKidHomeHeaderState();
                 return;
             }
             if (which === 'words') selectNavTab('dictionary');
