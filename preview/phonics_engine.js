@@ -1,5 +1,5 @@
 /**
- * Phonics 3000 – separable syllable engine.
+ * Phonics Bento – separable syllable engine.
  * Lexicon stores { word, ipa, definition }. Cuts are computed live.
  */
 (function (root) {
