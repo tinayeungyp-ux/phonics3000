@@ -313,6 +313,164 @@
             z-index: -1;
         }
 
+        /* App chrome — calm wordmark (header A) */
+        .p3-app-wordmark {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+        }
+        .p3-app-wordmark-mark {
+            width: 32px;
+            height: 32px;
+            flex-shrink: 0;
+            object-fit: contain;
+        }
+        .p3-app-wordmark-text {
+            font-size: 1.05rem;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            line-height: 1;
+            color: var(--ink);
+            white-space: nowrap;
+        }
+        .p3-app-wordmark-num { color: var(--blue); }
+        @media (min-width: 640px) {
+            .p3-app-wordmark-mark { width: 36px; height: 36px; }
+            .p3-app-wordmark-text { font-size: 1.2rem; }
+        }
+        #main-header .p3-header-actions-compact .p3-header-icon-btn {
+            width: 38px;
+            height: 38px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: var(--paper);
+            border: 2px solid var(--ink);
+            box-shadow: 1px 1px 0 rgba(30, 51, 80, 0.18);
+            color: var(--ink);
+        }
+        #btn-switch-area,
+        #nav-active-label { display: none !important; }
+
+        /* Kid home — option C: full-bleed pet room + floating header */
+        body.p3-kid-home-room #main-header { display: none; }
+        body.p3-kid-home-room main {
+            padding-top: 0;
+            padding-left: 0;
+            padding-right: 0;
+        }
+        body.p3-kid-home-room main > .max-w-4xl {
+            max-width: none;
+            margin-left: 0;
+            margin-right: 0;
+        }
+        body.p3-kid-home-room #view-child-home.active {
+            gap: 0;
+        }
+        body.p3-kid-home-room #view-child-home.active > * + * {
+            margin-top: 0 !important;
+        }
+        .p3-child-room-bg .p3-child-room-backdrop {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+            pointer-events: none;
+        }
+        .p3-child-room-float-header {
+            position: absolute;
+            left: 12px;
+            right: 12px;
+            top: calc(6px + env(safe-area-inset-top, 0px));
+            z-index: 25;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 8px;
+            pointer-events: none;
+        }
+        .p3-child-room-float-header > * { pointer-events: auto; }
+        .p3-child-home-gpill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+            max-width: calc(100% - 48px);
+            background: rgba(255, 255, 255, 0.88);
+            border: 1.5px solid var(--ink);
+            border-radius: 999px;
+            padding: 3px 11px 3px 3px;
+            box-shadow: 1px 1px 0 rgba(30, 51, 80, 0.14);
+        }
+        .p3-child-home-gpill #child-home-avatar {
+            width: 30px;
+            height: 30px;
+            font-size: 13px;
+            box-shadow: none;
+        }
+        .p3-child-home-gpill #child-home-greeting {
+            font-size: 13px;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+        .p3-child-home-gpill #child-home-date {
+            font-size: 10px;
+            line-height: 1.2;
+        }
+        .p3-child-home-menu-btn {
+            width: 34px;
+            height: 34px;
+            flex-shrink: 0;
+            border-radius: 50%;
+            border: 1.5px solid var(--ink);
+            background: rgba(255, 255, 255, 0.92);
+            box-shadow: 1px 1px 0 rgba(30, 51, 80, 0.14);
+            color: var(--ink);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body.p3-kid-home-room .p3-child-room.p3-child-home-hero {
+            border-radius: 0 0 28px 28px;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            box-shadow: none;
+            min-height: min(48vh, 380px);
+            margin-left: 0;
+            margin-right: 0;
+        }
+        body.p3-kid-home-room .p3-child-home-hero .p3-child-room-scene {
+            top: calc(36px + env(safe-area-inset-top, 0px));
+        }
+        body.p3-kid-home-room #child-hunger-wrap {
+            border-color: var(--ink);
+        }
+        .p3-child-home-gift-banner {
+            margin: -18px 14px 0;
+            position: relative;
+            z-index: 12;
+        }
+        .p3-child-home-today {
+            margin: -18px 14px 0;
+            position: relative;
+            z-index: 12;
+        }
+        body.p3-kid-home-room #view-child-home.active > .p3-child-home-gift-banner:not(.hidden) + .p3-child-home-today {
+            margin-top: 10px;
+        }
+        .p3-child-home-exam {
+            margin: 14px 14px 0;
+        }
+        #gift-reveal-modal.is-album-view .p3-gift-header-pill,
+        #gift-reveal-modal.is-album-view .p3-gift-hero { display: none !important; }
+
         body.app-area-child #view-child-home {
             padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px) + 2.5rem);
         }
@@ -805,6 +963,433 @@
         .half-food { position: relative; display: inline-block; opacity: 0.35; }
         .half-food::after { content: attr(data-icon); position: absolute; left: 0; top: 0; opacity: 1; clip-path: inset(0 50% 0 0); border-right: 2px dashed #dc2626; }
 
+        /* Practice result + gift reveal (flow-1 / flow-2) */
+        .p3-result-overlay { background: rgba(30, 51, 80, 0.55); backdrop-filter: blur(2px); }
+        .p3-result-card {
+            background: var(--cream);
+            border: 2.5px solid var(--ink);
+            border-radius: 24px;
+            box-shadow: var(--hard);
+            max-width: 22rem;
+            width: 100%;
+            padding: 1.35rem 1.25rem 1.15rem;
+            text-align: center;
+        }
+        .p3-result-pingo-stage {
+            position: relative;
+            width: 7.5rem;
+            height: 7.5rem;
+            margin: 0.15rem auto 0.35rem;
+        }
+        .p3-result-pingo-glow {
+            position: absolute;
+            inset: 0.35rem;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 231, 163, 0.55) 0%, rgba(255, 231, 163, 0) 70%);
+            pointer-events: none;
+        }
+        .p3-result-pingo-svg { width: 100%; height: 100%; display: block; }
+        .p3-result-pingo-svg svg { width: 100%; height: 100%; display: block; }
+        .p3-result-title { font-size: 1.35rem; font-weight: 900; color: var(--ink); line-height: 1.25; margin: 0.15rem 0; }
+        .p3-result-stars { display: flex; justify-content: center; gap: 0.35rem; margin: 0.35rem 0 0.2rem; }
+        .p3-result-star {
+            font-size: 1.35rem;
+            line-height: 1;
+            color: transparent;
+            -webkit-text-stroke: 2px var(--ink);
+            text-stroke: 2px var(--ink);
+        }
+        .p3-result-star.on { color: var(--butter-d); -webkit-text-stroke: 2px var(--ink); }
+        .p3-result-praise { font-size: 0.72rem; font-weight: 800; color: var(--ink2); line-height: 1.45; margin: 0 0 0.65rem; }
+        .p3-result-stats {
+            background: var(--paper);
+            border: 2px solid var(--ink);
+            border-radius: 18px;
+            box-shadow: var(--hard-sm);
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            padding: 0.65rem 0.35rem;
+            margin-bottom: 0.65rem;
+        }
+        .p3-result-stats > div { padding: 0 0.25rem; }
+        .p3-result-stats > div + div { border-left: 1px solid var(--line); }
+        .p3-result-stats .lbl { font-size: 0.62rem; font-weight: 700; color: var(--ink3); text-transform: uppercase; letter-spacing: 0.02em; }
+        .p3-result-stats .val { font-size: 1.05rem; font-weight: 900; margin-top: 0.1rem; }
+        .p3-result-teaser {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.72rem;
+            font-weight: 800;
+            color: var(--ink);
+            background: var(--rose);
+            border: 2px solid var(--ink);
+            border-radius: 999px;
+            padding: 0.3rem 0.75rem;
+            margin-bottom: 0.75rem;
+            box-shadow: var(--hard-sm);
+        }
+        .p3-result-btn-primary {
+            width: 100%;
+            min-height: 52px;
+            border-radius: 999px;
+            border: 2.5px solid var(--ink);
+            background: var(--blue);
+            color: #fff;
+            font-weight: 900;
+            font-size: 0.92rem;
+            box-shadow: var(--hard);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            cursor: pointer;
+        }
+        .p3-result-btn-primary:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--ink); }
+        .p3-result-btn-secondary {
+            width: 100%;
+            min-height: 46px;
+            border-radius: 999px;
+            border: 2.5px solid var(--ink);
+            background: var(--paper);
+            color: var(--ink);
+            font-weight: 800;
+            font-size: 0.82rem;
+            box-shadow: var(--hard-sm);
+            cursor: pointer;
+        }
+        .p3-result-btn-row { display: flex; gap: 0.5rem; }
+        .p3-result-btn-row .p3-result-btn-secondary { flex: 1; min-height: 42px; font-size: 0.78rem; }
+        .p3-gift-sheet { align-items: flex-end; padding: 0; overflow: hidden; }
+        @media (min-width: 480px) { .p3-gift-sheet { align-items: center; padding: 0.75rem; } }
+        .p3-gift-flow {
+            width: 100%;
+            max-width: 390px;
+            padding: 0.35rem 0.85rem 0.65rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-height: 100vh;
+            overflow: hidden;
+        }
+        .p3-gift-header-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            background: var(--ink);
+            color: #fff;
+            font-size: 0.68rem;
+            font-weight: 800;
+            border-radius: 999px;
+            padding: 0.25rem 0.75rem;
+            margin: 0 auto 0.45rem;
+            flex-shrink: 0;
+        }
+        .p3-gift-dots { display: inline-flex; gap: 0.25rem; }
+        .p3-gift-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.35); }
+        .p3-gift-dot.on { background: #fff; }
+        .p3-gift-scene {
+            position: relative;
+            width: 100%;
+            flex-shrink: 1;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .p3-gift-hero {
+            position: relative;
+            width: 100%;
+            height: 2.35rem;
+            flex-shrink: 0;
+            z-index: 4;
+            margin-bottom: -0.45rem;
+        }
+        .p3-gift-pingo {
+            position: absolute;
+            left: 0;
+            bottom: 0.2rem;
+            width: 4.35rem;
+            height: 4.35rem;
+            z-index: 2;
+            pointer-events: none;
+            object-fit: contain;
+            object-position: center bottom;
+        }
+        .p3-gift-bubble {
+            position: absolute;
+            left: 3.85rem;
+            bottom: 0.45rem;
+            z-index: 3;
+            max-width: calc(100% - 4.1rem);
+            background: var(--paper);
+            border: 2.5px solid var(--ink);
+            border-radius: 16px 16px 16px 4px;
+            padding: 0.35rem 0.65rem;
+            font-size: 0.72rem;
+            font-weight: 800;
+            box-shadow: 3px 3px 0 var(--ink);
+            line-height: 1.25;
+        }
+        .p3-gift-rc {
+            position: relative;
+            background: var(--cream);
+            border: 3px solid var(--ink);
+            border-radius: 22px;
+            padding: 0.55rem 0.85rem 0.65rem;
+            box-shadow: 0 5px 0 #0E1A2E;
+            text-align: left;
+            z-index: 1;
+        }
+        .p3-gift-edge-badge {
+            position: absolute;
+            top: -0.72rem;
+            right: 0.85rem;
+            z-index: 4;
+            font-size: 0.72rem;
+            font-weight: 900;
+            letter-spacing: 0.04em;
+            border: 2.5px solid var(--ink);
+            border-radius: 999px;
+            padding: 0.15rem 0.55rem;
+            box-shadow: var(--hard-sm);
+            transform: rotate(4deg);
+        }
+        .p3-gift-edge-badge.is-new { background: var(--rose-d); color: #fff; }
+        .p3-gift-edge-badge.is-dup { background: var(--paper); color: var(--ink); transform: rotate(2deg); }
+        .p3-gift-rc-top { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+        .p3-gift-cat-chip {
+            background: var(--butter);
+            border-radius: 999px;
+            padding: 0.22rem 0.55rem;
+            font-size: 0.68rem;
+            font-weight: 900;
+            white-space: nowrap;
+            flex: 0 0 auto;
+            width: fit-content;
+            max-width: calc(100% - 4.25rem);
+        }
+        .p3-gift-cat-no { font-size: 0.68rem; font-weight: 900; color: var(--ink3); font-family: Nunito, sans-serif; flex-shrink: 0; margin-left: auto; }
+        .p3-gift-art {
+            position: relative;
+            height: 8.75rem;
+            border-radius: 16px;
+            margin-top: 0.45rem;
+            background: var(--butter);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .p3-gift-art-spark { position: absolute; pointer-events: none; }
+        .p3-gift-art-img { width: 62%; max-height: 78%; object-fit: contain; position: relative; z-index: 1; }
+        .p3-gift-art-emoji { font-size: 4.5rem; line-height: 1; position: relative; z-index: 1; }
+        .p3-gift-main-title {
+            font-size: 1.05rem;
+            font-weight: 900;
+            text-align: center;
+            margin: 0.55rem 0 0.1rem;
+            line-height: 1.3;
+        }
+        .p3-gift-sub-title {
+            font-size: 0.72rem;
+            font-weight: 800;
+            color: var(--ink2);
+            text-align: center;
+            margin-bottom: 0.45rem;
+        }
+        .p3-gift-sub-title.hidden { display: none; }
+        .p3-gift-word {
+            background: var(--paper);
+            border: 2px solid var(--line);
+            border-radius: 14px;
+            padding: 0.45rem 0.55rem;
+            margin-top: 0.15rem;
+        }
+        .p3-gift-word-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.35rem; width: 100%; }
+        .p3-gift-word-en { font-size: 1.35rem; font-weight: 900; line-height: 1; font-family: Nunito, sans-serif; }
+        .p3-gift-chunks { display: inline-flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.35rem; }
+        .p3-gift-bch {
+            font-weight: 900;
+            font-size: 0.82rem;
+            padding: 0.12rem 0.45rem;
+            border-radius: 8px;
+            font-family: Nunito, sans-serif;
+        }
+        .p3-gift-bch.sky { background: var(--sky); color: var(--sky-d); }
+        .p3-gift-bch.peach { background: var(--peach); color: var(--peach-d); }
+        .p3-gift-spk {
+            width: 2.65rem;
+            height: 2.65rem;
+            border-radius: 50%;
+            background: var(--blue);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 3px 3px 0 var(--ink);
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+        .p3-gift-sounds {
+            font-size: 0.62rem;
+            font-weight: 800;
+            color: var(--ink2);
+            margin-top: 0.4rem;
+            line-height: 1.45;
+            font-family: Nunito, sans-serif;
+        }
+        .p3-gift-sounds b { color: var(--ink); letter-spacing: 0.04em; }
+        .p3-gift-prog-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-top: 0.45rem;
+            font-size: 0.72rem;
+            font-weight: 900;
+        }
+        .p3-gift-slots { display: flex; gap: 0.28rem; margin-top: 0.35rem; }
+        .p3-gift-slot {
+            flex: 1;
+            height: 1.65rem;
+            border-radius: 8px;
+            background: #EDE6DA;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+        }
+        .p3-gift-slot.on { background: var(--butter); }
+        .p3-gift-slot.cur { outline: 2.5px solid var(--ink); background: var(--butter); }
+        .p3-gift-slot img { width: 1.1rem; height: 1.1rem; object-fit: contain; }
+        .p3-gift-prog-foot {
+            font-size: 0.62rem;
+            font-weight: 700;
+            color: var(--ink2);
+            margin-top: 0.35rem;
+            line-height: 1.35;
+        }
+        #gift-reveal-modal .p3-result-btn-primary {
+            margin-top: 0.45rem;
+            min-height: 52px;
+            font-size: 0.95rem;
+            flex-shrink: 0;
+            width: 100%;
+        }
+        #gift-reveal-modal .p3-gift-footer-actions { margin-top: 0.45rem; flex-shrink: 0; width: 100%; }
+        #gift-close-btn { width: 100%; }
+
+        /* Child nav — 5 tabs @ 390px */
+        #child-bottom-nav { padding: 10px 6px 0; justify-content: space-between; }
+        .child-nav-btn { width: auto; flex: 1; min-width: 0; max-width: 74px; font-size: 10px; }
+        .child-nav-btn .ib { position: relative; width: 48px; height: 28px; font-size: 17px; }
+        .child-nav-btn .p3-nav-dot {
+            position: absolute; top: 1px; right: 4px; width: 7px; height: 7px;
+            border-radius: 50%; background: var(--alert); border: 1.5px solid var(--paper);
+            display: none;
+        }
+        .child-nav-btn.has-dot .p3-nav-dot { display: block; }
+
+        /* Pet room — pending gift parcel + banner */
+        #child-room-gift-parcel {
+            pointer-events: auto;
+            position: absolute;
+            right: 10%;
+            top: 38%;
+            z-index: 18;
+            width: 52px;
+            height: 52px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+        #child-room-gift-parcel.hidden { display: none; }
+        .p3-room-gift-box {
+            width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2rem;
+            filter: drop-shadow(2px 2px 0 rgba(30,51,80,.15));
+        }
+        .p3-room-gift-count {
+            position: absolute; top: -4px; right: -6px;
+            min-width: 20px; height: 20px; padding: 0 5px;
+            border-radius: 999px; background: var(--alert); color: #fff;
+            font-size: 11px; font-weight: 900; font-family: Nunito, sans-serif;
+            border: 2px solid var(--ink); display: flex; align-items: center; justify-content: center;
+            box-shadow: 2px 2px 0 var(--ink);
+        }
+        #child-room-gift-banner {
+            display: flex; align-items: center; gap: 10px;
+            background: var(--paper); border: 2px solid var(--ink);
+            border-radius: 18px; box-shadow: var(--hard); padding: 10px 12px;
+        }
+        #child-room-gift-banner.hidden { display: none; }
+        .p3-room-gift-banner-ico { font-size: 1.35rem; flex-shrink: 0; }
+        .p3-room-gift-banner-text { flex: 1; min-width: 0; }
+        .p3-room-gift-banner-text b { display: block; font-size: 14px; font-weight: 800; color: var(--ink); }
+        .p3-room-gift-banner-text span { font-size: 11px; color: var(--ink2); font-weight: 700; }
+        .p3-room-gift-open-btn {
+            flex-shrink: 0; border: 2px solid var(--ink); background: var(--blue); color: #fff;
+            font-size: 13px; font-weight: 800; padding: 8px 16px; border-radius: 999px;
+            box-shadow: 2px 2px 0 var(--ink); cursor: pointer;
+        }
+
+        /* 圖鑑 album tab */
+        body.app-area-child #view-child-album.active {
+            padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px) + 2.5rem);
+        }
+        .p3-album-wrap { display: flex; flex-direction: column; gap: 14px; }
+        .p3-album-hdr { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+        .p3-album-hdr h2 { font-size: 1.35rem; font-weight: 900; color: var(--ink); line-height: 1.15; }
+        .p3-album-hdr .sub { font-size: 12px; font-weight: 700; color: var(--ink2); margin-top: 4px; }
+        .p3-album-master {
+            text-align: right; font-size: 11px; font-weight: 800; padding: 6px 10px;
+            border-radius: 12px; border: 2px dashed var(--line); color: var(--ink3); max-width: 42%;
+            line-height: 1.3;
+        }
+        .p3-album-master.on {
+            border-style: solid; border-color: var(--ink); background: var(--butter);
+            color: var(--ink); box-shadow: 2px 2px 0 var(--ink);
+        }
+        .p3-album-section {
+            background: var(--paper); border: 2px solid var(--ink); border-radius: 20px;
+            box-shadow: var(--hard); padding: 12px 12px 10px;
+        }
+        .p3-album-sec-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+        .p3-album-sec-head b { font-size: 15px; font-weight: 900; color: var(--ink); }
+        .p3-album-sec-head .en { font-size: 12px; font-weight: 800; color: var(--ink2); margin-left: 4px; }
+        .p3-album-sec-prog { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+        .p3-album-sec-bar {
+            width: 56px; height: 7px; border-radius: 5px; background: #F1E4D6; overflow: hidden;
+        }
+        .p3-album-sec-bar i { display: block; height: 100%; border-radius: 5px; }
+        .p3-album-sec-count { font-size: 12px; font-weight: 900; font-family: Nunito, sans-serif; color: var(--ink); }
+        .p3-album-title-pill {
+            font-size: 10px; font-weight: 800; color: var(--ink2); margin-top: 2px;
+        }
+        .p3-album-title-pill.on { color: var(--mint-d); }
+        .p3-album-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .p3-album-card {
+            aspect-ratio: 1; border-radius: 14px; border: 2px solid var(--ink);
+            background: #FAFBFD; display: flex; flex-direction: column; align-items: center;
+            justify-content: center; padding: 4px; position: relative;
+            box-shadow: 2px 2px 0 var(--ink);
+        }
+        .p3-album-card.collected { cursor: pointer; background: var(--paper); }
+        .p3-album-card.locked { border-color: var(--line); box-shadow: none; background: #F4F6F9; }
+        .p3-album-card .art { flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; min-height: 0; }
+        .p3-album-card .art img { width: 72%; max-height: 72%; object-fit: contain; }
+        .p3-album-card .art .em { font-size: 1.65rem; line-height: 1; }
+        .p3-album-card .art .unk { font-size: 1.5rem; font-weight: 900; color: var(--ink3); font-family: Nunito, sans-serif; }
+        .p3-album-card .lbl { font-size: 9px; font-weight: 800; color: var(--ink); text-align: center; line-height: 1.15; width: 100%; }
+        .p3-album-card .cnt {
+            position: absolute; top: 3px; right: 4px; font-size: 9px; font-weight: 900;
+            font-family: Nunito, sans-serif; color: var(--ink); background: var(--butter);
+            border: 1.5px solid var(--ink); border-radius: 8px; padding: 1px 4px;
+        }
+        .p3-album-foot { font-size: 10px; font-weight: 700; color: var(--ink2); margin-top: 8px; text-align: center; }
+
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
         [data-theme="default"] ::-webkit-scrollbar-thumb { background: var(--ink3); }
@@ -869,8 +1454,7 @@
             #view-child-home > .p3-child-room { min-height: 300px; }
             #child-room-pet-hit { width: 188px; max-width: 46%; }
             #child-room-pet-svg { width: 100%; height: auto; max-height: min(58vh, 320px); }
-            #view-child-home > .flex.items-center.gap-3 { padding-left: 4px; padding-right: 4px; }
-            #view-child-home > .flex.items-center.gap-3 #child-home-greeting { font-size: 1.25rem; }
+            body.p3-kid-home-room .p3-child-home-today { margin-left: 14px; margin-right: 14px; }
             .p3-practice-arena { max-width: var(--p3-practice-col-max); padding-left: 8px; padding-right: 8px; }
             .p3-practice-footer { max-width: var(--p3-practice-col-max); padding-left: 24px; padding-right: 24px; }
             .p3-practice-play-btn { width: 92px; height: 92px; font-size: 2.15rem; }
@@ -921,62 +1505,173 @@
             body.app-area-child main > .max-w-4xl,
             body.app-area-parent main > .max-w-4xl { max-width: var(--p3-content-max); }
             #view-parent-dashboard { max-width: var(--p3-content-max); }
-            #view-child-home.active {
-                display: grid !important;
-                grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-                column-gap: 24px;
-                row-gap: 14px;
-                align-items: stretch;
-                grid-template-rows: auto minmax(320px, 1fr) auto;
+            body.p3-kid-home-room main {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                min-height: 0;
             }
-            #view-child-home.active > :nth-child(1) { grid-column: 1 / -1; grid-row: 1; }
-            #view-child-home.active > .p3-child-room {
+            body.p3-kid-home-room main > .max-w-4xl {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                min-height: 0;
+                box-sizing: border-box;
+                max-width: min(1080px, calc(100vw - 48px));
+                width: 100%;
+                padding-left: 24px;
+                padding-right: 24px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            body.p3-kid-home-room #view-child-home.active {
+                flex: 1;
+                min-height: calc(100dvh - 84px - env(safe-area-inset-bottom, 0px) - 8px);
+                padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px) + 0.25rem);
+            }
+            body.p3-kid-home-room #view-child-home.active {
+                display: grid !important;
+                grid-template-columns: minmax(0, 48%) minmax(0, 1fr);
+                column-gap: 20px;
+                row-gap: 10px;
+                align-items: stretch;
+                grid-template-rows: minmax(0, 1fr) auto auto;
+            }
+            #view-child-home.active > .p3-child-home-hero {
                 grid-column: 1;
-                grid-row: 2;
-                min-height: 100%;
+                grid-row: 1;
+                min-height: 0;
                 height: 100%;
                 align-self: stretch;
                 container-type: size;
             }
-            #view-child-home.active > #child-home-last-card {
+            body.p3-kid-home-room #view-child-home.active > .p3-child-home-hero {
+                border-radius: 0 0 24px 24px;
+                margin: 0;
+                min-height: 0;
+            }
+            body.p3-kid-home-room .p3-child-home-hero .p3-child-room-bg .p3-child-room-backdrop {
+                width: 100%;
+                height: 100%;
+                top: 0;
+                left: 0;
+                transform: none;
+            }
+            body.p3-kid-home-room .p3-child-home-hero .p3-child-room-scene {
+                bottom: 56px;
+            }
+            #view-child-home.active > .p3-child-home-gift-banner {
+                grid-column: 1;
+                grid-row: 2;
+                align-self: end;
+                margin: 0;
+            }
+            body.p3-kid-home-room #view-child-home.active > .p3-child-home-gift-banner:not(.hidden) {
+                margin-top: -12px;
+            }
+            #view-child-home.active > .p3-child-home-exam {
                 grid-column: 1;
                 grid-row: 3;
-                align-self: start;
+                align-self: end;
+                margin: 0;
             }
-            #view-child-home.active > .bg-white.rounded-card {
+            #view-child-home.active > .p3-child-home-today {
                 grid-column: 2;
-                grid-row: 2 / 4;
+                grid-row: 1 / 4;
                 align-self: stretch;
                 height: 100%;
+                margin: 0;
+                display: flex;
+                flex-direction: column;
+                min-height: 0;
             }
-            .p3-child-room-scene { bottom: 56px; }
-            #child-room-pet-hit {
-                width: auto;
-                height: 60cqb;
-                min-height: 190px;
-                max-height: 360px;
-                max-width: min(78cqi, 85%);
-                left: 44%;
-                top: 52%;
+            body.p3-kid-home-room .p3-child-home-today {
+                flex: 1;
+                min-height: 0;
+                margin: 0;
+                overflow-y: auto;
+            }
+            body.p3-kid-home-room .p3-child-home-exam {
+                margin: 0;
+            }
+            body.p3-kid-home-room #view-child-home.active #child-room-pet-hit {
+                width: min(38cqi, 210px);
+                height: auto;
+                max-height: min(42cqb, 240px);
+                min-height: 0;
+                max-width: min(55cqi, 240px);
+                left: 36%;
+                top: 58%;
                 transform: translate(-50%, -50%);
             }
-            #child-room-pet-svg { width: 100%; height: 100%; max-height: 100%; }
-            #child-room-pet-custom {
+            body.p3-kid-home-room #view-child-home.active #child-room-pet-custom {
+                left: 36%;
+                top: 58%;
+            }
+            body.p3-kid-home-room #view-child-home.active #child-room-bubble {
+                left: auto;
+                right: 8%;
+                top: 14%;
+                max-width: min(180px, 42%);
+            }
+            body.p3-kid-home-room #view-child-home.active #child-room-bubble::before {
+                left: auto;
+                right: 22px;
+                bottom: -7px;
+            }
+            body.p3-kid-home-room #view-child-home.active #child-room-bubble::after {
+                left: auto;
+                right: 20px;
+                bottom: -10px;
+            }
+            body.p3-kid-home-room #view-child-home.active #child-hunger-wrap {
+                left: 12px;
+                right: 12px;
+                bottom: 12px;
+            }
+            body.p3-kid-home-room #view-child-home.active #child-room-gift-parcel {
+                right: 12%;
+                top: 30%;
+                width: 52px;
+                height: 52px;
+            }
+            body.p3-kid-home-room #view-child-home.active #child-room-pet-svg {
+                width: 100%;
+                height: auto;
+                max-height: min(42cqb, 240px);
+            }
+            body:not(.p3-kid-home-room) .p3-child-room-scene { bottom: 56px; }
+            body:not(.p3-kid-home-room) #view-child-home.active #child-room-pet-hit {
+                width: auto;
+                height: min(38cqb, 42%);
+                min-height: 160px;
+                max-height: min(280px, 52cqb);
+                max-width: min(72cqi, 78%);
+                left: 42%;
+                top: 62%;
+                transform: translate(-50%, -50%);
+            }
+            body:not(.p3-kid-home-room) #child-room-pet-svg { width: 100%; height: 100%; max-height: 100%; }
+            body:not(.p3-kid-home-room) #child-room-pet-custom {
                 left: 44%;
                 top: 54%;
             }
-            #child-room-pet-custom img { width: clamp(140px, 58%, 260px); height: clamp(140px, 58%, 260px); }
-            #child-room-bubble {
-                left: 52%;
-                right: auto;
-                top: 10%;
-                max-width: min(200px, 42%);
+            body:not(.p3-kid-home-room) #child-room-pet-custom img { width: clamp(140px, 58%, 260px); height: clamp(140px, 58%, 260px); }
+            body:not(.p3-kid-home-room) #child-room-bubble {
+                left: auto;
+                right: 6%;
+                top: 18%;
+                max-width: min(200px, 46%);
                 font-size: 13px;
                 padding: 10px 12px;
             }
-            #child-room-bubble::before { left: 22px; bottom: -7px; }
-            #child-room-bubble::after { left: 20px; bottom: -10px; }
-            #child-hunger-wrap { left: 16px; right: 16px; bottom: 16px; }
+            body:not(.p3-kid-home-room) #child-room-bubble::before { left: auto; right: 22px; bottom: -7px; }
+            body:not(.p3-kid-home-room) #child-room-bubble::after { left: auto; right: 20px; bottom: -10px; }
+            body:not(.p3-kid-home-room) #child-hunger-wrap { left: 12px; right: 12px; bottom: 12px; }
+            body:not(.p3-kid-home-room) #child-room-gift-parcel {
+                right: 6%;
+                top: 42%;
+            }
             #view-parent-dashboard.active .p3-parent-dash-stack {
                 display: grid;
                 grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -993,13 +1688,13 @@
 
         @media (min-width: 1280px) {
             :root { --p3-content-max: 1120px; }
-            #view-child-home.active > .p3-child-room { min-height: 360px; }
-            #child-room-pet-hit {
+            body:not(.p3-kid-home-room) #view-child-home.active > .p3-child-room { min-height: 360px; }
+            body:not(.p3-kid-home-room) #child-room-pet-hit {
                 height: 62cqb;
                 min-height: 200px;
                 max-height: 380px;
             }
-            #child-room-bubble {
+            body:not(.p3-kid-home-room) #child-room-bubble {
                 left: 49%;
                 max-width: min(230px, 44%);
             }
@@ -1056,14 +1751,17 @@
     <header id="main-header" class="bg-white shadow-xs border-b-2 border-slate-200 px-4 py-2.5 shrink-0 z-30 sticky top-0">
         <div class="max-w-5xl mx-auto flex justify-between items-center gap-2">
             <div id="app-title" class="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2 cursor-pointer transition-all duration-300 min-w-0 truncate" onclick="handleAppTitleClick()">
-                <span>🚀 Phonics 3000</span>
+                <span class="p3-app-wordmark">
+                    <img src="./design/animals/svg/capybara-v3/calm-tummy-bazi.svg" alt="" class="p3-app-wordmark-mark" width="36" height="36">
+                    <span class="p3-app-wordmark-text"><span class="en">Phonics</span> <span class="p3-app-wordmark-num en">3000</span></span>
+                </span>
             </div>
-            <div class="flex items-center gap-2 shrink-0">
+            <div class="p3-header-actions-compact flex items-center gap-2 shrink-0">
                 <button type="button" id="btn-switch-area" onclick="returnToEntryScreen()" class="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold text-[11px] sm:text-xs flex items-center gap-1 transition-colors shadow-xs border-2 border-transparent" title="切換小朋友 / 家長入口">
                     <span aria-hidden="true">⇄</span><span class="hidden sm:inline">入口</span>
                 </button>
                 <span id="nav-active-label" class="text-xl bg-blue-50 px-2.5 py-1 rounded-xl flex items-center justify-center">🏠</span>
-                <button onclick="toggleNavMenu(true)" class="p-2 px-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold flex items-center justify-center transition-colors shadow-xs">
+                <button type="button" onclick="toggleNavMenu(true)" class="p3-header-icon-btn" aria-label="功能選單">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                 </button>
             </div>
@@ -1135,6 +1833,9 @@
                     <span class="text-base shrink-0">📊</span> <span data-i18n="nav_ipa">44 國際音標表</span>
                 </button>
                 <div class="text-[11px] font-black text-slate-400 px-2.5 pt-1.5 uppercase tracking-wider" data-i18n="cat_account">帳號與設定</div>
+                <button type="button" onclick="returnToEntryScreen(); toggleNavMenu(false)" class="nav-btn w-full text-left px-3 py-2 rounded-xl text-slate-700 bg-slate-50 flex items-center gap-2.5">
+                    <span class="text-base shrink-0">⇄</span> <span>切換小朋友 / 家長入口</span>
+                </button>
                 <button onclick="selectNavTab('profile')" id="btn-tab-profile" class="nav-btn parent-only w-full text-left px-3 py-2 rounded-xl text-slate-700 bg-slate-50 flex items-center gap-2.5 border border-slate-200">
                     <span class="text-base shrink-0">👤</span> <span data-i18n="nav_profile">會員專區與設定</span>
                 </button>
@@ -1177,16 +1878,41 @@
         <div class="max-w-4xl mx-auto space-y-4 sm:space-y-6">
 
             <div id="view-child-home" class="tab-content space-y-4 sm:space-y-5">
-                <div class="flex items-center gap-3 px-0.5">
-                    <div id="child-home-avatar" class="w-[42px] h-[42px] rounded-full flex items-center justify-center font-bold text-lg shrink-0 shadow-hard-sm border-2 border-p3-ink" style="background:var(--butter);color:#8A6300;border-color:var(--ink)">小</div>
-                    <div class="flex-1 min-w-0">
-                        <div id="child-home-greeting" class="text-lg font-bold truncate" style="color:var(--ink)">早晨！</div>
-                        <div id="child-home-date" class="text-xs" style="color:var(--ink2)"></div>
+                <div class="p3-child-room p3-child-home-hero relative overflow-hidden border-2 border-p3-ink min-h-[260px] sm:min-h-[282px]" data-scene="room" style="border-color:var(--ink)">
+                    <div class="p3-child-room-bg" aria-hidden="true">
+                        <svg class="p3-child-room-backdrop" viewBox="0 0 390 404" preserveAspectRatio="xMidYMin slice" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="390" height="404" fill="#FCEBD8"/>
+                            <g opacity=".35"><rect x="8" y="0" width="14" height="262" fill="#F8DDBF"/><rect x="42" y="0" width="14" height="262" fill="#F8DDBF"/><rect x="76" y="0" width="14" height="262" fill="#F8DDBF"/><rect x="110" y="0" width="14" height="262" fill="#F8DDBF"/><rect x="144" y="0" width="14" height="262" fill="#F8DDBF"/><rect x="178" y="0" width="14" height="262" fill="#F8DDBF"/><rect x="212" y="0" width="14" height="262" fill="#F8DDBF"/><rect x="246" y="0" width="14" height="262" fill="#F8DDBF"/><rect x="280" y="0" width="14" height="262" fill="#F8DDBF"/><rect x="314" y="0" width="14" height="262" fill="#F8DDBF"/><rect x="348" y="0" width="14" height="262" fill="#F8DDBF"/><rect x="382" y="0" width="14" height="262" fill="#F8DDBF"/></g>
+                            <g transform="translate(0 104)">
+                                <rect x="24" y="30" width="104" height="86" rx="14" fill="#fff"/><rect x="31" y="37" width="90" height="72" rx="9" fill="#CFEAFB"/>
+                                <circle cx="98" cy="58" r="11" fill="#FFE08A"/><path d="M44 88 a10 10 0 0 1 17-7 a12 12 0 0 1 22 5 a8 8 0 0 1 2 16 h-38 a7 7 0 0 1 -3-14z" fill="#fff"/>
+                                <rect x="74" y="37" width="4" height="72" fill="#fff"/><rect x="18" y="114" width="116" height="8" rx="4" fill="#E9C9A5"/>
+                                <g transform="translate(40 0)">
+                                    <rect x="232" y="84" width="96" height="7" rx="3.5" fill="#D9A77A"/>
+                                    <rect x="240" y="52" width="12" height="32" rx="3" fill="#7C9CF0"/><rect x="254" y="46" width="12" height="38" rx="3" fill="#F29A86"/><rect x="268" y="56" width="10" height="28" rx="3" fill="#8FD3AE"/>
+                                    <rect x="276" y="60" width="26" height="24" rx="3" fill="#FFD27A" transform="rotate(-12 289 72)"/>
+                                    <text x="288" y="77" font-family="Nunito" font-weight="900" font-size="13" fill="#B7791F" text-anchor="middle" transform="rotate(-12 289 72)">ABC</text>
+                                    <path d="M318 84 h-14 l2 -12 h10z" fill="#F4B489"/><path d="M311 72 c-6 -4 -8 -12 -3 -16 c3 5 4 10 3 16z M311 72 c5 -5 10 -9 9 -17 c-5 4 -8 10 -9 17z" fill="#6CC08B"/>
+                                </g>
+                            </g>
+                            <path d="M0 262 H390 V404 H0Z" fill="#EFD3B2"/><path d="M0 262 H390" stroke="#E3C29C" stroke-width="3"/>
+                            <ellipse cx="140" cy="306" rx="104" ry="20" fill="#F6C3A4"/>
+                            <ellipse cx="140" cy="306" rx="86" ry="14" fill="none" stroke="#FBDCC7" stroke-width="3" stroke-dasharray="7 7"/>
+                            <g transform="translate(312 296)"><path d="M0 0 h44 a22 12 0 0 1 -44 0z" fill="#3A7DF0" stroke="#1E3350" stroke-width="2"/><ellipse cx="22" cy="0" rx="22" ry="5" fill="#2E66C8" stroke="#1E3350" stroke-width="2"/></g>
+                        </svg>
                     </div>
-                </div>
-
-                <div class="p3-child-room relative overflow-hidden border-2 border-p3-ink min-h-[260px] sm:min-h-[282px]" data-scene="room" style="border-color:var(--ink)">
-                    <div class="p3-child-room-bg" aria-hidden="true"></div>
+                    <div class="p3-child-room-float-header">
+                        <div class="p3-child-home-gpill">
+                            <div id="child-home-avatar" class="w-[42px] h-[42px] rounded-full flex items-center justify-center font-bold text-lg shrink-0 border-2 border-p3-ink" style="background:var(--butter);color:#8A6300;border-color:var(--ink)">小</div>
+                            <div class="flex-1 min-w-0">
+                                <div id="child-home-greeting" class="text-lg font-bold truncate" style="color:var(--ink)">早晨！</div>
+                                <div id="child-home-date" class="text-xs" style="color:var(--ink2)"></div>
+                            </div>
+                        </div>
+                        <button type="button" class="p3-child-home-menu-btn" onclick="toggleNavMenu(true)" aria-label="功能選單">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                        </button>
+                    </div>
                     <div class="p3-child-room-scene" aria-hidden="true">
                         <div id="child-room-pet-custom" class="hidden absolute left-1/2 top-[55%] -translate-x-1/2 -translate-y-1/2 z-10">
                             <img id="child-room-pet-custom-img" src="" alt="" class="w-32 h-32 rounded-full object-cover border-[3px] border-white shadow-hard-sm">
@@ -1195,6 +1921,10 @@
                             <img id="child-room-pet-svg" src="./design/animals/svg/capybara-v3/calm-tummy-bazi.svg" alt="拼拼" class="w-full h-auto">
                         </button>
                         <div id="child-room-bubble" class="absolute left-[54%] top-[12%] max-w-[140px] bg-white rounded-2xl px-3 py-2 text-xs font-bold leading-snug shadow-hard-sm border-2 z-20" style="border-color:var(--ink);color:var(--ink)"></div>
+                        <button type="button" id="child-room-gift-parcel" class="hidden" onclick="openRoomPendingGiftFlow()" aria-label="打開禮物">
+                            <span class="p3-room-gift-box" aria-hidden="true">🎁</span>
+                            <span id="child-room-gift-count" class="p3-room-gift-count">0</span>
+                        </button>
                     </div>
                     <div id="child-hunger-wrap" class="absolute left-3 right-3 bottom-3 bg-white/95 rounded-[14px] px-3 py-2 flex items-center gap-2 border-2 z-20" style="border-color:var(--line)">
                         <span class="text-xs font-bold whitespace-nowrap" style="color:var(--ink)">拼拼飽肚度</span>
@@ -1203,7 +1933,16 @@
                     </div>
                 </div>
 
-                <div class="bg-white rounded-card border-2 p-3.5 space-y-1" style="border-color:var(--ink);box-shadow:var(--hard)">
+                <div id="child-room-gift-banner" class="p3-child-home-gift-banner hidden" role="status">
+                    <span class="p3-room-gift-banner-ico" aria-hidden="true">🎁</span>
+                    <div class="p3-room-gift-banner-text">
+                        <b id="child-room-gift-banner-title">有 0 份禮物未打開</b>
+                        <span>練習贏返嚟嘅，拼拼等緊你</span>
+                    </div>
+                    <button type="button" class="p3-room-gift-open-btn" onclick="openRoomPendingGiftFlow()">打開</button>
+                </div>
+
+                <div class="p3-child-home-today bg-white rounded-card border-2 p-3.5 space-y-1" style="border-color:var(--ink);box-shadow:var(--hard)">
                     <div class="flex items-baseline justify-between px-0.5 pb-2">
                         <b class="text-lg font-bold" style="color:var(--ink)">今日練習</b>
                         <span class="text-xs" style="color:var(--ink2)">約 10 分鐘 · 餵拼拼做練習</span>
@@ -1250,7 +1989,7 @@
                     </button>
                 </div>
 
-                <button type="button" id="child-home-last-card" onclick="selectNavTab('mock-dictation')" class="w-full rounded-[18px] border-2 p-3 flex items-center gap-3 text-left active:translate-y-0.5 transition-transform" style="background:var(--butter);border-color:var(--ink);box-shadow:var(--hard)">
+                <button type="button" id="child-home-last-card" onclick="selectNavTab('mock-dictation')" class="p3-child-home-exam w-full rounded-[18px] border-2 p-3 flex items-center gap-3 text-left active:translate-y-0.5 transition-transform" style="background:var(--butter);border-color:var(--ink);box-shadow:var(--hard)">
                     <span class="text-2xl">📅</span>
                     <span class="flex-1">
                         <b class="block text-[15px] font-bold" style="color:var(--ink)">模擬默書 · 溫習字表</b>
@@ -1258,6 +1997,17 @@
                     </span>
                     <span class="text-lg font-black" style="color:var(--ink)">›</span>
                 </button>
+            </div>
+
+            <div id="view-child-album" class="tab-content p3-album-wrap px-0.5">
+                <div class="p3-album-hdr">
+                    <div>
+                        <h2>食物圖鑑</h2>
+                        <p id="album-collected-line" class="sub en">已收集 0 / 56</p>
+                    </div>
+                    <div id="album-master-title" class="p3-album-master">🔒 稱號：？？？</div>
+                </div>
+                <div id="album-sections-root"></div>
             </div>
 
             <div id="view-parent-dashboard" class="tab-content p3-parent-dash max-w-lg mx-auto w-full">
@@ -2159,8 +2909,9 @@
     </main>
 
     <nav id="child-bottom-nav" aria-label="小朋友導覽">
-        <button type="button" class="child-nav-btn on" data-child-nav="room" onclick="selectChildNav('room', true)"><span class="ib">🏠</span><span>房間</span></button>
+        <button type="button" class="child-nav-btn on" data-child-nav="room" onclick="selectChildNav('room', true)"><span class="ib"><span class="p3-nav-dot" aria-hidden="true"></span>🏠</span><span>房間</span></button>
         <button type="button" class="child-nav-btn" data-child-nav="practice" onclick="selectChildNav('practice')"><span class="ib">✏️</span><span>練習</span></button>
+        <button type="button" class="child-nav-btn" data-child-nav="album" onclick="selectChildNav('album')"><span class="ib">🖼️</span><span>圖鑑</span></button>
         <button type="button" class="child-nav-btn" data-child-nav="words" onclick="selectChildNav('words')"><span class="ib">📖</span><span>字庫</span></button>
         <button type="button" class="child-nav-btn" data-child-nav="me" onclick="selectChildNav('me')"><span class="ib">👤</span><span>我的</span></button>
     </nav>
@@ -2173,62 +2924,94 @@
     </nav>
     </div><!-- #app-chrome -->
 
-    <div id="scramble-summary-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4 border border-indigo-100 text-center relative overflow-hidden">
-            
-            <div id="summary-avatar-stage" class="relative mx-auto w-28 h-28 my-1 flex items-center justify-center select-none">
-                <div id="summary-avatar-aura" class="absolute inset-0 rounded-full transition-all duration-500"></div>
-                <div id="summary-prop-top" class="absolute -top-3.5 z-20 text-4xl">👑</div>
-                <div id="summary-avatar-frame" class="relative w-24 h-24 rounded-full border-[3.5px] overflow-hidden bg-slate-100 shadow-lg flex items-center justify-center">
-                    <img id="summary-avatar-img" src="" class="w-full h-full object-cover hidden" alt="Student Avatar">
-                    <span id="summary-avatar-default" class="text-4xl">🧒</span>
-                </div>
-                <div id="summary-prop-side" class="absolute -bottom-1 -right-1 z-20 text-2xl">✨</div>
+    <div id="scramble-summary-modal" class="p3-result-overlay fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+        <div class="p3-result-card space-y-0 relative">
+            <div id="summary-pingo-stage" class="p3-result-pingo-stage">
+                <div id="summary-pingo-glow" class="p3-result-pingo-glow hidden"></div>
+                <div id="summary-pingo-svg" class="p3-result-pingo-svg" aria-hidden="true"></div>
             </div>
-
-            <div class="space-y-1">
-                <h3 id="summary-headline-text" class="font-black text-xl text-slate-900">挑戰大成功！</h3>
-                <div id="summary-stars" class="text-2xl text-amber-400 tracking-widest">⭐⭐⭐</div>
-                <p id="summary-praise-text" class="text-xs font-black text-indigo-600">表現卓越！自然拼讀基礎非常扎實！</p>
-                <div id="reward-food-container" class="pt-2 border-t border-slate-100 space-y-1.5">
-                    <p id="reward-food-sentence" class="text-xs font-black text-amber-700"></p>
-                    <div id="reward-food-icons" class="flex justify-center items-center gap-2 text-2xl min-h-[36px] flex-wrap"></div>
+            <h3 id="summary-headline-text" class="p3-result-title">挑戰大成功！</h3>
+            <div id="summary-stars" class="p3-result-stars" aria-hidden="true"></div>
+            <p id="summary-praise-text" class="p3-result-praise">表現卓越！自然拼讀基礎非常扎實！</p>
+            <div class="p3-result-stats">
+                <div>
+                    <div class="lbl">總分</div>
+                    <div id="summary-score-value" class="val" style="color:var(--blue)">50 / 50</div>
                 </div>
-            </div>
-            
-            <div class="bg-slate-50 border-2 border-slate-200 rounded-2xl p-3.5 grid grid-cols-3 gap-2">
-                <div class="text-center">
-                    <div class="text-[10px] font-bold text-slate-400 uppercase">總分</div>
-                    <div id="summary-score-value" class="text-lg font-black text-blue-600">50 / 50</div>
+                <div>
+                    <div class="lbl">準確率</div>
+                    <div id="summary-accuracy-value" class="val" style="color:var(--mint-d)">100%</div>
                 </div>
-                <div class="text-center border-x border-slate-200">
-                    <div class="text-[10px] font-bold text-slate-400 uppercase">準確率</div>
-                    <div id="summary-accuracy-value" class="text-lg font-black text-emerald-600">100%</div>
-                </div>
-                <div class="text-center">
-                    <div class="text-[10px] font-bold text-slate-400 uppercase">最高連對</div>
-                    <div id="summary-streak-value" class="text-lg font-black text-amber-600">5</div>
+                <div>
+                    <div class="lbl">最高連對</div>
+                    <div id="summary-streak-value" class="val" style="color:var(--peach-d)">5</div>
                 </div>
             </div>
-
-            <div class="space-y-2 pt-1">
-                <button id="btn-practice-mistakes" onclick="startMistakeChunkScramble()" class="hidden w-full py-3 bg-amber-500 hover:bg-amber-600 text-white font-black rounded-xl shadow-xs text-xs sm:text-sm flex items-center justify-center gap-1.5 active:scale-95 transition-colors">
+            <p id="reward-food-teaser" class="p3-result-teaser hidden"><span aria-hidden="true">🎁</span> <span id="reward-food-teaser-text"></span></p>
+            <div class="space-y-2 pt-0.5">
+                <button type="button" id="btn-open-gifts" onclick="openGiftRevealFlow()" class="p3-result-btn-primary hidden">
+                    <span aria-hidden="true">🎁</span> <span>打開禮物</span>
+                </button>
+                <button type="button" id="btn-practice-mistakes" onclick="startMistakeChunkScramble()" class="hidden p3-result-btn-secondary flex items-center justify-center gap-1.5">
                     <span>🔧</span> <span>練習錯題 (音節重組複習)</span>
                 </button>
-                <button onclick="restartScrambleQuiz()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl shadow-xs text-xs sm:text-sm flex items-center justify-center gap-1.5 active:scale-95 transition-colors">
+                <button type="button" onclick="restartScrambleQuiz()" class="p3-result-btn-secondary flex items-center justify-center gap-1.5">
                     <span>🔄</span> <span>再次挑戰同組題庫</span>
                 </button>
-                <div class="flex gap-2">
-                    <button onclick="closeScrambleSummaryModal(true)" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition-colors">
-                        ⚙️ 更換題庫
-                    </button>
-                    <button onclick="quitScrambleToMainEngine()" class="flex-1 py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-black rounded-xl text-xs transition-colors">
-                        🏠 回主頁
-                    </button>
+                <div class="p3-result-btn-row">
+                    <button type="button" onclick="closeScrambleSummaryModal(true)" class="p3-result-btn-secondary">更換題庫</button>
+                    <button type="button" onclick="quitScrambleToMainEngine()" class="p3-result-btn-secondary">回主頁</button>
                 </div>
             </div>
         </div>
-    </div> <!-- 💡 補回這個遺漏的 div 關閉標籤 -->
+    </div>
+
+    <div id="gift-reveal-modal" class="p3-result-overlay p3-gift-sheet fixed inset-0 z-[60] hidden flex justify-center">
+        <div class="p3-gift-flow">
+            <div class="p3-gift-header-pill">
+                <span id="gift-header-label">禮物 1 / 2</span>
+                <span id="gift-header-dots" class="p3-gift-dots"></span>
+            </div>
+            <div class="p3-gift-scene">
+                <div class="p3-gift-hero" aria-hidden="true">
+                    <img id="gift-pingo-img" class="p3-gift-pingo" src="./design/animals/svg/capybara-v3/happy-cheeks.svg" alt="">
+                    <div class="p3-gift-bubble">好香呀！多謝你～</div>
+                </div>
+                <div class="p3-gift-rc">
+                    <span id="gift-item-badge" class="hidden"></span>
+                    <div class="p3-gift-rc-top">
+                        <span id="gift-cat-chip" class="p3-gift-cat-chip"></span>
+                        <span id="gift-cat-no" class="p3-gift-cat-no"></span>
+                    </div>
+                    <div id="gift-art" class="p3-gift-art"></div>
+                    <h3 id="gift-main-title" class="p3-gift-main-title"></h3>
+                    <p id="gift-sub-title" class="p3-gift-sub-title"></p>
+                    <div id="gift-word-panel" class="p3-gift-word hidden">
+                        <div class="p3-gift-word-top">
+                            <div>
+                                <div id="gift-word-en" class="p3-gift-word-en"></div>
+                                <div id="gift-chunks" class="p3-gift-chunks"></div>
+                            </div>
+                            <button type="button" id="gift-spk-btn" class="p3-gift-spk" onclick="playGiftCardWordTTS()" aria-label="播放">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 9.5h3l4.5-4v13l-4.5-4h-3z"/><path d="M15.5 9a4.2 4.2 0 0 1 0 6M18 6.5a8 8 0 0 1 0 11"/></svg>
+                            </button>
+                        </div>
+                        <div id="gift-sounds-line" class="p3-gift-sounds"></div>
+                    </div>
+                    <div class="p3-gift-prog-head">
+                        <span id="gift-prog-label"></span>
+                        <span id="gift-prog-count" class="en"></span>
+                    </div>
+                    <div id="gift-prog-slots" class="p3-gift-slots"></div>
+                    <p id="gift-prog-foot" class="p3-gift-prog-foot"></p>
+                </div>
+            </div>
+            <div class="p3-gift-footer-actions">
+                <button type="button" id="gift-advance-btn" onclick="advanceGiftReveal()" class="p3-result-btn-primary">下一份 →</button>
+                <button type="button" id="gift-close-btn" onclick="closeGiftRevealOverlay()" class="p3-result-btn-primary hidden">關閉</button>
+            </div>
+        </div>
+    </div>
 
     <!-- 家長核算與食物派發確認 Modal (模擬默書專屬) -->
     <div id="parent-food-eval-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
@@ -2323,21 +3106,371 @@
             updateSyllableDisplay(currentStepLevel); if (document.getElementById('view-flashcard')?.classList.contains('active')) renderCurrentFlashcard();
         }
 
-        const FOOD_DATABASE = [
+        const FOOD_COLLECTION_STORAGE_KEY = 'phonics_food_collection_v1';
+        const PENDING_GIFTS_STORAGE_KEY = 'phonics_pending_gifts_v1';
+        const FOOD_CATALOG_URL = './data/foods.json';
+        let foodCatalogData = null;
+
+        /** Legacy 30-food fallback if `data/foods.json` cannot be loaded (regenerate from that file). */
+        const LEGACY_FOOD_DATABASE = [
             '🍕','🍣','🍜','🍰','🥩','🍔','🍟','🍗','🍩','🥞',
             '🌮','🍙','🥟','🍦','🌭','🥗','🥐','🧇','🍢','🍛',
             '🍎','🍇','🍉','🍓','🥪','🧀','🍿','🍮','🍡','🍫'
         ];
-        const FOOD_NAMES_ZH = [
+        const LEGACY_FOOD_NAMES_ZH = [
             '薄餅','壽司','拉麵','蛋糕','燒肉','漢堡','薯條','炸雞','冬甩','班戟',
             '墨西哥捲','飯糰','餃子','雪糕','熱狗','沙律','牛角包','窩夫','關東煮','咖喱飯',
             '蘋果','提子','西瓜','士多啤梨','三文治','芝士','爆谷','布甸','丸子','朱古力'
         ];
-        const FOOD_NAMES_EN = [
+        const LEGACY_FOOD_NAMES_EN = [
             'pizza','sushi','ramen','cake','steak','burger','fries','chicken','donut','pancake',
             'taco','rice ball','dumpling','ice cream','hot dog','salad','croissant','waffle','oden','curry',
             'apple','grapes','watermelon','strawberry','sandwich','cheese','popcorn','pudding','dumpling','chocolate'
         ];
+        const LEGACY_FOOD_IDS = [
+            'pizza','sushi','ramen','cake','steak','burger','fries','chicken','donut','pancake',
+            'taco','rice-ball','dumpling','ice-cream','hot-dog','salad','croissant','waffle','oden','curry',
+            'apple','grapes','watermelon','strawberry','sandwich','cheese','popcorn','pudding','dango','chocolate'
+        ];
+
+        function buildLegacyFoodCatalogFallback() {
+            const foods = LEGACY_FOOD_DATABASE.map((emoji, i) => ({
+                id: LEGACY_FOOD_IDS[i] || `legacy-${i}`,
+                category: 'legacy',
+                zh: LEGACY_FOOD_NAMES_ZH[i],
+                en: LEGACY_FOOD_NAMES_EN[i],
+                emoji,
+                legacyIndex: i,
+                spellable: true,
+                status: 'existing'
+            }));
+            return { version: 0, categories: [], foods, completionRule: {} };
+        }
+
+        async function loadFoodCatalog() {
+            try {
+                const r = await fetch(`${FOOD_CATALOG_URL}?v=${Date.now()}`, { cache: 'no-store' });
+                if (r.ok) {
+                    const data = await r.json();
+                    if (data && Array.isArray(data.foods) && data.foods.length) {
+                        foodCatalogData = data;
+                        return;
+                    }
+                }
+            } catch (e) {}
+            foodCatalogData = buildLegacyFoodCatalogFallback();
+        }
+
+        function getFoodCatalog() {
+            return foodCatalogData || buildLegacyFoodCatalogFallback();
+        }
+
+        function lookupFoodById(foodId) {
+            return (getFoodCatalog().foods || []).find((f) => f.id === foodId) || null;
+        }
+
+        function readPendingGifts(profileId = 'default') {
+            const empty = { version: 1, profiles: { [profileId]: { gifts: [] } } };
+            try {
+                const raw = localStorage.getItem(PENDING_GIFTS_STORAGE_KEY);
+                if (!raw) return empty;
+                const parsed = JSON.parse(raw);
+                if (!parsed || parsed.version !== 1) return empty;
+                parsed.profiles = parsed.profiles || {};
+                parsed.profiles[profileId] = parsed.profiles[profileId] || { gifts: [] };
+                parsed.profiles[profileId].gifts = parsed.profiles[profileId].gifts || [];
+                return parsed;
+            } catch (e) {
+                return empty;
+            }
+        }
+
+        function writePendingGifts(data) {
+            try { localStorage.setItem(PENDING_GIFTS_STORAGE_KEY, JSON.stringify(data)); } catch (e) {}
+        }
+
+        function appendPendingGiftsFromReward(reward, source, profileId = 'default') {
+            if (!reward || !reward.foods || !reward.foods.length) return;
+            const data = readPendingGifts(profileId);
+            const list = data.profiles[profileId].gifts;
+            const ts = Date.now();
+            reward.foods.forEach((f) => {
+                if (!f.id) return;
+                list.push({
+                    foodId: f.id,
+                    source: source || 'scramble',
+                    timestamp: ts,
+                    isHalf: !!f.isHalf,
+                    isNew: !!f.isNew,
+                    count: f.count || 1
+                });
+            });
+            writePendingGifts(data);
+        }
+
+        function getPendingGiftList(profileId = 'default') {
+            return readPendingGifts(profileId).profiles[profileId].gifts || [];
+        }
+
+        function clearPendingGifts(profileId = 'default') {
+            const data = readPendingGifts(profileId);
+            data.profiles[profileId].gifts = [];
+            writePendingGifts(data);
+        }
+
+        function buildSessionRewardFromPendingGifts(gifts) {
+            const foods = gifts.map((g) => {
+                const meta = lookupFoodById(g.foodId) || {};
+                const entry = readFoodCollection().profiles.default?.foods?.[g.foodId];
+                const count = g.count || (entry && entry.count) || 1;
+                return {
+                    id: g.foodId,
+                    emoji: meta.emoji,
+                    isHalf: !!g.isHalf,
+                    isNew: g.isNew === true,
+                    count
+                };
+            });
+            const earned = gifts.reduce((sum, g) => sum + (g.isHalf ? 0.5 : 1), 0);
+            return { earned, foods, namesZh: [], namesEn: [] };
+        }
+
+        function foodHasDrawableArt(food) {
+            return !!(food && (food.emoji || food.image));
+        }
+
+        function getDrawableFoods(catalog) {
+            return (catalog.foods || []).filter(foodHasDrawableArt);
+        }
+
+        function readFoodCollection() {
+            const empty = { version: 1, profiles: { default: { foods: {}, drawsSinceNew: 0 } } };
+            try {
+                const raw = localStorage.getItem(FOOD_COLLECTION_STORAGE_KEY);
+                if (!raw) return empty;
+                const parsed = JSON.parse(raw);
+                if (!parsed || parsed.version !== 1 || !parsed.profiles) return empty;
+                parsed.profiles.default = parsed.profiles.default || { foods: {}, drawsSinceNew: 0 };
+                parsed.profiles.default.foods = parsed.profiles.default.foods || {};
+                if (typeof parsed.profiles.default.drawsSinceNew !== 'number') parsed.profiles.default.drawsSinceNew = 0;
+                return parsed;
+            } catch (e) {
+                return empty;
+            }
+        }
+
+        function writeFoodCollection(data) {
+            try {
+                localStorage.setItem(FOOD_COLLECTION_STORAGE_KEY, JSON.stringify(data));
+            } catch (e) {}
+        }
+
+        function isFoodCollectedInProfile(profile, foodId) {
+            const entry = profile.foods && profile.foods[foodId];
+            return !!(entry && entry.count > 0);
+        }
+
+        function recordFoodEarnedInProfile(profile, foodId) {
+            const now = Date.now();
+            if (!profile.foods[foodId]) {
+                profile.foods[foodId] = { count: 1, firstAt: now, lastAt: now };
+                return true;
+            }
+            profile.foods[foodId].count += 1;
+            profile.foods[foodId].lastAt = now;
+            return false;
+        }
+
+        /**
+         * Pick one drawable food. Mutates profile.drawsSinceNew when applyDrawCounter is true.
+         * Exported for tests via window.__phonicsFoodDraw.pickDrawableFood.
+         */
+        function pickDrawableFood(profile, drawable, excludeIds, applyDrawCounter) {
+            const available = drawable.filter((f) => !excludeIds.has(f.id));
+            if (!available.length) return null;
+
+            const uncollected = available.filter((f) => !isFoodCollectedInProfile(profile, f.id));
+            const mustBeNew = uncollected.length > 0 && (profile.drawsSinceNew || 0) >= 2;
+
+            let pool;
+            if (mustBeNew) {
+                pool = uncollected;
+            } else if (uncollected.length > 0) {
+                pool = Math.random() < 0.7 ? uncollected : available;
+            } else {
+                pool = available;
+            }
+
+            const pick = pool[Math.floor(Math.random() * pool.length)];
+            if (applyDrawCounter) {
+                const isNew = recordFoodEarnedInProfile(profile, pick.id);
+                if (isNew) profile.drawsSinceNew = 0;
+                else profile.drawsSinceNew = (profile.drawsSinceNew || 0) + 1;
+            }
+            return pick;
+        }
+
+        function drawFoodPicks(drawCount, profile, drawable, applyDrawCounter) {
+            const picks = [];
+            const excludeIds = new Set();
+            for (let i = 0; i < drawCount; i++) {
+                const food = pickDrawableFood(profile, drawable, excludeIds, applyDrawCounter);
+                if (!food) break;
+                excludeIds.add(food.id);
+                picks.push({ food, isHalf: false });
+            }
+            return picks;
+        }
+
+        function earnedFoodPortionsFromPct(pct) {
+            if (pct === 100) return 2;
+            if (pct >= 80) return 1;
+            if (pct >= 60) return 0.5;
+            return 0;
+        }
+
+        function foodRewardDisplayCount(portions) {
+            if (portions === 0) return 0;
+            if (portions === 0.5) return 1;
+            return Math.ceil(portions);
+        }
+
+        function formatFoodRewardName(food, isHalf, langEn) {
+            if (langEn) return `${isHalf ? 'half a ' : 'a '}${food.en}`;
+            return `${isHalf ? '半份' : '一份'}${food.zh}`;
+        }
+
+        function persistFoodRewardGrant(reward, opts = {}) {
+            const { persistHunger = false, persistCollection = false, profileId = 'default' } = opts;
+            const portions = reward.earned || 0;
+            const foods = reward.foods || [];
+            if (!portions || !foods.length) {
+                return { fed: 0, currentScore: getHungerScore(), albumOnly: false };
+            }
+
+            const currentScore = getHungerScore();
+            const petFull = currentScore >= HUNGER_SCORE_MAX;
+
+            if (persistCollection) {
+                const collection = readFoodCollection();
+                const profile = collection.profiles[profileId] || { foods: {}, drawsSinceNew: 0 };
+                collection.profiles[profileId] = profile;
+                foods.forEach((f) => {
+                    if (!f.id) return;
+                    const isNew = recordFoodEarnedInProfile(profile, f.id);
+                    if (isNew) profile.drawsSinceNew = 0;
+                    else profile.drawsSinceNew = (profile.drawsSinceNew || 0) + 1;
+                });
+                writeFoodCollection(collection);
+            }
+
+            let fed = 0;
+            let newScore = currentScore;
+            if (persistHunger && !petFull) {
+                fed = Math.min(portions, HUNGER_SCORE_MAX - currentScore);
+                newScore = currentScore + fed;
+                localStorage.setItem('phonics_hunger_score', newScore);
+                localStorage.setItem('phonics_last_fed_time', Date.now());
+                updateMenuPetStatusUI();
+                if (fed > 0) flashPetFullAnimation();
+            }
+
+            return {
+                fed,
+                currentScore: persistHunger && !petFull ? newScore : currentScore,
+                albumOnly: petFull && portions > 0
+            };
+        }
+
+        function buildFoodRewardFromPct(pct, opts = {}) {
+            const {
+                persistHunger = false,
+                persistCollection = false,
+                profileId = 'default'
+            } = opts;
+
+            const portions = earnedFoodPortionsFromPct(pct);
+            const currentScore = getHungerScore();
+            const petFull = currentScore >= HUNGER_SCORE_MAX;
+
+            if (portions === 0) {
+                return {
+                    earned: 0,
+                    fed: 0,
+                    foods: [],
+                    namesZh: [],
+                    namesEn: [],
+                    currentScore,
+                    petFull,
+                    albumOnly: false
+                };
+            }
+
+            const catalog = getFoodCatalog();
+            const drawable = getDrawableFoods(catalog);
+            const displayCount = foodRewardDisplayCount(portions);
+
+            const collection = readFoodCollection();
+            const profile = collection.profiles[profileId] || { foods: {}, drawsSinceNew: 0 };
+            collection.profiles[profileId] = profile;
+
+            const beforeCounts = {};
+            if (persistCollection) {
+                Object.keys(profile.foods || {}).forEach((id) => {
+                    beforeCounts[id] = profile.foods[id].count;
+                });
+            }
+
+            let picks = drawFoodPicks(displayCount, profile, drawable, persistCollection);
+            if (portions === 0.5 && picks.length) picks[0].isHalf = true;
+
+            const foods = picks.map((p) => {
+                const id = p.food.id;
+                const count = (profile.foods[id] && profile.foods[id].count) || 1;
+                const isNew = persistCollection ? !((beforeCounts[id] || 0) > 0) : false;
+                return {
+                    id,
+                    emoji: p.food.emoji,
+                    isHalf: p.isHalf,
+                    isNew,
+                    count
+                };
+            });
+            const namesZh = picks.map((p) => formatFoodRewardName(p.food, p.isHalf, false));
+            const namesEn = picks.map((p) => formatFoodRewardName(p.food, p.isHalf, true));
+
+            let fed = 0;
+            let newScore = currentScore;
+            if (persistHunger && !petFull) {
+                fed = Math.min(portions, HUNGER_SCORE_MAX - currentScore);
+                newScore = currentScore + fed;
+                localStorage.setItem('phonics_hunger_score', newScore);
+                localStorage.setItem('phonics_last_fed_time', Date.now());
+                updateMenuPetStatusUI();
+                if (fed > 0) flashPetFullAnimation();
+            }
+
+            if (persistCollection) writeFoodCollection(collection);
+
+            return {
+                earned: portions,
+                fed,
+                foods,
+                namesZh,
+                namesEn,
+                currentScore: persistHunger && !petFull ? newScore : currentScore,
+                petFull,
+                albumOnly: petFull && portions > 0
+            };
+        }
+
+        window.__phonicsFoodDraw = {
+            pickDrawableFood,
+            drawFoodPicks,
+            getDrawableFoods,
+            readFoodCollection,
+            buildLegacyFoodCatalogFallback
+        };
 
         function getUserNickname() {
             return localStorage.getItem('phonics_user_nickname') || '我的寵物';
@@ -2372,41 +3505,532 @@
         }
 
         function calculateFoodReward(pct) {
-            let earnedFoodCount = 0;
-            if (pct === 100) earnedFoodCount = 2;
-            else if (pct >= 80) earnedFoodCount = 1;   
-            else if (pct >= 60) earnedFoodCount = 0.5; 
-            
-            if (earnedFoodCount === 0) return { earned: 0, foods: [], namesZh: [], namesEn: [], currentScore: getHungerScore() };
-
-            let currentScore = getHungerScore();
-            if (currentScore >= 6) return { earned: 0, foods: [], namesZh: [], namesEn: [], currentScore: 6 }; 
-            
-            const actualEarned = Math.min(earnedFoodCount, 6 - currentScore);
-            const foods = [];
-            const namesZh = [];
-            const namesEn = [];
-            const displayCount = Math.ceil(actualEarned);
-            
-            for(let i=0; i<displayCount; i++) {
-                const pickIdx = Math.floor(Math.random() * FOOD_DATABASE.length);
-                const isHalfItem = (actualEarned === 0.5 && i === 0);
-                foods.push({ emoji: FOOD_DATABASE[pickIdx], isHalf: isHalfItem });
-                
-                const zName = FOOD_NAMES_ZH[pickIdx];
-                const eName = FOOD_NAMES_EN[pickIdx];
-                namesZh.push((isHalfItem ? '半份' : '一份') + zName);
-                namesEn.push((isHalfItem ? 'half a ' : 'a ') + eName);
-            }
-            
-            currentScore += actualEarned;
-            localStorage.setItem('phonics_hunger_score', currentScore);
-            localStorage.setItem('phonics_last_fed_time', Date.now());
-            
-            updateMenuPetStatusUI();
-            if (actualEarned > 0) flashPetFullAnimation();
-            return { earned: actualEarned, foods: foods, namesZh: namesZh, namesEn: namesEn, currentScore: currentScore };
+            return buildFoodRewardFromPct(pct, { persistHunger: false, persistCollection: true });
         }
+
+        let activeSessionFoodReward = null;
+        let sessionRewardFulfilled = false;
+        let giftRevealIndex = 0;
+        /** @type {'session'|'pending'|'album'} */
+        let giftRevealContext = 'session';
+        const capybaraSvgTextCache = {};
+        const PINO_RESULT_CROWN_SVG = '<g id="acc-crown" transform="translate(256 18) scale(2)"><path d="M-32 34 L-22 -6 L-8 14 L0 -4 L8 14 L22 -6 L32 34 Z" fill="#FFE566" stroke="#1E3350" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/><rect x="-34" y="28" width="68" height="20" rx="8" fill="#FFE566" stroke="#1E3350" stroke-width="10"/></g>';
+
+        function getResultScoreBand(pct) {
+            if (pct === 100) return 'perfect';
+            if (pct >= 80) return 'great';
+            if (pct >= 60) return 'good';
+            return 'retry';
+        }
+
+        function getResultCopyForBand(band) {
+            const map = {
+                perfect: { title: '挑戰大成功！', praise: '表現卓越！自然拼讀基礎非常扎實！', starsOn: 3 },
+                great: { title: '做得好！', praise: '差一點就完美了！', starsOn: 2 },
+                good: { title: '有進步！', praise: '多聽幾次頭尾音會更厲害！', starsOn: 1 },
+                retry: { title: '再試一次，一定得！', praise: '建議先到聯動音節重組練習錯題！', starsOn: 0 }
+            };
+            return map[band] || map.retry;
+        }
+
+        function renderSummaryStars(starsOn) {
+            const wrap = document.getElementById('summary-stars');
+            if (!wrap) return;
+            wrap.innerHTML = '';
+            for (let i = 0; i < 3; i++) {
+                const s = document.createElement('span');
+                s.className = 'p3-result-star' + (i < starsOn ? ' on' : '');
+                s.textContent = '★';
+                wrap.appendChild(s);
+            }
+        }
+
+        async function fetchCapybaraSvgText(variant) {
+            if (capybaraSvgTextCache[variant]) return capybaraSvgTextCache[variant];
+            const res = await fetch(`${CAPYBARA_V3_DIR}/${variant}.svg`);
+            const text = await res.text();
+            capybaraSvgTextCache[variant] = text;
+            return text;
+        }
+
+        function injectSummaryPingoSvg(rawSvg, withCrown) {
+            let svg = rawSvg.replace(/<g id="acc-orange">[\s\S]*?<\/g>\s*/g, '');
+            if (withCrown) {
+                svg = svg.replace(/<g id="face-happy">/, `${PINO_RESULT_CROWN_SVG}\n<g id="face-happy">`);
+            }
+            return svg;
+        }
+
+        async function renderSummaryPingoForBand(band) {
+            const host = document.getElementById('summary-pingo-svg');
+            const glow = document.getElementById('summary-pingo-glow');
+            if (!host) return;
+            let variant = 'calm-tummy-bazi';
+            let withCrown = false;
+            if (band === 'perfect') { variant = 'happy-tummy'; withCrown = true; }
+            else if (band === 'great') variant = 'happy-tummy';
+            else if (band === 'good') variant = 'calm-tummy-bazi';
+            else variant = 'calm-cheeks-bazi';
+            glow?.classList.toggle('hidden', band !== 'perfect');
+            try {
+                const raw = await fetchCapybaraSvgText(variant);
+                host.innerHTML = injectSummaryPingoSvg(raw, withCrown);
+            } catch (e) {
+                host.innerHTML = `<img src="${CAPYBARA_V3_DIR}/${variant}.svg" alt="拼拼" />`;
+            }
+        }
+
+        function foodRewardTeaserCount(reward) {
+            if (!reward || !reward.earned) return 0;
+            return foodRewardDisplayCount(reward.earned);
+        }
+
+        let giftCardSpeakWord = '';
+        const GIFT_ART_SPARKLE = '<svg class="p3-gift-art-spark" style="left:8%;top:18%;" width="14" height="14" viewBox="0 0 20 20"><path d="M10 0 C11 7 13 9 20 10 C13 11 11 13 10 20 C9 13 7 11 0 10 C7 9 9 7 10 0Z" fill="#F6C244"/></svg><svg class="p3-gift-art-spark" style="right:12%;top:22%;" width="11" height="11" viewBox="0 0 20 20"><path d="M10 0 C11 7 13 9 20 10 C13 11 11 13 10 20 C9 13 7 11 0 10 C7 9 9 7 10 0Z" fill="#F6C244"/></svg><svg class="p3-gift-art-spark" style="right:8%;bottom:16%;" width="9" height="9" viewBox="0 0 20 20"><path d="M10 0 C11 7 13 9 20 10 C13 11 11 13 10 20 C9 13 7 11 0 10 C7 9 9 7 10 0Z" fill="#fff"/></svg>';
+
+        function lookupCategoryMeta(categoryId) {
+            return (getFoodCatalog().categories || []).find((c) => c.id === categoryId) || null;
+        }
+
+        function getFoodCatalogNumber(foodId) {
+            const foods = getFoodCatalog().foods || [];
+            const idx = foods.findIndex((f) => f.id === foodId);
+            return idx >= 0 ? idx + 1 : 0;
+        }
+
+        function getFoodsInCategory(categoryId) {
+            return (getFoodCatalog().foods || []).filter((f) => f.category === categoryId);
+        }
+
+        /** Album award titles — real names only when unlocked; use display helpers for all UI. */
+        const ALBUM_TITLE_SECRET = '？？？';
+        const ALBUM_CATEGORY_TITLE_GOAL = '集齊 8 款即可獲得稱號';
+        const ALBUM_CATEGORY_SIZE = 8;
+
+        function getFoodCollectionProfile(profileId = 'default') {
+            return readFoodCollection().profiles[profileId] || { foods: {} };
+        }
+
+        function getMasterAlbumTitlePlain() {
+            const allRule = getFoodCatalog().completionRule?.allComplete || {};
+            return allRule.title || '拼拼美食家';
+        }
+
+        function getCategoryTitlePlain(categoryId) {
+            const cat = lookupCategoryMeta(categoryId);
+            return cat?.title || '';
+        }
+
+        function getCategoryTitlePlainEn(categoryId) {
+            const cat = lookupCategoryMeta(categoryId);
+            return cat?.title_en || '';
+        }
+
+        function countCategoryCollectedFoods(categoryId, profileId = 'default', extraCollectedIds = null) {
+            const profile = getFoodCollectionProfile(profileId);
+            const catFoodIds = new Set(getFoodsInCategory(categoryId).map((f) => f.id));
+            const collected = new Set();
+            catFoodIds.forEach((id) => {
+                if (profile.foods[id]?.count > 0) collected.add(id);
+            });
+            if (extraCollectedIds) {
+                extraCollectedIds.forEach((id) => {
+                    if (catFoodIds.has(id)) collected.add(id);
+                });
+            }
+            return collected.size;
+        }
+
+        function isCategoryTitleUnlocked(categoryId, profileId = 'default', opts = {}) {
+            return countCategoryCollectedFoods(categoryId, profileId, opts.extraCollectedIds) >= ALBUM_CATEGORY_SIZE;
+        }
+
+        function isMasterAlbumTitleUnlocked(profileId = 'default') {
+            const catalog = getFoodCatalog();
+            const profile = getFoodCollectionProfile(profileId);
+            const totalFoods = (catalog.foods || []).length;
+            return countCollectedFoods(profile) >= totalFoods && totalFoods > 0;
+        }
+
+        function resolveMasterTitleChipDisplay(profileId = 'default') {
+            return isMasterAlbumTitleUnlocked(profileId)
+                ? `🏅 ${getMasterAlbumTitlePlain()}`
+                : `🔒 稱號：${ALBUM_TITLE_SECRET}`;
+        }
+
+        function resolveCategoryTitlePillDisplay(categoryId, profileId = 'default', opts = {}) {
+            if (isCategoryTitleUnlocked(categoryId, profileId, opts)) {
+                const t = getCategoryTitlePlain(categoryId);
+                return t ? `🏅 稱號「${t}」 · 已解鎖` : ALBUM_TITLE_SECRET;
+            }
+            return ALBUM_TITLE_SECRET;
+        }
+
+        function resolveCategoryTitleFootDisplay(categoryId, profileId = 'default', opts = {}) {
+            if (isCategoryTitleUnlocked(categoryId, profileId, opts)) {
+                const t = getCategoryTitlePlain(categoryId);
+                return t ? `集齊 8 款 → 稱號「${t}」` : '';
+            }
+            return ALBUM_CATEGORY_TITLE_GOAL;
+        }
+
+        /** Scan visible page text for award names that should still be secret. */
+        function scanVisibleAlbumTitleLeaks(profileId = 'default') {
+            const visible = document.body?.innerText || '';
+            const leaks = [];
+            if (!isMasterAlbumTitleUnlocked(profileId)) {
+                const master = getMasterAlbumTitlePlain();
+                if (master && visible.includes(master)) leaks.push({ scope: 'master', name: master });
+                const masterEn = getFoodCatalog().completionRule?.allComplete?.title_en || '';
+                if (masterEn && visible.includes(masterEn)) leaks.push({ scope: 'master_en', name: masterEn });
+            }
+            (getFoodCatalog().categories || []).forEach((cat) => {
+                if (isCategoryTitleUnlocked(cat.id, profileId)) return;
+                if (cat.title && visible.includes(cat.title)) {
+                    leaks.push({ scope: 'category', id: cat.id, name: cat.title });
+                }
+                if (cat.title_en && visible.includes(cat.title_en)) {
+                    leaks.push({ scope: 'category_en', id: cat.id, name: cat.title_en });
+                }
+            });
+            return leaks;
+        }
+
+        window.__phonicsAlbumTitles = {
+            ALBUM_TITLE_SECRET,
+            ALBUM_CATEGORY_TITLE_GOAL,
+            getMasterAlbumTitlePlain,
+            getCategoryTitlePlain,
+            isCategoryTitleUnlocked,
+            isMasterAlbumTitleUnlocked,
+            resolveMasterTitleChipDisplay,
+            resolveCategoryTitlePillDisplay,
+            resolveCategoryTitleFootDisplay,
+            scanVisibleAlbumTitleLeaks,
+            countCategoryCollectedFoods
+        };
+
+        function capitalizeGiftEnglish(en) {
+            if (!en) return '';
+            return en.split(' ').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+        }
+
+        function buildGiftSoundsLine(food) {
+            if (!food || !food.sounds || !food.sounds.length) return '';
+            const parts = food.sounds.join(' · ');
+            let line = `拆音 <b>${parts}</b>`;
+            if (food.note) {
+                const m = food.note.match(/(\w+)\s+says?\s+(\/[^/]+\/)/i);
+                if (m) line += ` <span style="color:var(--ink3)">|</span> ${m[1]} 喺呢度讀 ${m[2]}`;
+            }
+            return line;
+        }
+
+        function renderGiftProgressSlots(categoryId, currentFoodId, collectedIds) {
+            const catFoods = getFoodsInCategory(categoryId);
+            const slotsEl = document.getElementById('gift-prog-slots');
+            if (!slotsEl) return;
+            slotsEl.innerHTML = catFoods.slice(0, 8).map((f) => {
+                const on = collectedIds.has(f.id);
+                const cur = f.id === currentFoodId;
+                let inner = '';
+                if (cur) {
+                    if (f.image) inner = `<img src="${f.image}" alt="">`;
+                    else if (f.emoji) inner = f.emoji;
+                } else if (on) {
+                    inner = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1E3350" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 12.5l4 4 9-9"/></svg>';
+                }
+                return `<div class="p3-gift-slot${on ? ' on' : ''}${cur ? ' cur' : ''}">${inner}</div>`;
+            }).join('');
+        }
+
+        function playGiftCardWordTTS() {
+            if (!giftCardSpeakWord) return;
+            stopAllPlayback();
+            playWholeWordAudioUK(giftCardSpeakWord, 1, activeSessionId, 1.0);
+        }
+
+        function maybeSavePendingSessionReward(source) {
+            if (sessionRewardFulfilled || !activeSessionFoodReward || activeSessionFoodReward.earned <= 0) return;
+            appendPendingGiftsFromReward(activeSessionFoodReward, source || 'scramble');
+            activeSessionFoodReward = null;
+        }
+
+        function syncGiftRevealFooterButtons(index, total) {
+            const adv = document.getElementById('gift-advance-btn');
+            const closeBtn = document.getElementById('gift-close-btn');
+            if (giftRevealContext === 'album') {
+                adv.classList.add('hidden');
+                closeBtn.classList.remove('hidden');
+                return;
+            }
+            closeBtn.classList.add('hidden');
+            adv.classList.remove('hidden');
+            if (index >= total - 1) adv.innerText = '帶去俾拼拼';
+            else adv.innerText = '下一份 →';
+        }
+
+        function renderGiftRevealCard(index) {
+            const reward = activeSessionFoodReward;
+            if (!reward || !reward.foods || !reward.foods.length) return;
+            const total = reward.foods.length;
+            const item = reward.foods[index];
+            const meta = lookupFoodById(item.id) || {};
+            const zh = meta.zh || (reward.namesZh[index] || '食物');
+            const en = meta.en || '';
+            const enTitle = capitalizeGiftEnglish(en);
+            const isAlbum = giftRevealContext === 'album';
+            const giftModal = document.getElementById('gift-reveal-modal');
+            giftModal?.classList.toggle('is-album-view', isAlbum);
+
+            const headerLabel = document.getElementById('gift-header-label');
+            const dots = document.getElementById('gift-header-dots');
+            if (isAlbum) {
+                headerLabel.innerText = zh;
+                dots.innerHTML = '';
+            } else {
+                headerLabel.innerText = `禮物 ${index + 1} / ${total}`;
+                dots.innerHTML = '';
+                for (let i = 0; i < total; i++) {
+                    const d = document.createElement('span');
+                    d.className = 'p3-gift-dot' + (i === index ? ' on' : '');
+                    dots.appendChild(d);
+                }
+            }
+
+            const badge = document.getElementById('gift-item-badge');
+            badge.textContent = '';
+            badge.className = 'hidden';
+            if (!isAlbum && item.isNew) {
+                badge.textContent = 'NEW';
+                badge.className = 'p3-gift-edge-badge is-new en';
+            } else if (!item.isHalf && (item.count || 0) > 1) {
+                badge.textContent = `×${item.count || 1}`;
+                badge.className = 'p3-gift-edge-badge is-dup en';
+            }
+
+            const cat = lookupCategoryMeta(meta.category);
+            const catChip = document.getElementById('gift-cat-chip');
+            if (cat) catChip.innerHTML = `${cat.zh} · <span class="en">${cat.en}</span>`;
+            else catChip.textContent = meta.category || '';
+            const catNo = getFoodCatalogNumber(item.id);
+            document.getElementById('gift-cat-no').innerText = catNo ? `No. ${String(catNo).padStart(2, '0')}` : '';
+
+            const artEl = document.getElementById('gift-art');
+            let artInner = GIFT_ART_SPARKLE;
+            if (meta.image && !item.isHalf) {
+                artInner += `<img class="p3-gift-art-img" src="${meta.image}" alt="">`;
+            } else if (item.isHalf && item.emoji) {
+                artInner += `<span class="p3-gift-art-emoji"><span class="half-food" data-icon="${item.emoji}">${item.emoji}</span></span>`;
+            } else {
+                artInner += `<span class="p3-gift-art-emoji">${item.emoji || '🍽️'}</span>`;
+            }
+            artEl.innerHTML = artInner;
+
+            const halfPrefix = item.isHalf ? '半份' : '一份';
+            const spellable = meta.spellable !== false && en;
+            const mainTitleEl = document.getElementById('gift-main-title');
+            if (isAlbum) {
+                mainTitleEl.innerHTML = currentLang === 'en'
+                    ? `<span class="en">${enTitle}</span>`
+                    : `${zh}<span class="en" style="display:block;font-size:0.85rem;font-weight:800;color:var(--ink2);margin-top:2px">${enTitle}</span>`;
+            } else {
+                mainTitleEl.innerHTML =
+                    currentLang === 'en'
+                        ? `You got ${item.isHalf ? 'half a ' : 'a '}${enTitle}!`
+                        : `你獲得${halfPrefix}${zh}！`;
+            }
+
+            const subEl = document.getElementById('gift-sub-title');
+            if (spellable && meta.chunks && meta.chunks.length) {
+                subEl.classList.add('hidden');
+                subEl.textContent = '';
+            } else {
+                subEl.classList.remove('hidden');
+                subEl.innerHTML = en ? `<span class="en">${enTitle || capitalizeGiftEnglish(en)}</span>` : '';
+            }
+
+            const wordPanel = document.getElementById('gift-word-panel');
+            if (spellable && meta.chunks && meta.chunks.length) {
+                wordPanel.classList.remove('hidden');
+                giftCardSpeakWord = en;
+                document.getElementById('gift-word-en').innerText = en;
+                const chunksEl = document.getElementById('gift-chunks');
+                chunksEl.innerHTML = (meta.chunks || []).map((c, i) =>
+                    `<span class="p3-gift-bch ${i % 2 === 0 ? 'sky' : 'peach'}">${c}</span>`
+                ).join('');
+                document.getElementById('gift-sounds-line').innerHTML = buildGiftSoundsLine(meta);
+            } else {
+                wordPanel.classList.add('hidden');
+                giftCardSpeakWord = '';
+            }
+
+            const profile = readFoodCollection().profiles.default || { foods: {} };
+            const catFoods = getFoodsInCategory(meta.category);
+            const collectedIds = new Set();
+            catFoods.forEach((f) => {
+                if (profile.foods[f.id]?.count > 0) collectedIds.add(f.id);
+            });
+            if (item.id) collectedIds.add(item.id);
+            const progCount = collectedIds.size;
+            const catLabel = cat ? cat.zh : (meta.category || '');
+            document.getElementById('gift-prog-label').innerText = `${catLabel}收集進度`;
+            document.getElementById('gift-prog-count').innerHTML =
+                `${progCount}<span style="color:var(--ink3)">/8</span>`;
+            renderGiftProgressSlots(meta.category, item.id, collectedIds);
+            document.getElementById('gift-prog-foot').innerText = resolveCategoryTitleFootDisplay(
+                meta.category,
+                'default',
+                { extraCollectedIds: collectedIds }
+            );
+
+            syncGiftRevealFooterButtons(index, total);
+            giftRevealIndex = index;
+        }
+
+        function openGiftRevealFlow() {
+            if (!activeSessionFoodReward || activeSessionFoodReward.earned <= 0) return;
+            giftRevealContext = 'session';
+            closeScrambleSummaryModal(false, { savePending: false });
+            renderGiftRevealCard(0);
+            document.getElementById('gift-reveal-modal').classList.remove('hidden');
+        }
+
+        function openRoomPendingGiftFlow() {
+            const gifts = getPendingGiftList('default');
+            if (!gifts.length) return;
+            activeSessionFoodReward = buildSessionRewardFromPendingGifts(gifts);
+            if (!activeSessionFoodReward.foods.length) return;
+            sessionRewardFulfilled = false;
+            giftRevealContext = 'pending';
+            giftRevealIndex = 0;
+            renderGiftRevealCard(0);
+            document.getElementById('gift-reveal-modal').classList.remove('hidden');
+        }
+
+        function openAlbumFoodCard(foodId) {
+            const meta = lookupFoodById(foodId);
+            const entry = readFoodCollection().profiles.default?.foods?.[foodId];
+            if (!meta || !entry || entry.count < 1) return;
+            activeSessionFoodReward = {
+                earned: 0,
+                foods: [{
+                    id: foodId,
+                    emoji: meta.emoji,
+                    isHalf: false,
+                    isNew: false,
+                    count: entry.count
+                }],
+                namesZh: [meta.zh],
+                namesEn: [meta.en]
+            };
+            giftRevealContext = 'album';
+            giftRevealIndex = 0;
+            renderGiftRevealCard(0);
+            document.getElementById('gift-reveal-modal').classList.remove('hidden');
+        }
+
+        function closeGiftRevealOverlay() {
+            document.getElementById('gift-reveal-modal').classList.add('hidden');
+            document.getElementById('gift-reveal-modal')?.classList.remove('is-album-view');
+            if (giftRevealContext === 'album') activeSessionFoodReward = null;
+            giftRevealContext = 'session';
+        }
+
+        function advanceGiftReveal() {
+            const reward = activeSessionFoodReward;
+            if (!reward || !reward.foods) return;
+            if (giftRevealIndex >= reward.foods.length - 1) {
+                completeGiftFlowToRoom();
+                return;
+            }
+            renderGiftRevealCard(giftRevealIndex + 1);
+        }
+
+        function completeGiftFlowToRoom() {
+            if (!activeSessionFoodReward) return;
+            sessionRewardFulfilled = true;
+            const fromPending = giftRevealContext === 'pending';
+            const grant = persistFoodRewardGrant(activeSessionFoodReward, { persistHunger: true, persistCollection: false });
+            if (fromPending) clearPendingGifts('default');
+            activeSessionFoodReward = null;
+            giftRevealContext = 'session';
+            document.getElementById('gift-reveal-modal').classList.add('hidden');
+            document.getElementById('scramble-summary-modal').classList.add('hidden');
+            selectChildNav('room', true);
+            updateRoomPendingGiftUI();
+            if (grant.albumOnly) {
+                showToast('拼拼食飽咗，食物已經收入圖鑑。', 'info');
+            } else if (grant.fed > 0) {
+                showToast(`拼拼食咗嘢！飽肚度 ${grant.currentScore}/6`, 'success');
+            }
+        }
+
+        function showResultModalForPct(pct) {
+            const band = getResultScoreBand(pct);
+            const copy = getResultCopyForBand(band);
+            document.getElementById('summary-headline-text').innerText = copy.title;
+            document.getElementById('summary-praise-text').innerText = copy.praise;
+            renderSummaryStars(copy.starsOn);
+            renderSummaryPingoForBand(band);
+            document.getElementById('summary-score-value').innerText = `${pct} / 100`;
+            document.getElementById('summary-accuracy-value').innerText = `${pct}%`;
+            document.getElementById('summary-streak-value').innerText = '—';
+            activeSessionFoodReward = calculateFoodReward(pct);
+            sessionRewardFulfilled = false;
+            giftRevealIndex = 0;
+            const teaser = document.getElementById('reward-food-teaser');
+            const teaserText = document.getElementById('reward-food-teaser-text');
+            const btnGifts = document.getElementById('btn-open-gifts');
+            const nFoods = foodRewardTeaserCount(activeSessionFoodReward);
+            if (nFoods > 0) {
+                teaserText.innerText = `你贏得 ${nFoods} 份食物`;
+                teaser.classList.remove('hidden');
+                btnGifts.classList.remove('hidden');
+            } else {
+                teaser.classList.add('hidden');
+                btnGifts.classList.add('hidden');
+            }
+            document.getElementById('btn-practice-mistakes').classList.add('hidden');
+            document.getElementById('scramble-summary-modal').classList.remove('hidden');
+            return { band, copy, reward: activeSessionFoodReward };
+        }
+
+        function showGiftCardDemo(foodItem) {
+            giftRevealContext = 'session';
+            activeSessionFoodReward = {
+                earned: 1,
+                foods: [foodItem],
+                namesZh: ['demo'],
+                namesEn: ['demo']
+            };
+            sessionRewardFulfilled = false;
+            giftRevealIndex = 0;
+            renderGiftRevealCard(0);
+            document.getElementById('scramble-summary-modal').classList.add('hidden');
+            document.getElementById('gift-reveal-modal').classList.remove('hidden');
+        }
+
+        window.__phonicsResultFlow = {
+            getResultScoreBand,
+            getResultCopyForBand,
+            showResultModalForPct,
+            openGiftRevealFlow,
+            advanceGiftReveal,
+            completeGiftFlowToRoom,
+            renderGiftRevealCard,
+            showGiftCardDemo,
+            maybeSavePendingSessionReward,
+            readPendingGifts,
+            openRoomPendingGiftFlow,
+            openAlbumFoodCard,
+            closeGiftRevealOverlay,
+            renderChildAlbumUI,
+            updateRoomPendingGiftUI,
+            quitScrambleToMainEngine,
+            getActiveSessionReward: () => activeSessionFoodReward,
+            getGiftRevealContext: () => giftRevealContext
+        };
 
         const APP_AREA_STORAGE_KEY = 'phonics_app_area_v1';
         const PET_SPECIES_STORAGE_KEY = 'phonics_pet_species_v1';
@@ -2671,6 +4295,27 @@
             document.body.classList.remove('app-area-child', 'app-area-parent');
             if (area === 'child') document.body.classList.add('app-area-child');
             else if (area === 'parent') document.body.classList.add('app-area-parent');
+            syncKidHomeHeaderState();
+        }
+
+        function syncKidHomeRoomBackdrop() {
+            const svg = document.querySelector('.p3-child-home-hero .p3-child-room-backdrop');
+            if (!svg) return;
+            const tabletKidHome = document.body.classList.contains('p3-kid-home-room')
+                && window.matchMedia('(min-width: 1024px)').matches;
+            svg.setAttribute('preserveAspectRatio', tabletKidHome ? 'xMidYMid meet' : 'xMidYMin slice');
+        }
+
+        function syncKidHomeHeaderState() {
+            const onKidRoom = getAppArea() === 'child'
+                && document.getElementById('view-child-home')?.classList.contains('active');
+            document.body.classList.toggle('p3-kid-home-room', !!onKidRoom);
+            syncKidHomeRoomBackdrop();
+        }
+
+        if (!window.__phonicsKidHomeBackdropResize) {
+            window.__phonicsKidHomeBackdropResize = true;
+            window.addEventListener('resize', syncKidHomeRoomBackdrop, { passive: true });
         }
 
         function showEntryScreen() {
@@ -2732,11 +4377,98 @@
                 toggleNavMenu(false);
                 if (randomizeCapybaraVariant) prepareCapybaraVariantOnRoomEnter();
                 updateChildHomeUI();
+                syncKidHomeHeaderState();
+                return;
+            }
+            if (which === 'album') {
+                stopAllPlayback();
+                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(v => v.classList.remove('active'));
+                document.getElementById('view-child-album')?.classList.add('active');
+                const lbl = document.getElementById('nav-active-label');
+                if (lbl) lbl.innerText = '🖼️';
+                toggleNavMenu(false);
+                renderChildAlbumUI();
+                syncKidHomeHeaderState();
                 return;
             }
             if (which === 'practice') selectNavTab('flashcard');
             else if (which === 'words') selectNavTab('dictionary');
             else if (which === 'me') selectNavTab('profile');
+            syncKidHomeHeaderState();
+        }
+
+        function updateRoomPendingGiftUI() {
+            const gifts = getPendingGiftList('default');
+            const n = gifts.length;
+            const parcel = document.getElementById('child-room-gift-parcel');
+            const countEl = document.getElementById('child-room-gift-count');
+            const banner = document.getElementById('child-room-gift-banner');
+            const bannerTitle = document.getElementById('child-room-gift-banner-title');
+            const roomNav = document.querySelector('#child-bottom-nav .child-nav-btn[data-child-nav="room"]');
+            if (parcel) parcel.classList.toggle('hidden', n === 0);
+            if (countEl) countEl.innerText = String(n);
+            if (banner) banner.classList.toggle('hidden', n === 0);
+            if (bannerTitle) bannerTitle.innerText = `有 ${n} 份禮物未打開`;
+            roomNav?.classList.toggle('has-dot', n > 0);
+        }
+
+        function countCollectedFoods(profile) {
+            const foods = profile?.foods || {};
+            return Object.keys(foods).filter((id) => foods[id].count > 0).length;
+        }
+
+        function renderAlbumFoodArt(meta) {
+            if (meta.image) return `<img src="${meta.image}" alt="">`;
+            if (meta.emoji) return `<span class="em">${meta.emoji}</span>`;
+            return '<span class="unk">?</span>';
+        }
+
+        function renderChildAlbumUI() {
+            const root = document.getElementById('album-sections-root');
+            if (!root) return;
+            const catalog = getFoodCatalog();
+            const profile = readFoodCollection().profiles.default || { foods: {} };
+            const totalFoods = (catalog.foods || []).length;
+            const collectedTotal = countCollectedFoods(profile);
+
+            const line = document.getElementById('album-collected-line');
+            if (line) line.innerText = `已收集 ${collectedTotal} / ${totalFoods}`;
+            const masterEl = document.getElementById('album-master-title');
+            if (masterEl) {
+                const allDone = isMasterAlbumTitleUnlocked('default');
+                masterEl.classList.toggle('on', allDone);
+                masterEl.innerText = resolveMasterTitleChipDisplay('default');
+            }
+
+            const categories = catalog.categories || [];
+            root.innerHTML = categories.map((cat) => {
+                const catFoods = getFoodsInCategory(cat.id);
+                const collectedInCat = catFoods.filter((f) => profile.foods[f.id]?.count > 0).length;
+                const barPct = Math.round((collectedInCat / Math.max(catFoods.length, 1)) * 100);
+                const titleOn = isCategoryTitleUnlocked(cat.id, 'default');
+                const cards = catFoods.map((f) => {
+                    const entry = profile.foods[f.id];
+                    const on = entry && entry.count > 0;
+                    if (!on) {
+                        return `<div class="p3-album-card locked" aria-hidden="true"><div class="art"><span class="unk">?</span></div></div>`;
+                    }
+                    const cntBadge = entry.count > 1 ? `<span class="cnt">×${entry.count}</span>` : '';
+                    return `<button type="button" class="p3-album-card collected" data-food-id="${f.id}" onclick="openAlbumFoodCard('${f.id}')">${cntBadge}<div class="art">${renderAlbumFoodArt(f)}</div><span class="lbl">${f.zh}</span></button>`;
+                }).join('');
+                return `<section class="p3-album-section" data-category="${cat.id}">
+                    <div class="p3-album-sec-head">
+                        <div><b>${cat.zh}</b><span class="en">${cat.en}</span></div>
+                        <div class="p3-album-sec-prog">
+                            <div class="p3-album-sec-bar"><i style="width:${barPct}%;background:${cat.color || 'var(--mint)'}"></i></div>
+                            <span class="p3-album-sec-count">${collectedInCat}/8</span>
+                        </div>
+                    </div>
+                    <p class="p3-album-title-pill${titleOn ? ' on' : ''}">${resolveCategoryTitlePillDisplay(cat.id, 'default')}</p>
+                    <div class="p3-album-grid">${cards}</div>
+                    <p class="p3-album-foot">${resolveCategoryTitleFootDisplay(cat.id, 'default')}</p>
+                </section>`;
+            }).join('');
         }
 
         function updateChildHomeUI(useAnimatedFull) {
@@ -2770,8 +4502,14 @@
             const avEl = document.getElementById('child-home-avatar');
             if (avEl) avEl.innerText = isDefaultNick ? '小' : (displayName.charAt(0) || '小');
 
+            const pendingN = getPendingGiftList('default').length;
             const bubble = document.getElementById('child-room-bubble');
-            if (bubble) bubble.innerText = getChildPetBubbleText(mood, isEn);
+            if (bubble) {
+                bubble.innerText = pendingN > 0
+                    ? (isEn ? 'Gifts for you… shall we open them?' : '有禮物呀… 一齊打開睇下？')
+                    : getChildPetBubbleText(mood, isEn);
+            }
+            updateRoomPendingGiftUI();
 
             const filled = petState.segmentsFilled;
             const hungerWrap = document.getElementById('child-hunger-wrap');
@@ -3230,6 +4968,7 @@
                 document.getElementById('view-child-home')?.classList.remove('active');
                 syncChildBottomNav(childBottomNavForTab(tid));
             }
+            syncKidHomeHeaderState();
             updateMenuPetStatusUI();
         }
 
@@ -4281,32 +6020,12 @@
             document.getElementById('summary-accuracy-value').innerText = `${pct}%`;
             document.getElementById('summary-streak-value').innerText = mStreak;
             
-            const hl = document.getElementById('summary-headline-text');
-            const pr = document.getElementById('summary-praise-text');
-            const st = document.getElementById('summary-stars');
-            
-            let emo = 'happy';
-            if (pct === 100) {
-                hl.innerText = "完美通關！";
-                pr.innerText = "表現卓越！自然拼讀基礎非常扎實！";
-                st.innerText = "⭐⭐⭐";
-                emo = 'excited';
-            } else if (pct >= 80) {
-                hl.innerText = "做得好，繼續努力！";
-                pr.innerText = "差一點就完美了！";
-                st.innerText = "⭐⭐";
-            } else if (pct >= 60) {
-                hl.innerText = "過關！";
-                pr.innerText = "多聽幾次頭尾音會更厲害！";
-                st.innerText = "⭐";
-            } else {
-                hl.innerText = "需要再加油喔！";
-                pr.innerText = "建議先到聯動音節重組練習錯題！";
-                st.innerText = "💨";
-                emo = 'sad';
-            }
-            
-            renderSummaryAvatar(emo);
+            const band = getResultScoreBand(pct);
+            const copy = getResultCopyForBand(band);
+            document.getElementById('summary-headline-text').innerText = copy.title;
+            document.getElementById('summary-praise-text').innerText = copy.praise;
+            renderSummaryStars(copy.starsOn);
+            renderSummaryPingoForBand(band);
             
             const btnMistake = document.getElementById('btn-practice-mistakes');
             if (recentMistakes.length > 0) {
@@ -4316,70 +6035,41 @@
                 btnMistake.classList.add('hidden');
             }
 
-            const rw = calculateFoodReward(pct);
-            const rContainer = document.getElementById('reward-food-container');
-            if (rw.earned > 0) {
-                const isEn = (currentLang === 'en');
-                const nList = isEn ? rw.namesEn : rw.namesZh;
-                document.getElementById('reward-food-sentence').innerText = isEn 
-                    ? `You earned ${nList.join(' & ')}!`
-                    : `你這次獲得 ${nList.join(' 和 ')}！`;
-                
-                document.getElementById('reward-food-icons').innerHTML = rw.foods.map(f => {
-                    if(f.isHalf) return `<span class="half-food" data-icon="${f.emoji}">${f.emoji}</span>`;
-                    return `<span>${f.emoji}</span>`;
-                }).join('');
-                rContainer.classList.remove('hidden');
+            activeSessionFoodReward = calculateFoodReward(pct);
+            sessionRewardFulfilled = false;
+            giftRevealIndex = 0;
+
+            const teaser = document.getElementById('reward-food-teaser');
+            const teaserText = document.getElementById('reward-food-teaser-text');
+            const btnGifts = document.getElementById('btn-open-gifts');
+            const nFoods = foodRewardTeaserCount(activeSessionFoodReward);
+            if (nFoods > 0) {
+                teaserText.innerText = currentLang === 'en'
+                    ? `You won ${nFoods} food reward${nFoods > 1 ? 's' : ''}`
+                    : `你贏得 ${nFoods} 份食物`;
+                teaser.classList.remove('hidden');
+                btnGifts.classList.remove('hidden');
             } else {
-                rContainer.classList.add('hidden');
+                teaser.classList.add('hidden');
+                btnGifts.classList.add('hidden');
             }
         }
         
         function startMistakeChunkScramble() {
-            closeScrambleSummaryModal();
+            closeScrambleSummaryModal(false, { savePending: true });
             startChunkScramble(recentMistakes, true);
-        }
-        
-        function renderSummaryAvatar(emotion) {
-            const sv = localStorage.getItem(USER_AVATAR_STORAGE_KEY);
-            const img = document.getElementById('summary-avatar-img');
-            const def = document.getElementById('summary-avatar-default');
-            const aura = document.getElementById('summary-avatar-aura');
-            const topProp = document.getElementById('summary-prop-top');
-            const sideProp = document.getElementById('summary-prop-side');
-            
-            if(sv){ img.src=sv; img.classList.remove('hidden'); def.classList.add('hidden'); }
-            else{ img.src=""; img.classList.add('hidden'); def.classList.remove('hidden'); }
-            
-            aura.className = 'absolute inset-0 rounded-full transition-all duration-500';
-            document.getElementById('summary-avatar-frame').className = 'relative w-24 h-24 rounded-full border-[3.5px] overflow-hidden bg-white shadow-lg flex items-center justify-center';
-            topProp.className = 'absolute -top-3.5 z-20 text-4xl';
-            
-            if(emotion === 'excited') {
-                aura.classList.add('bg-amber-400', 'animate-ping', 'opacity-20');
-                document.getElementById('summary-avatar-frame').classList.add('border-amber-400', 'animate-cheer');
-                topProp.innerText = '👑'; topProp.classList.add('prop-crown-excited');
-                sideProp.innerText = '✨'; sideProp.classList.add('animate-twinkle');
-            } else if(emotion === 'happy') {
-                aura.classList.add('bg-blue-400', 'opacity-10');
-                document.getElementById('summary-avatar-frame').classList.add('border-blue-400', 'animate-happy-sway');
-                topProp.innerText = '💪';
-                sideProp.innerText = '🎵';
-            } else {
-                aura.classList.add('bg-slate-400', 'opacity-10');
-                document.getElementById('summary-avatar-frame').classList.add('border-slate-300', 'animate-sad');
-                topProp.innerText = '🌧️';
-                sideProp.innerText = '💤';
-            }
         }
 
         function restartScrambleQuiz() {
-            closeScrambleSummaryModal();
-            startScrambleGame(); 
+            closeScrambleSummaryModal(false, { savePending: true });
+            startScrambleGame();
         }
-
-        function closeScrambleSummaryModal(returnToSetup = false) {
+        
+        function closeScrambleSummaryModal(returnToSetup = false, opts = {}) {
+            const savePending = opts.savePending !== false;
+            if (savePending) maybeSavePendingSessionReward('scramble');
             document.getElementById('scramble-summary-modal').classList.add('hidden');
+            document.getElementById('gift-reveal-modal').classList.add('hidden');
             if(returnToSetup) {
                 document.getElementById('scramble-setup-box').classList.remove('hidden');
             }
@@ -4987,34 +6677,27 @@
             const correct = dictMarkingResults.filter(r => r.isCorrect).length;
             const pct = Math.round((correct / total) * 100);
 
-            let earned = 0;
-            if (pct === 100) earned = 2;
-            else if (pct >= 80) earned = 1;
-            else if (pct >= 60) earned = 0.5;
-
-            const foods = [];
-            const names = [];
-            const count = Math.ceil(earned);
-
-            for (let i = 0; i < count; i++) {
-                const idx = Math.floor(Math.random() * FOOD_DATABASE.length);
-                const isHalf = (earned === 0.5 && i === 0);
-                foods.push({ emoji: FOOD_DATABASE[idx], isHalf });
-                names.push((isHalf ? '半份' : '一份') + FOOD_NAMES_ZH[idx]);
-            }
-
-            dictCalculatedReward = { earned, foods, names, pct };
+            const preview = buildFoodRewardFromPct(pct, { persistHunger: false, persistCollection: false });
+            dictCalculatedReward = {
+                earned: preview.earned,
+                foods: preview.foods,
+                names: preview.namesZh,
+                pct,
+                albumOnly: preview.albumOnly
+            };
 
             document.getElementById('eval-modal-stats').innerText = `答對 ${correct} / ${total} 題 (${pct}%)`;
             const badge = document.getElementById('eval-food-calc-badge');
             const iconsWrap = document.getElementById('eval-food-icons-preview');
             const sentence = document.getElementById('eval-food-sentence');
 
-            if (earned > 0) {
-                badge.innerText = `${earned} 份食物`;
+            if (preview.earned > 0) {
+                badge.innerText = `${preview.earned} 份食物`;
                 badge.className = "text-xs font-black text-amber-700 bg-amber-100 px-2 py-0.5 rounded-md";
-                sentence.innerText = `本次成績表現可獲得：${names.join(' 和 ')}`;
-                iconsWrap.innerHTML = foods.map(f => {
+                let sentenceText = `本次成績表現可獲得：${preview.namesZh.join(' 和 ')}`;
+                if (preview.albumOnly) sentenceText += '（拼拼食飽咗，食物將收入圖鑑）';
+                sentence.innerText = sentenceText;
+                iconsWrap.innerHTML = preview.foods.map(f => {
                     if (f.isHalf) return `<span class="half-food text-3xl" data-icon="${f.emoji}">${f.emoji}</span>`;
                     return `<span class="text-3xl">${f.emoji}</span>`;
                 }).join('');
@@ -5042,12 +6725,10 @@
             updateParentDashboardUI();
             const willGrant = document.getElementById('chk-grant-pet-food').checked;
             if (willGrant && dictCalculatedReward && dictCalculatedReward.earned > 0) {
-                const oldScore = getHungerScore();
-                const newScore = Math.min(6, oldScore + dictCalculatedReward.earned);
-                localStorage.setItem('phonics_hunger_score', newScore);
-                localStorage.setItem('phonics_last_fed_time', Date.now());
-                updateMenuPetStatusUI();
-                showToast(`🎉 家長已派發食物！寵物飽足度提升至 ${newScore}/6`, "success");
+                const pct = dictCalculatedReward.pct;
+                const reward = buildFoodRewardFromPct(pct, { persistHunger: false, persistCollection: true });
+                appendPendingGiftsFromReward(reward, 'dictation');
+                showToast('🎁 食物已存起，去房間打開俾拼拼！', 'success');
             } else {
                 showToast("✓ 已完成默書紀錄 (本次不派發食物)", "info");
             }
@@ -5069,7 +6750,16 @@
         }
 
         async function initDB() { try{ const r=await fetch('./words.json?v='+Date.now(), {cache:'no-store'}); if(r.ok){ const rm=await r.json(); if(rm && typeof rm==='object'){ Object.keys(customWordDatabase).forEach(k=>delete customWordDatabase[k]); Object.entries(rm).forEach(([k,v])=>{ customWordDatabase[k]=PhonicsEngine.slimEntry((v&&v.word)||k, (v&&v.ipa)||'', (v&&v.definition)||''); }); document.getElementById('recommended-words-bar').innerHTML='<span class="shrink-0 text-slate-400">已套用自訂詞庫</span>'; } } }catch(e){} renderDictionary(); pSubSel(); processWord(); }
-        window.addEventListener('load', ()=>{ ldSubs(); initDB(); renderProfileAvatar(); updateMenuPetStatusUI(); try{setLanguage(localStorage.getItem('phonics_lang_pref')||'zh_HK'); setTheme(localStorage.getItem('phonics_theme_pref')||'default');}catch(e){} initAppArea(); document.getElementById('child-room-pet-hit')?.addEventListener('click', handleChildRoomPetTap); });
+        window.addEventListener('load', async ()=>{
+            await loadFoodCatalog();
+            ldSubs();
+            initDB();
+            renderProfileAvatar();
+            updateMenuPetStatusUI();
+            try{setLanguage(localStorage.getItem('phonics_lang_pref')||'zh_HK'); setTheme(localStorage.getItem('phonics_theme_pref')||'default');}catch(e){}
+            initAppArea();
+            document.getElementById('child-room-pet-hit')?.addEventListener('click', handleChildRoomPetTap);
+        });
     </script>
 </body>
 </html>

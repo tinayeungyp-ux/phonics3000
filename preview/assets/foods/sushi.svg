@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+<title>壽司 sushi</title>
+<g stroke-linejoin="round" stroke-linecap="round">
+<ellipse cx="128" cy="226" rx="78" ry="8" fill="#1E3350" opacity="0.10"/>
+
+<path d="M40 156 C40 132 60 124 104 124 C148 124 168 132 168 156 C168 184 150 190 104 190 C58 190 40 184 40 156 Z" fill="#FFFBF2" stroke="#1E3350" stroke-width="8"/>
+<path d="M62 170 l6 -3 M90 178 l6 2 M128 172 l6 -2 M146 160 l5 3" stroke="#E6DCC8" stroke-width="4" fill="none"/>
+<path d="M30 128 C30 102 66 90 108 92 C150 94 182 104 182 130 C182 146 170 150 154 146 C122 138 88 138 58 146 C40 150 30 144 30 128 Z" fill="#F7936A" stroke="#1E3350" stroke-width="8"/>
+<path d="M66 104 Q80 118 74 138 M100 98 Q114 114 108 136 M134 100 Q148 114 142 136 M162 110 Q170 120 166 136" stroke="#FFD6C1" stroke-width="6" fill="none"/>
+<ellipse cx="56" cy="112" rx="9" ry="5" transform="rotate(-20 56 112)" fill="#FFB797"/>
+<g transform="translate(192 176)">
+<circle r="34" fill="#2F4038" stroke="#1E3350" stroke-width="8"/>
+<circle r="23" fill="#FFFBF2"/>
+<path d="M-12 -4 C-12 -14 -2 -16 4 -12 C12 -8 12 4 4 8 C-4 12 -12 6 -12 -4 Z" fill="#F7936A"/>
+<circle cx="8" cy="10" r="5" fill="#8FCB7A"/>
+<path d="M-24 -18 Q-28 -8 -26 2" stroke="#4E6358" stroke-width="4" fill="none"/>
+</g>
+</g>
+</svg>

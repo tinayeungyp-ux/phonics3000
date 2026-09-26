@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+<title>牛角包 croissant</title>
+<g stroke-linejoin="round" stroke-linecap="round">
+<ellipse cx="128" cy="226" rx="78" ry="8" fill="#1E3350" opacity="0.10"/>
+
+<ellipse cx="48" cy="178" rx="15" ry="25" transform="rotate(-62 48 178)" fill="#D98A3E" stroke="#1E3350" stroke-width="8"/><ellipse cx="208" cy="178" rx="15" ry="25" transform="rotate(62 208 178)" fill="#D98A3E" stroke="#1E3350" stroke-width="8"/>
+<ellipse cx="74" cy="150" rx="24" ry="36" transform="rotate(-38 74 150)" fill="#E9A150" stroke="#1E3350" stroke-width="8"/><ellipse cx="182" cy="150" rx="24" ry="36" transform="rotate(38 182 150)" fill="#E9A150" stroke="#1E3350" stroke-width="8"/>
+<path d="M62 132 Q72 142 74 160" stroke="#F4C07A" stroke-width="5" fill="none"/>
+<path d="M194 132 Q184 142 182 160" stroke="#F4C07A" stroke-width="5" fill="none"/>
+<ellipse cx="128" cy="132" rx="38" ry="50" transform="rotate(0 128 132)" fill="#F0AE5E" stroke="#1E3350" stroke-width="8"/>
+<path d="M110 104 Q128 96 146 104" stroke="#FAD196" stroke-width="6" fill="none"/>
+<path d="M104 134 Q128 124 152 134" stroke="#C97B35" stroke-width="5" fill="none" opacity="0.6"/>
+<ellipse cx="112" cy="116" rx="7" ry="4" transform="rotate(-20 112 116)" fill="#FFE0AE"/>
+
+</g>
+</svg>

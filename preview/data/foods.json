@@ -1,0 +1,1395 @@
+{
+  "version": 1,
+  "bonusWords": "spellable=false → 'bonus word': the card shows the English + chunks for reading/listening, but the word is never used in spelling practice or dictation (romanised names such as siu mai, oden, dango). All other words are spellable.",
+  "chunkRules": [
+    "chunks = syllable chunks shown on the card as 'piz · za'; one-syllable words are a single chunk",
+    "sounds = grapheme (phoneme-letter) units, UK Letters-and-Sounds style; split digraphs written a_e / i_e; shown for 1-syllable words (c · a_e · k)",
+    "never split a digraph/trigraph (ch, sh, ck, ng, oo, ee, ai, ur, er, or, aw...)",
+    "doubled consonants split between syllables: ap·ple, piz·za, pud·ding, jel·ly, cher·ry",
+    "consonant-le stays together: ap·ple, waf·fle",
+    "long/open first vowel -> V/CV (ba·na·na, su·shi, ta·co); short/closed -> VC/V (mel·on, sal·ad)",
+    "compounds and two-word names split on the word boundary first (straw·ber·ry, pop·corn, ice cream)"
+  ],
+  "levels": {
+    "easy": "1–2 regular chunks, mostly single-letter sounds",
+    "medium": "digraphs, split digraphs, doubled letters or two words",
+    "hard": "3+ syllables, loanword spelling, or tricky/irregular parts"
+  },
+  "completionRule": {
+    "complete": "A category is complete when all 8 of its foods have been collected at least once. The title is awarded immediately on the 8th new card.",
+    "drops": "1 food per finished practice session (streak/perfect bonus = +1 extra draw, max 2 a day from bonuses).",
+    "newCardBias": "Draws favour uncollected foods: guarantee a NEW card at least every 3rd draw until the album is full.",
+    "duplicates": "Duplicates still feed 拼拼 and add ×2, ×3 counters on the card – no wasted rewards, no loss mechanics.",
+    "levelGate": "Optional: hard-level foods only drop after a session with ≥80% correct, so the rarest cards line up with the hardest words.",
+    "stretch": "Optional gold-frame 'mastered' stamp per card when the child has spelled that food word correctly once (tap card → mini spell).",
+    "allComplete": {
+      "title": "拼拼美食家",
+      "title_en": "Pingo's Food Critic",
+      "rule": "all 7 categories complete"
+    }
+  },
+  "categories": [
+    {
+      "id": "fruit",
+      "zh": "生果",
+      "en": "Fruit",
+      "title": "果園主人",
+      "title_en": "Orchard Keeper",
+      "color": "#CDEFDC"
+    },
+    {
+      "id": "japan",
+      "zh": "日本",
+      "en": "Japan",
+      "title": "遊日大師",
+      "title_en": "Japan Trip Master",
+      "color": "#FFD3D8"
+    },
+    {
+      "id": "fast-food",
+      "zh": "快餐",
+      "en": "Fast food",
+      "title": "快餐店熟客",
+      "title_en": "Fast-food Regular",
+      "color": "#FFE7A3"
+    },
+    {
+      "id": "sweets",
+      "zh": "甜品",
+      "en": "Sweets",
+      "title": "甜品鑑賞家",
+      "title_en": "Dessert Connoisseur",
+      "color": "#E6DBFF"
+    },
+    {
+      "id": "breakfast",
+      "zh": "早餐麵包",
+      "en": "Breakfast & bakery",
+      "title": "早餐大滿貫",
+      "title_en": "Breakfast Grand Slam",
+      "color": "#FFD6B0"
+    },
+    {
+      "id": "world",
+      "zh": "世界美食",
+      "en": "Around the world",
+      "title": "環遊世界食家",
+      "title_en": "World Foodie",
+      "color": "#D3EDFB"
+    },
+    {
+      "id": "hk-snacks",
+      "zh": "香港小食",
+      "en": "HK snacks",
+      "title": "香港小食達人",
+      "title_en": "HK Snack Expert",
+      "color": "#FFE0CC"
+    }
+  ],
+  "foods": [
+    {
+      "id": "apple",
+      "category": "fruit",
+      "zh": "蘋果",
+      "en": "apple",
+      "chunks": [
+        "ap",
+        "ple"
+      ],
+      "sounds": [
+        "a",
+        "pp",
+        "le"
+      ],
+      "level": "easy",
+      "status": "existing",
+      "emoji": "🍎",
+      "spellable": true,
+      "legacyIndex": 20
+    },
+    {
+      "id": "grapes",
+      "category": "fruit",
+      "zh": "提子",
+      "en": "grapes",
+      "chunks": [
+        "grapes"
+      ],
+      "sounds": [
+        "g",
+        "r",
+        "a_e",
+        "p",
+        "s"
+      ],
+      "level": "medium",
+      "status": "existing",
+      "emoji": "🍇",
+      "spellable": true,
+      "legacyIndex": 21,
+      "note": "split digraph a_e"
+    },
+    {
+      "id": "watermelon",
+      "category": "fruit",
+      "zh": "西瓜",
+      "en": "watermelon",
+      "chunks": [
+        "wa",
+        "ter",
+        "mel",
+        "on"
+      ],
+      "sounds": [
+        "w",
+        "a",
+        "t",
+        "er",
+        "m",
+        "e",
+        "l",
+        "o",
+        "n"
+      ],
+      "level": "hard",
+      "status": "existing",
+      "emoji": "🍉",
+      "spellable": true,
+      "legacyIndex": 22,
+      "note": "compound water+melon"
+    },
+    {
+      "id": "strawberry",
+      "category": "fruit",
+      "zh": "士多啤梨",
+      "en": "strawberry",
+      "chunks": [
+        "straw",
+        "ber",
+        "ry"
+      ],
+      "sounds": [
+        "s",
+        "t",
+        "r",
+        "aw",
+        "b",
+        "e",
+        "rr",
+        "y"
+      ],
+      "level": "hard",
+      "status": "existing",
+      "emoji": "🍓",
+      "spellable": true,
+      "legacyIndex": 23,
+      "note": "compound straw+berry",
+      "image": "./assets/foods/strawberry.svg"
+    },
+    {
+      "id": "banana",
+      "category": "fruit",
+      "zh": "香蕉",
+      "en": "banana",
+      "chunks": [
+        "ba",
+        "na",
+        "na"
+      ],
+      "sounds": [
+        "b",
+        "a",
+        "n",
+        "a",
+        "n",
+        "a"
+      ],
+      "level": "easy",
+      "status": "new",
+      "emoji": "🍌",
+      "spellable": true
+    },
+    {
+      "id": "mango",
+      "category": "fruit",
+      "zh": "芒果",
+      "en": "mango",
+      "chunks": [
+        "man",
+        "go"
+      ],
+      "sounds": [
+        "m",
+        "a",
+        "n",
+        "g",
+        "o"
+      ],
+      "level": "easy",
+      "status": "new",
+      "emoji": "🥭",
+      "spellable": true
+    },
+    {
+      "id": "orange",
+      "category": "fruit",
+      "zh": "橙",
+      "en": "orange",
+      "chunks": [
+        "or",
+        "ange"
+      ],
+      "sounds": [
+        "o",
+        "r",
+        "a",
+        "n",
+        "ge"
+      ],
+      "level": "medium",
+      "status": "new",
+      "emoji": "🍊",
+      "spellable": true,
+      "note": "拼拼's signature food; 'ange' says /ɪndʒ/ – tricky"
+    },
+    {
+      "id": "cherry",
+      "category": "fruit",
+      "zh": "車厘子",
+      "en": "cherry",
+      "chunks": [
+        "cher",
+        "ry"
+      ],
+      "sounds": [
+        "ch",
+        "e",
+        "rr",
+        "y"
+      ],
+      "level": "medium",
+      "status": "new",
+      "emoji": "🍒",
+      "spellable": true
+    },
+    {
+      "id": "sushi",
+      "category": "japan",
+      "zh": "壽司",
+      "en": "sushi",
+      "chunks": [
+        "su",
+        "shi"
+      ],
+      "sounds": [
+        "s",
+        "u",
+        "sh",
+        "i"
+      ],
+      "level": "easy",
+      "status": "existing",
+      "emoji": "🍣",
+      "spellable": true,
+      "legacyIndex": 1,
+      "image": "./assets/foods/sushi.svg"
+    },
+    {
+      "id": "ramen",
+      "category": "japan",
+      "zh": "拉麵",
+      "en": "ramen",
+      "chunks": [
+        "ra",
+        "men"
+      ],
+      "sounds": [
+        "r",
+        "a",
+        "m",
+        "e",
+        "n"
+      ],
+      "level": "easy",
+      "status": "existing",
+      "emoji": "🍜",
+      "spellable": true,
+      "legacyIndex": 2
+    },
+    {
+      "id": "rice-ball",
+      "category": "japan",
+      "zh": "飯糰",
+      "en": "rice ball",
+      "chunks": [
+        "rice",
+        "ball"
+      ],
+      "sounds": [
+        "r",
+        "i_e",
+        "c",
+        "b",
+        "a",
+        "ll"
+      ],
+      "level": "medium",
+      "status": "existing",
+      "emoji": "🍙",
+      "spellable": true,
+      "legacyIndex": 11,
+      "note": "two words"
+    },
+    {
+      "id": "oden",
+      "category": "japan",
+      "zh": "關東煮",
+      "en": "oden",
+      "chunks": [
+        "o",
+        "den"
+      ],
+      "sounds": [
+        "o",
+        "d",
+        "e",
+        "n"
+      ],
+      "level": "easy",
+      "status": "existing",
+      "emoji": "🍢",
+      "spellable": false,
+      "legacyIndex": 18,
+      "note": "loanword"
+    },
+    {
+      "id": "dango",
+      "category": "japan",
+      "zh": "丸子",
+      "en": "dango",
+      "chunks": [
+        "dan",
+        "go"
+      ],
+      "sounds": [
+        "d",
+        "a",
+        "n",
+        "g",
+        "o"
+      ],
+      "level": "easy",
+      "status": "existing",
+      "emoji": "🍡",
+      "spellable": false,
+      "legacyIndex": 28,
+      "note": "FIX: app currently labels 🍡 'dumpling' (duplicate of 🥟)"
+    },
+    {
+      "id": "udon",
+      "category": "japan",
+      "zh": "烏冬",
+      "en": "udon",
+      "chunks": [
+        "u",
+        "don"
+      ],
+      "sounds": [
+        "u",
+        "d",
+        "o",
+        "n"
+      ],
+      "level": "easy",
+      "status": "new",
+      "emoji": null,
+      "spellable": true,
+      "note": "loanword"
+    },
+    {
+      "id": "mochi",
+      "category": "japan",
+      "zh": "麻糬",
+      "en": "mochi",
+      "chunks": [
+        "mo",
+        "chi"
+      ],
+      "sounds": [
+        "m",
+        "o",
+        "ch",
+        "i"
+      ],
+      "level": "medium",
+      "status": "new",
+      "emoji": null,
+      "spellable": true,
+      "note": "loanword"
+    },
+    {
+      "id": "tempura",
+      "category": "japan",
+      "zh": "天婦羅",
+      "en": "tempura",
+      "chunks": [
+        "tem",
+        "pu",
+        "ra"
+      ],
+      "sounds": [
+        "t",
+        "e",
+        "m",
+        "p",
+        "u",
+        "r",
+        "a"
+      ],
+      "level": "hard",
+      "status": "new",
+      "emoji": "🍤",
+      "spellable": true,
+      "note": "loanword, 3 syllables"
+    },
+    {
+      "id": "pizza",
+      "category": "fast-food",
+      "zh": "薄餅",
+      "en": "pizza",
+      "chunks": [
+        "piz",
+        "za"
+      ],
+      "sounds": [
+        "p",
+        "i",
+        "zz",
+        "a"
+      ],
+      "level": "easy",
+      "status": "existing",
+      "emoji": "🍕",
+      "spellable": true,
+      "legacyIndex": 0,
+      "note": "zz says /ts/",
+      "image": "./assets/foods/pizza.svg"
+    },
+    {
+      "id": "burger",
+      "category": "fast-food",
+      "zh": "漢堡",
+      "en": "burger",
+      "chunks": [
+        "bur",
+        "ger"
+      ],
+      "sounds": [
+        "b",
+        "ur",
+        "g",
+        "er"
+      ],
+      "level": "medium",
+      "status": "existing",
+      "emoji": "🍔",
+      "spellable": true,
+      "legacyIndex": 5
+    },
+    {
+      "id": "fries",
+      "category": "fast-food",
+      "zh": "薯條",
+      "en": "fries",
+      "chunks": [
+        "fries"
+      ],
+      "sounds": [
+        "f",
+        "r",
+        "ie",
+        "s"
+      ],
+      "level": "medium",
+      "status": "existing",
+      "emoji": "🍟",
+      "spellable": true,
+      "legacyIndex": 6,
+      "note": "UK also says 'chips'"
+    },
+    {
+      "id": "chicken",
+      "category": "fast-food",
+      "zh": "炸雞",
+      "en": "chicken",
+      "chunks": [
+        "chick",
+        "en"
+      ],
+      "sounds": [
+        "ch",
+        "i",
+        "ck",
+        "e",
+        "n"
+      ],
+      "level": "medium",
+      "status": "existing",
+      "emoji": "🍗",
+      "spellable": true,
+      "legacyIndex": 7,
+      "note": "card may subtitle 'fried chicken'"
+    },
+    {
+      "id": "hot-dog",
+      "category": "fast-food",
+      "zh": "熱狗",
+      "en": "hot dog",
+      "chunks": [
+        "hot",
+        "dog"
+      ],
+      "sounds": [
+        "h",
+        "o",
+        "t",
+        "d",
+        "o",
+        "g"
+      ],
+      "level": "easy",
+      "status": "existing",
+      "emoji": "🌭",
+      "spellable": true,
+      "legacyIndex": 14,
+      "note": "two words"
+    },
+    {
+      "id": "popcorn",
+      "category": "fast-food",
+      "zh": "爆谷",
+      "en": "popcorn",
+      "chunks": [
+        "pop",
+        "corn"
+      ],
+      "sounds": [
+        "p",
+        "o",
+        "p",
+        "c",
+        "or",
+        "n"
+      ],
+      "level": "easy",
+      "status": "existing",
+      "emoji": "🍿",
+      "spellable": true,
+      "legacyIndex": 26,
+      "note": "compound"
+    },
+    {
+      "id": "nuggets",
+      "category": "fast-food",
+      "zh": "雞塊",
+      "en": "nuggets",
+      "chunks": [
+        "nug",
+        "gets"
+      ],
+      "sounds": [
+        "n",
+        "u",
+        "gg",
+        "e",
+        "t",
+        "s"
+      ],
+      "level": "medium",
+      "status": "new",
+      "emoji": null,
+      "spellable": true
+    },
+    {
+      "id": "milkshake",
+      "category": "fast-food",
+      "zh": "奶昔",
+      "en": "milkshake",
+      "chunks": [
+        "milk",
+        "shake"
+      ],
+      "sounds": [
+        "m",
+        "i",
+        "l",
+        "k",
+        "sh",
+        "a_e",
+        "k"
+      ],
+      "level": "medium",
+      "status": "new",
+      "emoji": "🥤",
+      "spellable": true,
+      "note": "compound"
+    },
+    {
+      "id": "cake",
+      "category": "sweets",
+      "zh": "蛋糕",
+      "en": "cake",
+      "chunks": [
+        "cake"
+      ],
+      "sounds": [
+        "c",
+        "a_e",
+        "k"
+      ],
+      "level": "easy",
+      "status": "existing",
+      "emoji": "🍰",
+      "spellable": true,
+      "legacyIndex": 3,
+      "note": "split digraph a_e"
+    },
+    {
+      "id": "donut",
+      "category": "sweets",
+      "zh": "冬甩",
+      "en": "donut",
+      "chunks": [
+        "do",
+        "nut"
+      ],
+      "sounds": [
+        "d",
+        "o",
+        "n",
+        "u",
+        "t"
+      ],
+      "level": "easy",
+      "status": "existing",
+      "emoji": "🍩",
+      "spellable": true,
+      "legacyIndex": 8,
+      "note": "UK spelling is 'doughnut' – see notes"
+    },
+    {
+      "id": "ice-cream",
+      "category": "sweets",
+      "zh": "雪糕",
+      "en": "ice cream",
+      "chunks": [
+        "ice",
+        "cream"
+      ],
+      "sounds": [
+        "i_e",
+        "c",
+        "c",
+        "r",
+        "ea",
+        "m"
+      ],
+      "level": "medium",
+      "status": "existing",
+      "emoji": "🍦",
+      "spellable": true,
+      "legacyIndex": 13,
+      "note": "two words",
+      "image": "./assets/foods/ice-cream.svg"
+    },
+    {
+      "id": "pudding",
+      "category": "sweets",
+      "zh": "布甸",
+      "en": "pudding",
+      "chunks": [
+        "pud",
+        "ding"
+      ],
+      "sounds": [
+        "p",
+        "u",
+        "dd",
+        "i",
+        "ng"
+      ],
+      "level": "medium",
+      "status": "existing",
+      "emoji": "🍮",
+      "spellable": true,
+      "legacyIndex": 27
+    },
+    {
+      "id": "chocolate",
+      "category": "sweets",
+      "zh": "朱古力",
+      "en": "chocolate",
+      "chunks": [
+        "choc",
+        "o",
+        "late"
+      ],
+      "sounds": [
+        "ch",
+        "o",
+        "c",
+        "o",
+        "l",
+        "a",
+        "te"
+      ],
+      "level": "hard",
+      "status": "existing",
+      "emoji": "🍫",
+      "spellable": true,
+      "legacyIndex": 29,
+      "note": "tricky: said 'choc-late', ending /ət/"
+    },
+    {
+      "id": "cookie",
+      "category": "sweets",
+      "zh": "曲奇",
+      "en": "cookie",
+      "chunks": [
+        "cook",
+        "ie"
+      ],
+      "sounds": [
+        "c",
+        "oo",
+        "k",
+        "ie"
+      ],
+      "level": "medium",
+      "status": "new",
+      "emoji": "🍪",
+      "spellable": true
+    },
+    {
+      "id": "jelly",
+      "category": "sweets",
+      "zh": "啫喱",
+      "en": "jelly",
+      "chunks": [
+        "jel",
+        "ly"
+      ],
+      "sounds": [
+        "j",
+        "e",
+        "ll",
+        "y"
+      ],
+      "level": "easy",
+      "status": "new",
+      "emoji": null,
+      "spellable": true
+    },
+    {
+      "id": "lollipop",
+      "category": "sweets",
+      "zh": "波板糖",
+      "en": "lollipop",
+      "chunks": [
+        "lol",
+        "li",
+        "pop"
+      ],
+      "sounds": [
+        "l",
+        "o",
+        "ll",
+        "i",
+        "p",
+        "o",
+        "p"
+      ],
+      "level": "hard",
+      "status": "new",
+      "emoji": "🍭",
+      "spellable": true,
+      "note": "3 syllables, double l"
+    },
+    {
+      "id": "croissant",
+      "category": "breakfast",
+      "zh": "牛角包",
+      "en": "croissant",
+      "chunks": [
+        "crois",
+        "sant"
+      ],
+      "sounds": [
+        "c",
+        "r",
+        "oi",
+        "ss",
+        "a",
+        "n",
+        "t"
+      ],
+      "level": "hard",
+      "status": "existing",
+      "emoji": "🥐",
+      "spellable": true,
+      "legacyIndex": 16,
+      "note": "French loanword, pronunciation ≠ spelling",
+      "image": "./assets/foods/croissant.svg"
+    },
+    {
+      "id": "pancake",
+      "category": "breakfast",
+      "zh": "班戟",
+      "en": "pancake",
+      "chunks": [
+        "pan",
+        "cake"
+      ],
+      "sounds": [
+        "p",
+        "a",
+        "n",
+        "c",
+        "a_e",
+        "k"
+      ],
+      "level": "medium",
+      "status": "existing",
+      "emoji": "🥞",
+      "spellable": true,
+      "legacyIndex": 9,
+      "note": "compound"
+    },
+    {
+      "id": "waffle",
+      "category": "breakfast",
+      "zh": "窩夫",
+      "en": "waffle",
+      "chunks": [
+        "waf",
+        "fle"
+      ],
+      "sounds": [
+        "w",
+        "a",
+        "ff",
+        "le"
+      ],
+      "level": "medium",
+      "status": "existing",
+      "emoji": "🧇",
+      "spellable": true,
+      "legacyIndex": 17,
+      "note": "'a' after w says /ɒ/"
+    },
+    {
+      "id": "sandwich",
+      "category": "breakfast",
+      "zh": "三文治",
+      "en": "sandwich",
+      "chunks": [
+        "sand",
+        "wich"
+      ],
+      "sounds": [
+        "s",
+        "a",
+        "n",
+        "d",
+        "w",
+        "i",
+        "ch"
+      ],
+      "level": "medium",
+      "status": "existing",
+      "emoji": "🥪",
+      "spellable": true,
+      "legacyIndex": 24,
+      "note": "compound-like; d often silent in speech"
+    },
+    {
+      "id": "cheese",
+      "category": "breakfast",
+      "zh": "芝士",
+      "en": "cheese",
+      "chunks": [
+        "cheese"
+      ],
+      "sounds": [
+        "ch",
+        "ee",
+        "se"
+      ],
+      "level": "medium",
+      "status": "existing",
+      "emoji": "🧀",
+      "spellable": true,
+      "legacyIndex": 25,
+      "note": "se says /z/"
+    },
+    {
+      "id": "toast",
+      "category": "breakfast",
+      "zh": "多士",
+      "en": "toast",
+      "chunks": [
+        "toast"
+      ],
+      "sounds": [
+        "t",
+        "oa",
+        "s",
+        "t"
+      ],
+      "level": "easy",
+      "status": "new",
+      "emoji": "🍞",
+      "spellable": true,
+      "note": "HK cha chaan teng staple"
+    },
+    {
+      "id": "egg",
+      "category": "breakfast",
+      "zh": "煎蛋",
+      "en": "egg",
+      "chunks": [
+        "egg"
+      ],
+      "sounds": [
+        "e",
+        "gg"
+      ],
+      "level": "easy",
+      "status": "new",
+      "emoji": "🍳",
+      "spellable": true,
+      "note": "card subtitle 'fried egg'; HK also says 太陽蛋"
+    },
+    {
+      "id": "muffin",
+      "category": "breakfast",
+      "zh": "鬆餅",
+      "en": "muffin",
+      "chunks": [
+        "muf",
+        "fin"
+      ],
+      "sounds": [
+        "m",
+        "u",
+        "ff",
+        "i",
+        "n"
+      ],
+      "level": "easy",
+      "status": "new",
+      "emoji": "🧁",
+      "spellable": true,
+      "note": "HK bakeries label muffins 鬆餅 (e.g. 藍莓鬆餅)"
+    },
+    {
+      "id": "taco",
+      "category": "world",
+      "zh": "墨西哥捲",
+      "en": "taco",
+      "chunks": [
+        "ta",
+        "co"
+      ],
+      "sounds": [
+        "t",
+        "a",
+        "c",
+        "o"
+      ],
+      "level": "easy",
+      "status": "existing",
+      "emoji": "🌮",
+      "spellable": true,
+      "legacyIndex": 10
+    },
+    {
+      "id": "dumpling",
+      "category": "world",
+      "zh": "餃子",
+      "en": "dumpling",
+      "chunks": [
+        "dump",
+        "ling"
+      ],
+      "sounds": [
+        "d",
+        "u",
+        "m",
+        "p",
+        "l",
+        "i",
+        "ng"
+      ],
+      "level": "medium",
+      "status": "existing",
+      "emoji": "🥟",
+      "spellable": true,
+      "legacyIndex": 12,
+      "image": "./assets/foods/dumpling.svg"
+    },
+    {
+      "id": "curry",
+      "category": "world",
+      "zh": "咖喱飯",
+      "en": "curry",
+      "chunks": [
+        "cur",
+        "ry"
+      ],
+      "sounds": [
+        "c",
+        "u",
+        "rr",
+        "y"
+      ],
+      "level": "medium",
+      "status": "existing",
+      "emoji": "🍛",
+      "spellable": true,
+      "legacyIndex": 19,
+      "note": "card may subtitle 'curry rice'"
+    },
+    {
+      "id": "steak",
+      "category": "world",
+      "zh": "牛扒",
+      "en": "steak",
+      "chunks": [
+        "steak"
+      ],
+      "sounds": [
+        "s",
+        "t",
+        "ea",
+        "k"
+      ],
+      "level": "medium",
+      "status": "existing",
+      "emoji": "🥩",
+      "spellable": true,
+      "legacyIndex": 4,
+      "note": "tricky ea=/eɪ/; RENAMED from app's 燒肉"
+    },
+    {
+      "id": "salad",
+      "category": "world",
+      "zh": "沙律",
+      "en": "salad",
+      "chunks": [
+        "sal",
+        "ad"
+      ],
+      "sounds": [
+        "s",
+        "a",
+        "l",
+        "a",
+        "d"
+      ],
+      "level": "easy",
+      "status": "existing",
+      "emoji": "🥗",
+      "spellable": true,
+      "legacyIndex": 15
+    },
+    {
+      "id": "pasta",
+      "category": "world",
+      "zh": "意粉",
+      "en": "pasta",
+      "chunks": [
+        "pas",
+        "ta"
+      ],
+      "sounds": [
+        "p",
+        "a",
+        "s",
+        "t",
+        "a"
+      ],
+      "level": "easy",
+      "status": "new",
+      "emoji": "🍝",
+      "spellable": true
+    },
+    {
+      "id": "kimchi",
+      "category": "world",
+      "zh": "泡菜",
+      "en": "kimchi",
+      "chunks": [
+        "kim",
+        "chi"
+      ],
+      "sounds": [
+        "k",
+        "i",
+        "m",
+        "ch",
+        "i"
+      ],
+      "level": "medium",
+      "status": "new",
+      "emoji": null,
+      "spellable": true,
+      "note": "loanword; Korean nod"
+    },
+    {
+      "id": "kebab",
+      "category": "world",
+      "zh": "烤肉串",
+      "en": "kebab",
+      "chunks": [
+        "ke",
+        "bab"
+      ],
+      "sounds": [
+        "k",
+        "e",
+        "b",
+        "a",
+        "b"
+      ],
+      "level": "easy",
+      "status": "new",
+      "emoji": "🥙",
+      "spellable": true
+    },
+    {
+      "id": "fish-balls",
+      "category": "hk-snacks",
+      "zh": "魚蛋",
+      "en": "fish balls",
+      "chunks": [
+        "fish",
+        "balls"
+      ],
+      "sounds": [
+        "f",
+        "i",
+        "sh",
+        "b",
+        "a",
+        "ll",
+        "s"
+      ],
+      "level": "medium",
+      "status": "new",
+      "emoji": null,
+      "spellable": true,
+      "note": "two words; street classic 咖喱魚蛋"
+    },
+    {
+      "id": "siu-mai",
+      "category": "hk-snacks",
+      "zh": "燒賣",
+      "en": "siu mai",
+      "chunks": [
+        "siu",
+        "mai"
+      ],
+      "sounds": null,
+      "level": "medium",
+      "status": "new",
+      "emoji": null,
+      "spellable": false,
+      "note": "BONUS: Cantonese romanisation, not a phonics word – show & read, never test"
+    },
+    {
+      "id": "egg-tart",
+      "category": "hk-snacks",
+      "zh": "蛋撻",
+      "en": "egg tart",
+      "chunks": [
+        "egg",
+        "tart"
+      ],
+      "sounds": [
+        "e",
+        "gg",
+        "t",
+        "ar",
+        "t"
+      ],
+      "level": "easy",
+      "status": "new",
+      "emoji": "🥧",
+      "spellable": true,
+      "note": "two words",
+      "image": "./assets/foods/egg-tart.svg"
+    },
+    {
+      "id": "french-toast",
+      "category": "hk-snacks",
+      "zh": "西多士",
+      "en": "French toast",
+      "chunks": [
+        "French",
+        "toast"
+      ],
+      "sounds": [
+        "F",
+        "r",
+        "e",
+        "n",
+        "ch",
+        "t",
+        "oa",
+        "s",
+        "t"
+      ],
+      "level": "medium",
+      "status": "new",
+      "emoji": null,
+      "spellable": true,
+      "note": "capital F; accept 'french toast' when marking"
+    },
+    {
+      "id": "egg-waffle",
+      "category": "hk-snacks",
+      "zh": "雞蛋仔",
+      "en": "egg waffle",
+      "chunks": [
+        "egg",
+        "waf",
+        "fle"
+      ],
+      "sounds": [
+        "e",
+        "gg",
+        "w",
+        "a",
+        "ff",
+        "le"
+      ],
+      "level": "medium",
+      "status": "new",
+      "emoji": null,
+      "spellable": true,
+      "note": "two words; 'a' after w says /ɒ/",
+      "image": "./assets/foods/egg-waffle.svg"
+    },
+    {
+      "id": "pineapple-bun",
+      "category": "hk-snacks",
+      "zh": "菠蘿包",
+      "en": "pineapple bun",
+      "chunks": [
+        "pine",
+        "ap",
+        "ple",
+        "bun"
+      ],
+      "sounds": [
+        "p",
+        "i_e",
+        "n",
+        "a",
+        "pp",
+        "le",
+        "b",
+        "u",
+        "n"
+      ],
+      "level": "hard",
+      "status": "suggested",
+      "emoji": null,
+      "spellable": true,
+      "note": "Confirmed by Tina; long phrase (no pineapple inside – fun fact for the card)"
+    },
+    {
+      "id": "milk-tea",
+      "category": "hk-snacks",
+      "zh": "港式奶茶",
+      "en": "milk tea",
+      "chunks": [
+        "milk",
+        "tea"
+      ],
+      "sounds": [
+        "m",
+        "i",
+        "l",
+        "k",
+        "t",
+        "ea"
+      ],
+      "level": "easy",
+      "status": "suggested",
+      "emoji": "🧋",
+      "spellable": true,
+      "note": "Confirmed by Tina; 🧋 emoji is bubble tea – draw HK 絲襪奶茶 cup"
+    },
+    {
+      "id": "rice-roll",
+      "category": "hk-snacks",
+      "zh": "腸粉",
+      "en": "rice roll",
+      "chunks": [
+        "rice",
+        "roll"
+      ],
+      "sounds": [
+        "r",
+        "i_e",
+        "c",
+        "r",
+        "o",
+        "ll"
+      ],
+      "level": "medium",
+      "status": "suggested",
+      "emoji": null,
+      "spellable": true,
+      "note": "Confirmed by Tina; HK menus also write 'cheung fun' (romanised) – use 'rice roll' for spelling"
+    }
+  ],
+  "futurePacks": [
+    {
+      "id": "cha-chaan-teng",
+      "zh": "茶餐廳（香港小食之後）",
+      "title": "茶餐廳熟客",
+      "examples": [
+        "lemon tea 檸檬茶",
+        "macaroni 通粉",
+        "instant noodles 公仔麵",
+        "pork chop bun 豬扒包",
+        "red bean ice 紅豆冰"
+      ]
+    },
+    {
+      "id": "thailand",
+      "zh": "泰國",
+      "title": "泰國背包客",
+      "examples": [
+        "mango sticky rice 芒果糯米飯",
+        "satay 沙嗲",
+        "coconut 椰青",
+        "pad thai 泰式炒金邊粉"
+      ]
+    },
+    {
+      "id": "korea",
+      "zh": "韓國",
+      "title": "韓國通",
+      "examples": [
+        "kimbap 紫菜包飯",
+        "bibimbap 韓式拌飯",
+        "rice cake 年糕",
+        "fried chicken 韓式炸雞"
+      ]
+    }
+  ]
+}

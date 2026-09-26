@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+<title>薄餅 pizza</title>
+<g stroke-linejoin="round" stroke-linecap="round">
+<ellipse cx="128" cy="226" rx="78" ry="8" fill="#1E3350" opacity="0.10"/>
+
+<g transform="rotate(-8 128 140)">
+<path d="M60 98 Q128 72 196 98 L138 204 Q128 220 118 204 Z" fill="#FFCF5C" stroke="#1E3350" stroke-width="8"/>
+<path d="M150 118 Q160 140 150 152" stroke="#FFE39A" stroke-width="5" fill="none"/>
+<circle cx="106" cy="122" r="15" fill="#E8665A" stroke="#1E3350" stroke-width="6"/>
+<circle cx="150" cy="128" r="13" fill="#E8665A" stroke="#1E3350" stroke-width="6"/>
+<circle cx="126" cy="168" r="12" fill="#E8665A" stroke="#1E3350" stroke-width="6"/>
+<ellipse cx="101" cy="117" rx="4.5" ry="3" fill="#F7A091"/>
+<ellipse cx="146" cy="124" rx="4" ry="2.6" fill="#F7A091"/>
+<path d="M104 152 C98 146 98 138 106 136 C110 142 110 148 104 152 Z" fill="#6DBA6A" stroke="#1E3350" stroke-width="4"/>
+<path d="M150 158 C152 150 158 148 164 150 C162 158 156 160 150 158 Z" fill="#6DBA6A" stroke="#1E3350" stroke-width="4"/>
+<path d="M46 88 Q128 50 210 88 Q216 104 200 110 Q128 80 56 110 Q40 104 46 88 Z" fill="#E9A55B" stroke="#1E3350" stroke-width="8"/>
+<path d="M84 80 Q100 74 116 71 M144 71 Q160 74 174 79" stroke="#F6CB8E" stroke-width="5" fill="none"/>
+</g>
+</g>
+</svg>
